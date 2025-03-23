@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\TruthOrDare_API.props" />
+</Project>
