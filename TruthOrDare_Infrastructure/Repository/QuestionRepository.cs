@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TruthOrDare_Contract.DTOs;
 using TruthOrDare_Contract.IRepository;
 using TruthOrDare_Contract.Models;
 
@@ -28,6 +29,45 @@ namespace TruthOrDare_Infrastructure.Repository
         {
             var question = await _questions.Find(q => q.Id == questionId).FirstOrDefaultAsync();
             return question?.Points ?? 0;
+        }
+        public async Task<string> CreateQuestion(QuestionCreateDTO question)
+        {
+            try
+            {
+                if (question == null || string.IsNullOrWhiteSpace(question.Text) || string.IsNullOrWhiteSpace(question.Type))
+                {
+                    return "Question text and type are required";
+                }
+                var checkq = await _questions
+                    .Find(a => a.Text.ToLower() == question.Text.ToLower())
+                    .FirstOrDefaultAsync();
+                if (checkq != null)
+                {
+                    return "Question text already exist";
+                }
+                var newQuestion = new Question
+                {
+                    Mode = question.Mode,
+                    Type = question.Type,
+                    Text = question.Text,
+                    Difficulty = question.Difficulty,
+                    AgeGroup = question.AgeGroup,
+                    TimeLimit = question.TimeLimit,
+                    ResponseType = question.ResponseType,
+                    Points = question.Points > 0 ? question.Points : 10,
+                    CreatedAt = DateTime.Now,
+                    UpdatedAt = DateTime.Now,
+                    Visibility = question.Visibility,
+                    Tags = question.Tags,
+                    CreatedBy = "Admin",
+                };
+                await _questions.InsertOneAsync(newQuestion);
+                return "Success";
+            }
+            catch (Exception ex)
+            {
+                return $"Failed: {ex.Message}";
+            }
         }
     }
 }

@@ -13,3 +13,4 @@ D:\Somethings\TruthOrDare\TruthOrDare_Infrastructure\obj\Debug\net8.0\TruthOrDar
 D:\Somethings\TruthOrDare\TruthOrDare_Infrastructure\obj\Debug\net8.0\refint\TruthOrDare_Infrastructure.dll
 D:\Somethings\TruthOrDare\TruthOrDare_Infrastructure\obj\Debug\net8.0\TruthOrDare_Infrastructure.pdb
 D:\Somethings\TruthOrDare\TruthOrDare_Infrastructure\obj\Debug\net8.0\ref\TruthOrDare_Infrastructure.dll
+D:\Somethings\TruthOrDare\TruthOrDare_Infrastructure\obj\Debug\net8.0\TruthOrDare_Infrastructure.sourcelink.json

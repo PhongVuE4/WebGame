@@ -31,5 +31,7 @@ namespace TruthOrDare_Contract.Models
 
         [BsonElement("last_active")]
         public DateTime LastActive { get; set; }
+        [BsonElement("is_deleted")]
+        public bool IsDeleted { get; set; }
     }
 }
