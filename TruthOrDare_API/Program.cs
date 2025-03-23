@@ -1,15 +1,31 @@
-using TruthOrDare_API;
+﻿using TruthOrDare_API;
 using TruthOrDare_Contract.IServices;
+using Newtonsoft.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddNewtonsoftJson(options =>
+{
+    options.SerializerSettings.MissingMemberHandling = MissingMemberHandling.Ignore;
+});
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDependencyInjection();
+
+// Add CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", builder =>
+    {
+        builder.WithOrigins("https://webgame-lk6s.onrender.com")
+               .AllowAnyMethod()
+               .AllowAnyHeader();
+    });
+});
+
 
 var app = builder.Build();
 
@@ -21,11 +37,18 @@ app.UseSwaggerUI(c =>
 });
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+//if (app.Environment.IsDevelopment())
+//{
+//    app.UseSwagger();
+//    app.UseSwaggerUI();
+//}
+app.UseCors("AllowAll");
+app.UseSwagger(); // Kích hoạt Swagger trên mọi môi trường
+app.UseSwaggerUI(c =>
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "TruthOrDare API V1");
+    c.RoutePrefix = "swagger"; // Truy cập Swagger UI tại /swagger
+});
 app.UseWebSockets();
 app.Map("/ws/{roomId}", async (HttpContext context, IWebSocketHandler handler) =>
 {

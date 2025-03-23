@@ -34,16 +34,6 @@ namespace TruthOrDare_API.Controllers
             await _roomService.CompleteTurnAsync(roomId, playerId, response);
             return Ok();
         }
-        [HttpGet("questions")]
-        public async Task<IActionResult> GetQuestions()
-        {
-            var questions = await _dbContext.Questions
-                .Find(_ => true)
-                .Limit(10) // Giới hạn 10 câu hỏi để test
-                .ToListAsync();
-            return Ok(questions);
-        }
-
         [HttpGet("game-sessions")]
         public async Task<IActionResult> GetGameSessions()
         {

@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("TruthOrDare_Infrastructure")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+82246afe0d2b365cf0744d815bcbc402060ff117")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+3e15b8ba2b0041a962a89120062d237bb01dbbe3")]
 [assembly: System.Reflection.AssemblyProductAttribute("TruthOrDare_Infrastructure")]
 [assembly: System.Reflection.AssemblyTitleAttribute("TruthOrDare_Infrastructure")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

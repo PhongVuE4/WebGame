@@ -34,5 +34,7 @@ namespace TruthOrDare_Contract.Models
 
         [BsonElement("ttl_expiry")]
         public DateTime TtlExpiry { get; set; }
+        [BsonElement("is_deleted")]
+        public bool IsDeleted { get; set; }
     }
 }
