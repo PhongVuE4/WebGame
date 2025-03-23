@@ -13,5 +13,6 @@ namespace TruthOrDare_Contract.IRepository
         Task<Question> GetRandomQuestionAsync(List<string> excludeIds);
         Task<int> GetPointsForQuestionAsync(string questionId);
         Task<string> CreateQuestion(QuestionCreateDTO question);
+        Task<List<Question>> GetQuestions(string? mode, string? type, string? difficulty, string? age_group);
     }
 }
