@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
 using TruthOrDare_Contract.DTOs;
@@ -12,20 +13,19 @@ namespace TruthOrDare_API.Controllers
     [ApiController]
     public class QuestionsController : ControllerBase
     {
-        private readonly MongoDbContext _dbContext;
         private readonly IQuestionRepository _questionRepository;
-        public QuestionsController(MongoDbContext dbContext, IQuestionRepository questionRepository)
+        public QuestionsController(IQuestionRepository questionRepository)
         {
-            _dbContext = dbContext;
             _questionRepository = questionRepository;
         }
         [HttpGet("questions")]
-        public async Task<IActionResult> GetQuestions()
+        public async Task<IActionResult> GetQuestions(string? mode, string? type, string? difficulty, string? age_group)
         {
-            var questions = await _dbContext.Questions
-                .Find(_ => true)
-                .Limit(10) // Giới hạn 10 câu hỏi để test
-                .ToListAsync();
+            var questions = await _questionRepository.GetQuestions(mode, type, difficulty, age_group);
+            if (questions != null)
+            {
+                return NotFound(questions);
+            }
             return Ok(questions);
         }
         [HttpPost]

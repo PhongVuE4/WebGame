@@ -24,7 +24,17 @@ namespace TruthOrDare_Infrastructure.Repository
             var filter = Builders<Question>.Filter.Not(Builders<Question>.Filter.In(q => q.Id, excludeIds));
             return await _questions.Find(filter).Limit(1).FirstOrDefaultAsync();
         }
-
+        public async Task<List<Question>> GetQuestions(string? mode, string? type, string? difficulty, string? age_group)
+        {
+            var filter = await _questions
+                .Find(a => (a.Mode == mode) || (a.Type == type) || (a.Difficulty == difficulty) || (a.AgeGroup == age_group))
+                .ToListAsync();
+            if(filter == null)
+            {
+                return null;
+            }
+            return filter;
+        }
         public async Task<int> GetPointsForQuestionAsync(string questionId)
         {
             var question = await _questions.Find(q => q.Id == questionId).FirstOrDefaultAsync();
