@@ -1,0 +1,58 @@
+[
+  {
+    "ContainingType": "TruthOrDare_API.Controllers.GameController",
+    "Method": "CompleteTurn",
+    "RelativePath": "api/Game/complete-turn",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "roomId",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "playerId",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "response",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TruthOrDare_API.Controllers.GameController",
+    "Method": "CreateRoom",
+    "RelativePath": "api/Game/create-room",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TruthOrDare_API.Controllers.GameController",
+    "Method": "GetGameSessions",
+    "RelativePath": "api/Game/game-sessions",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TruthOrDare_API.Controllers.GameController",
+    "Method": "GetQuestions",
+    "RelativePath": "api/Game/questions",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  }
+]

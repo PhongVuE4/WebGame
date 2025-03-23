@@ -1,0 +1,30 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
+using TruthOrDare_Contract;
+using TruthOrDare_Contract.IRepository;
+using TruthOrDare_Contract.IServices;
+using TruthOrDare_Core.Services;
+using TruthOrDare_Infrastructure;
+using TruthOrDare_Infrastructure.Repository;
+
+namespace TruthOrDare_API
+{
+    public static class DIConfig
+    {
+        public static IServiceCollection AddDependencyInjection(this IServiceCollection services)
+        {
+            //Add Repository
+            services.AddScoped<IQuestionRepository, QuestionRepository>();
+            //Add service
+            services.AddScoped<IRoomService, RoomService>();
+            services.AddSingleton<IWebSocketHandler, WebSocketHandler>();
+            // Register MongoDbContext
+            services.AddSingleton<MongoDbContext>();
+            return services;
+        }
+    }
+}

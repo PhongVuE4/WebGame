@@ -1,0 +1,17 @@
+D:\Somethings\TruthOrDare\TruthOrDare_Core\bin\Debug\net8.0\TruthOrDare_Core.deps.json
+D:\Somethings\TruthOrDare\TruthOrDare_Core\bin\Debug\net8.0\TruthOrDare_Core.dll
+D:\Somethings\TruthOrDare\TruthOrDare_Core\bin\Debug\net8.0\TruthOrDare_Core.pdb
+D:\Somethings\TruthOrDare\TruthOrDare_Core\bin\Debug\net8.0\TruthOrDare_Contract.dll
+D:\Somethings\TruthOrDare\TruthOrDare_Core\bin\Debug\net8.0\TruthOrDare_Infrastructure.dll
+D:\Somethings\TruthOrDare\TruthOrDare_Core\bin\Debug\net8.0\TruthOrDare_Contract.pdb
+D:\Somethings\TruthOrDare\TruthOrDare_Core\bin\Debug\net8.0\TruthOrDare_Infrastructure.pdb
+D:\Somethings\TruthOrDare\TruthOrDare_Core\obj\Debug\net8.0\TruthOrDare_Core.csproj.AssemblyReference.cache
+D:\Somethings\TruthOrDare\TruthOrDare_Core\obj\Debug\net8.0\TruthOrDare_Core.GeneratedMSBuildEditorConfig.editorconfig
+D:\Somethings\TruthOrDare\TruthOrDare_Core\obj\Debug\net8.0\TruthOrDare_Core.AssemblyInfoInputs.cache
+D:\Somethings\TruthOrDare\TruthOrDare_Core\obj\Debug\net8.0\TruthOrDare_Core.AssemblyInfo.cs
+D:\Somethings\TruthOrDare\TruthOrDare_Core\obj\Debug\net8.0\TruthOrDare_Core.csproj.CoreCompileInputs.cache
+D:\Somethings\TruthOrDare\TruthOrDare_Core\obj\Debug\net8.0\TruthOrD.397CA974.Up2Date
+D:\Somethings\TruthOrDare\TruthOrDare_Core\obj\Debug\net8.0\TruthOrDare_Core.dll
+D:\Somethings\TruthOrDare\TruthOrDare_Core\obj\Debug\net8.0\refint\TruthOrDare_Core.dll
+D:\Somethings\TruthOrDare\TruthOrDare_Core\obj\Debug\net8.0\TruthOrDare_Core.pdb
+D:\Somethings\TruthOrDare\TruthOrDare_Core\obj\Debug\net8.0\ref\TruthOrDare_Core.dll
