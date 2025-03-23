@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TruthOrDare_Contract.DTOs;
 using TruthOrDare_Contract.Models;
 
 namespace TruthOrDare_Contract.IRepository
@@ -11,5 +12,6 @@ namespace TruthOrDare_Contract.IRepository
     {
         Task<Question> GetRandomQuestionAsync(List<string> excludeIds);
         Task<int> GetPointsForQuestionAsync(string questionId);
+        Task<string> CreateQuestion(QuestionCreateDTO question);
     }
 }
