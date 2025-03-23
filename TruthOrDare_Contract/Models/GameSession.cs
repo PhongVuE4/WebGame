@@ -26,6 +26,8 @@ namespace TruthOrDare_Contract.Models
 
         [BsonElement("history")]
         public List<SessionHistory> History { get; set; } = new();
+        [BsonElement("is_deleted")]
+        public bool IsDeleted { get; set; }
     }
 
     public class SessionHistory

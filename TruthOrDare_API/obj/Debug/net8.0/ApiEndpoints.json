@@ -46,9 +46,25 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "TruthOrDare_API.Controllers.GameController",
+    "ContainingType": "TruthOrDare_API.Controllers.QuestionsController",
+    "Method": "CreateQuestion",
+    "RelativePath": "api/questions",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "questionCreate",
+        "Type": "TruthOrDare_Contract.DTOs.QuestionCreateDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TruthOrDare_API.Controllers.QuestionsController",
     "Method": "GetQuestions",
-    "RelativePath": "api/Game/questions",
+    "RelativePath": "api/questions/questions",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,

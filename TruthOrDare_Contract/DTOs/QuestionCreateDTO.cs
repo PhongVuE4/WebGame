@@ -6,17 +6,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TruthOrDare_Contract.Models
+namespace TruthOrDare_Contract.DTOs
 {
-    public class Question
+    public class QuestionCreateDTO
     {
-        [BsonId]
-        [BsonRepresentation(BsonType.ObjectId)]
-        public string Id { get; set; }
-
-        [BsonElement("game_type")]
-        public string GameType { get; set; } = "truth_or_dare";
-
         [BsonElement("mode")]
         public string Mode { get; set; }
 
@@ -41,25 +34,11 @@ namespace TruthOrDare_Contract.Models
         [BsonElement("points")]
         public int Points { get; set; }
 
-        [BsonElement("created_at")]
-        public DateTime CreatedAt { get; set; }
-        [BsonElement("updated_at")]
-        public DateTime UpdatedAt { get; set; }
-
-        [BsonElement("created_by")]
-        [BsonIgnoreIfNull]
-        public string CreatedBy { get; set; }
-
-        [BsonElement("is_custom")]
-        public bool IsCustom { get; set; } = true;
-
         [BsonElement("visibility")]
-        public string Visibility { get; set; } = "public";
+        public string Visibility { get; set; }
 
         [BsonElement("tags")]
         [BsonIgnoreIfNull]
         public List<string> Tags { get; set; }
-        [BsonElement("is_deleted")]
-        public bool IsDeleted { get; set; } = false;
     }
 }
