@@ -26,14 +26,52 @@ namespace TruthOrDare_Infrastructure.Repository
         }
         public async Task<List<Question>> GetQuestions(string? mode, string? type, string? difficulty, string? age_group)
         {
-            var filter = await _questions
-                .Find(a => (a.Mode == mode) || (a.Type == type) || (a.Difficulty == difficulty) || (a.AgeGroup == age_group))
-                .ToListAsync();
-            if(filter == null)
+            var baseFilter = Builders<Question>.Filter.Eq(q => q.IsDeleted, false);
+
+            if (string.IsNullOrWhiteSpace(mode) &&
+                string.IsNullOrWhiteSpace(type) &&
+                string.IsNullOrWhiteSpace(difficulty) &&
+                string.IsNullOrWhiteSpace(age_group))
             {
-                return null;
+                return await _questions.Find(baseFilter).ToListAsync();
             }
-            return filter;
+
+            var conditions = new List<FilterDefinition<Question>>();
+
+            if (!string.IsNullOrWhiteSpace(mode))
+            {
+                conditions.Add(Builders<Question>.Filter.Eq(q => q.Mode, mode));
+            }
+
+            if (!string.IsNullOrWhiteSpace(type))
+            {
+                conditions.Add(Builders<Question>.Filter.Eq(q => q.Type, type));
+            }
+
+            if (!string.IsNullOrWhiteSpace(difficulty))
+            {
+                conditions.Add(Builders<Question>.Filter.Eq(q => q.Difficulty, difficulty));
+            }
+
+            if (!string.IsNullOrWhiteSpace(age_group))
+            {
+                conditions.Add(Builders<Question>.Filter.Eq(q => q.AgeGroup, age_group));
+            }
+
+            FilterDefinition<Question> filterBuilder;
+            if (conditions.Any())
+            {
+                var orFilter = Builders<Question>.Filter.Or(conditions);
+                filterBuilder = Builders<Question>.Filter.And(baseFilter, orFilter);
+            }
+            else
+            {
+                filterBuilder = baseFilter;
+            }
+
+            var questions = await _questions.Find(filterBuilder).ToListAsync();
+
+            return questions;
         }
         public async Task<int> GetPointsForQuestionAsync(string questionId)
         {

@@ -24,9 +24,9 @@ namespace TruthOrDare_API.Controllers
             var questions = await _questionRepository.GetQuestions(mode, type, difficulty, age_group);
             if (questions != null)
             {
-                return NotFound(questions);
+                return Ok(questions);
             }
-            return Ok(questions);
+            return NotFound(questions);
         }
         [HttpPost]
         public async Task<ActionResult> CreateQuestion([FromBody] QuestionCreateDTO questionCreate)
