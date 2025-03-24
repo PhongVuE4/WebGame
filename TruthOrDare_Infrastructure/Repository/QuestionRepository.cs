@@ -61,7 +61,7 @@ namespace TruthOrDare_Infrastructure.Repository
             FilterDefinition<Question> filterBuilder;
             if (conditions.Any())
             {
-                var orFilter = Builders<Question>.Filter.Or(conditions);
+                var orFilter = Builders<Question>.Filter.And(conditions);
                 filterBuilder = Builders<Question>.Filter.And(baseFilter, orFilter);
             }
             else
@@ -115,6 +115,124 @@ namespace TruthOrDare_Infrastructure.Repository
             catch (Exception ex)
             {
                 return $"Failed: {ex.Message}";
+            }
+        }
+        public async Task<(int SuccessCount, List<string> Errors)> InsertManyQuestions(List<QuestionCreateDTO> questions)
+        {
+            try
+            {
+                if(questions == null || !questions.Any())
+                {
+                    return (0, new List<string> {"Khong co cau hoi nao"});
+                }
+                var errors = new List<string>();
+                var questionsToInsert = new List<Question>();
+                var existingTexts = new HashSet<string>();
+
+                var existingQuestions = await _questions
+                    .Find(Builders<Question>.Filter.Eq(a => a.IsDeleted, false))
+                    .Project(a => a.Text.ToLower()).ToListAsync();
+
+
+                foreach (var text in existingQuestions)
+                {
+                    if (!string.IsNullOrWhiteSpace(text))
+                    {
+                        var normalizedText = text.Trim().ToLower().Normalize(NormalizationForm.FormC);
+                        existingTexts.Add(normalizedText);
+                    }
+                }
+
+                for (int i = 0; i < questions.Count; i++)
+                {
+                    var question = questions[i];
+
+                    if (question == null || string.IsNullOrWhiteSpace(question.Text) || string.IsNullOrWhiteSpace(question.Type))
+                    {
+                        errors.Add($"Question at index {i}: Text and Type are required.");
+                        continue;
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(question.Type))
+                    {
+                        var typeLower = question.Type.ToLower();
+                        if (typeLower != "truth" && typeLower != "dare")
+                        {
+                            errors.Add($"Question at index {i}: Type must be either 'Truth' or 'Dare'.");
+                            continue;
+                        }
+                    }
+                    if (!string.IsNullOrWhiteSpace(question.Difficulty))
+                    {
+                        var difficultyLower = question.Difficulty.ToLower();
+                        if (difficultyLower != "easy" && difficultyLower != "medium" && difficultyLower != "hard")
+                        {
+                            errors.Add($"Question at index {i}: Difficulty must be 'Easy', 'Medium', or 'Hard'.");
+                            continue;
+                        }
+                    }
+                    if (!string.IsNullOrWhiteSpace(question.AgeGroup))
+                    {
+                        var agegroupLower = question.AgeGroup.ToLower();
+                        if (agegroupLower != "kid" && agegroupLower != "teen" && agegroupLower != "adult" && agegroupLower != "all")
+                        {
+                            errors.Add($"Question at index {i}: AgeGroup must be 'Kid', 'Teen', 'Adult' or 'All'.");
+                            continue;
+                        }
+                    }
+                    
+                    if (question.TimeLimit < 0)
+                    {
+                        errors.Add($"Question at index {i}: TimeLimit must be non-negative.");
+                        continue;
+                    }
+
+                    if (question.Points < 0)
+                    {
+                        errors.Add($"Question at index {i}: Points must be non-negative.");
+                        continue;
+                    }
+
+                    if (existingTexts.Contains(question.Text.ToLower()))
+                    {
+                        errors.Add($"Question at index {i}: Text '{question.Text}' already exists.");
+                        continue;
+                    }
+
+                    var newQuestion = new Question
+                    {
+                        Mode = question.Mode,
+                        Type = question.Type,
+                        Text = question.Text,
+                        Difficulty = question.Difficulty,
+                        AgeGroup = question.AgeGroup,
+                        TimeLimit = question.TimeLimit,
+                        ResponseType = question.ResponseType,
+                        Points = question.Points > 0 ? question.Points : 10,
+                        CreatedAt = DateTime.Now,
+                        UpdatedAt = DateTime.Now,
+                        Visibility = question.Visibility,
+                        Tags = question.Tags,
+                        CreatedBy = "Admin",
+                    };
+
+                    questionsToInsert.Add(newQuestion);
+                    existingTexts.Add(question.Text.ToLower()); // Thêm vào HashSet để tránh trùng lặp trong cùng batch
+                }
+
+                if (!questionsToInsert.Any())
+                {
+                    errors.Add("Khong co cau hoi nao duoc them.");
+                    return (0, errors);
+                }
+
+                await _questions.InsertManyAsync(questionsToInsert);
+
+                return (questionsToInsert.Count, errors);
+            }
+            catch (Exception ex)
+            {
+                return (0, new List<string> { $"Failed to insert questions: {ex.Message}" });
             }
         }
     }
