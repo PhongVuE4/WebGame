@@ -20,7 +20,9 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", builder =>
     {
-        builder.WithOrigins("https://webgame-lk6s.onrender.com", "http://localhost:3000")
+        builder.WithOrigins("https://webgame-lk6s.onrender.com", 
+                            "http://localhost:3000",
+                           "https://webgame-oqyj-g.fly.dev")
                .AllowAnyMethod()
                .AllowAnyHeader();
     });
