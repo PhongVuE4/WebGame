@@ -48,7 +48,7 @@
   {
     "ContainingType": "TruthOrDare_API.Controllers.QuestionsController",
     "Method": "CreateQuestion",
-    "RelativePath": "api/questions",
+    "RelativePath": "api/questions/add-a-question",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
@@ -56,6 +56,22 @@
       {
         "Name": "questionCreate",
         "Type": "TruthOrDare_Contract.DTOs.QuestionCreateDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TruthOrDare_API.Controllers.QuestionsController",
+    "Method": "InsertManyQuestions",
+    "RelativePath": "api/questions/add-many-question",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "questions",
+        "Type": "System.Collections.Generic.List\u00601[[TruthOrDare_Contract.DTOs.QuestionCreateDTO, TruthOrDare_Contract, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "IsRequired": true
       }
     ],
