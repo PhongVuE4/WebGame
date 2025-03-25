@@ -77,6 +77,18 @@
               "target": "Package",
               "version": "[3.2.1, )"
             },
+            "Quartz": {
+              "target": "Package",
+              "version": "[3.14.0, )"
+            },
+            "Quartz.AspNetCore": {
+              "target": "Package",
+              "version": "[3.14.0, )"
+            },
+            "Quartz.Extensions.DependencyInjection": {
+              "target": "Package",
+              "version": "[3.14.0, )"
+            },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
               "version": "[8.0.0, )"
@@ -311,6 +323,10 @@
             "Microsoft.AspNetCore.Http.Abstractions": {
               "target": "Package",
               "version": "[2.3.0, )"
+            },
+            "Quartz": {
+              "target": "Package",
+              "version": "[3.14.0, )"
             }
           },
           "imports": [
