@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("TruthOrDare_Core")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+afd22a13702b8de223505dcdfd584b6fc80b1d87")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+12aca47d02e75afb5aaebb56dd7c7a0394848e0c")]
 [assembly: System.Reflection.AssemblyProductAttribute("TruthOrDare_Core")]
 [assembly: System.Reflection.AssemblyTitleAttribute("TruthOrDare_Core")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
