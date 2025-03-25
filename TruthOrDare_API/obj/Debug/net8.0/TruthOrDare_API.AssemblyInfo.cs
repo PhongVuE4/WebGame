@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("TruthOrDare_API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+41d917f98beb2e34b59bf806c5ec806930840edd")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+afd22a13702b8de223505dcdfd584b6fc80b1d87")]
 [assembly: System.Reflection.AssemblyProductAttribute("TruthOrDare_API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("TruthOrDare_API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

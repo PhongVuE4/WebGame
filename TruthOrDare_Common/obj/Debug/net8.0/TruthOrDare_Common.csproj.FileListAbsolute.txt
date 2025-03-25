@@ -9,3 +9,8 @@ D:\Somethings\TruthOrDare\TruthOrDare_Common\obj\Debug\net8.0\TruthOrDare_Common
 D:\Somethings\TruthOrDare\TruthOrDare_Common\obj\Debug\net8.0\refint\TruthOrDare_Common.dll
 D:\Somethings\TruthOrDare\TruthOrDare_Common\obj\Debug\net8.0\TruthOrDare_Common.pdb
 D:\Somethings\TruthOrDare\TruthOrDare_Common\obj\Debug\net8.0\ref\TruthOrDare_Common.dll
+D:\Somethings\TruthOrDare\TruthOrDare_Common\bin\Debug\net8.0\TruthOrDare_Contract.dll
+D:\Somethings\TruthOrDare\TruthOrDare_Common\bin\Debug\net8.0\TruthOrDare_Contract.pdb
+D:\Somethings\TruthOrDare\TruthOrDare_Common\obj\Debug\net8.0\TruthOrDare_Common.csproj.AssemblyReference.cache
+D:\Somethings\TruthOrDare\TruthOrDare_Common\obj\Debug\net8.0\TruthOrDare_Common.sourcelink.json
+D:\Somethings\TruthOrDare\TruthOrDare_Common\obj\Debug\net8.0\TruthOrD.921BD4C4.Up2Date

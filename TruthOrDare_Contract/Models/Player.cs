@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Net.WebSockets;
 
 namespace TruthOrDare_Contract.Models
 {
@@ -17,8 +18,8 @@ namespace TruthOrDare_Contract.Models
         [BsonElement("player_id")]
         public string PlayerId { get; set; }
 
-        [BsonElement("username")]
-        public string Username { get; set; }
+        [BsonElement("player_name")]
+        public string PlayerName { get; set; }
 
         [BsonElement("age_group")]
         public string AgeGroup { get; set; }
@@ -31,6 +32,10 @@ namespace TruthOrDare_Contract.Models
 
         [BsonElement("last_active")]
         public DateTime LastActive { get; set; }
+        [BsonElement("is_host")]
+        public bool IsHost { get; set; }
+        [BsonIgnore]
+        public WebSocket WebSocket { get; set; }
         [BsonElement("is_deleted")]
         public bool IsDeleted { get; set; }
     }

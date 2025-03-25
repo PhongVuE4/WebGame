@@ -355,6 +355,19 @@
           "lib/net7.0/ZstdSharp.dll": {}
         }
       },
+      "TruthOrDare_Common/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v8.0",
+        "dependencies": {
+          "TruthOrDare_Contract": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/TruthOrDare_Common.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/TruthOrDare_Common.dll": {}
+        }
+      },
       "TruthOrDare_Contract/1.0.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v8.0",
@@ -977,6 +990,11 @@
         "zstdsharp.port.nuspec"
       ]
     },
+    "TruthOrDare_Common/1.0.0": {
+      "type": "project",
+      "path": "../TruthOrDare_Common/TruthOrDare_Common.csproj",
+      "msbuildProject": "../TruthOrDare_Common/TruthOrDare_Common.csproj"
+    },
     "TruthOrDare_Contract/1.0.0": {
       "type": "project",
       "path": "../TruthOrDare_Contract/TruthOrDare_Contract.csproj",
@@ -991,6 +1009,7 @@
   "projectFileDependencyGroups": {
     "net8.0": [
       "Microsoft.AspNetCore.Http.Abstractions >= 2.3.0",
+      "TruthOrDare_Common >= 1.0.0",
       "TruthOrDare_Contract >= 1.0.0",
       "TruthOrDare_Infrastructure >= 1.0.0"
     ]
@@ -1028,6 +1047,9 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
+            "D:\\Somethings\\TruthOrDare\\TruthOrDare_Common\\TruthOrDare_Common.csproj": {
+              "projectPath": "D:\\Somethings\\TruthOrDare\\TruthOrDare_Common\\TruthOrDare_Common.csproj"
+            },
             "D:\\Somethings\\TruthOrDare\\TruthOrDare_Contract\\TruthOrDare_Contract.csproj": {
               "projectPath": "D:\\Somethings\\TruthOrDare\\TruthOrDare_Contract\\TruthOrDare_Contract.csproj"
             },
