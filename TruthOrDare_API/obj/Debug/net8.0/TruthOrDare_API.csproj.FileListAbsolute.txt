@@ -53,3 +53,5 @@ D:\Somethings\TruthOrDare\TruthOrDare_API\bin\Debug\net8.0\Microsoft.AspNetCore.
 D:\Somethings\TruthOrDare\TruthOrDare_API\bin\Debug\net8.0\Microsoft.AspNetCore.Mvc.NewtonsoftJson.dll
 D:\Somethings\TruthOrDare\TruthOrDare_API\bin\Debug\net8.0\Newtonsoft.Json.dll
 D:\Somethings\TruthOrDare\TruthOrDare_API\bin\Debug\net8.0\Newtonsoft.Json.Bson.dll
+D:\Somethings\TruthOrDare\TruthOrDare_API\bin\Debug\net8.0\TruthOrDare_Common.dll
+D:\Somethings\TruthOrDare\TruthOrDare_API\bin\Debug\net8.0\TruthOrDare_Common.pdb

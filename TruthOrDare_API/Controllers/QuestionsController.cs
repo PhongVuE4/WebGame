@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
-using TruthOrDare_Contract.DTOs;
+using TruthOrDare_Contract.DTOs.Question;
 using TruthOrDare_Contract.IRepository;
 using TruthOrDare_Contract.IServices;
 using TruthOrDare_Infrastructure;
@@ -19,9 +19,9 @@ namespace TruthOrDare_API.Controllers
             _questionRepository = questionRepository;
         }
         [HttpGet("questions")]
-        public async Task<IActionResult> GetQuestions(string? mode, string? type, string? difficulty, string? age_group)
+        public async Task<IActionResult> GetQuestions(string? filters)
         {
-            var questions = await _questionRepository.GetQuestions(mode, type, difficulty, age_group);
+            var questions = await _questionRepository.GetQuestions(filters);
             if (questions != null)
             {
                 return Ok(questions);

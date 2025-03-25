@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TruthOrDare_Contract.DTOs
+namespace TruthOrDare_Contract.DTOs.Question
 {
     public class QuestionCreateDTO
     {

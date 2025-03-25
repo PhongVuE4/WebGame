@@ -16,9 +16,13 @@ namespace TruthOrDare_Contract.Models
 
         [BsonElement("room_id")]
         public string RoomId { get; set; }
+        [BsonElement("room_name")]
+        public string RoomName { get; set; }
+        [BsonElement("room_password")]
+        public string? RoomPassword { get; set; }
 
         [BsonElement("players")]
-        public List<string> Players { get; set; } = new();
+        public List<Player> Players { get; set; } = new List<Player>();
 
         [BsonElement("current_question_id")]
         public string CurrentQuestionId { get; set; }
@@ -28,9 +32,13 @@ namespace TruthOrDare_Contract.Models
 
         [BsonElement("status")]
         public string Status { get; set; }
+        [BsonElement("created_by")]
+        public string CreatedBy { get; set; }
 
         [BsonElement("created_at")]
         public DateTime CreatedAt { get; set; }
+        [BsonElement("is_active")]
+        public bool IsActive { get; set; }
 
         [BsonElement("ttl_expiry")]
         public DateTime TtlExpiry { get; set; }

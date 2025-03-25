@@ -1,6 +1,7 @@
 ﻿using TruthOrDare_API;
 using TruthOrDare_Contract.IServices;
 using Newtonsoft.Json;
+using TruthOrDare_Contract.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +23,7 @@ builder.Services.AddCors(options =>
     {
         builder.WithOrigins("https://webgame-lk6s.onrender.com",
             "http://localhost:3000",
+            "https://leminhhien.me")
             "http://localhost:3001",
             "https://webgame-oqyj-g.fly.dev")
                .AllowAnyMethod()
@@ -32,19 +34,6 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-//app.UseSwagger();
-//app.UseSwaggerUI(c =>
-//{
-//    c.SwaggerEndpoint("/swagger/v1/swagger.json", "TruthOrDare API v1");
-//    c.RoutePrefix = string.Empty; 
-//});
-
-// Configure the HTTP request pipeline.
-//if (app.Environment.IsDevelopment())
-//{
-//    app.UseSwagger();
-//    app.UseSwaggerUI();
-//}
 app.UseCors("AllowAll");
 app.UseSwagger(); // Kích hoạt Swagger trên mọi môi trường
 app.UseSwaggerUI(c =>
@@ -53,13 +42,14 @@ app.UseSwaggerUI(c =>
     c.RoutePrefix = "swagger"; // Truy cập Swagger UI tại /swagger
 });
 app.UseWebSockets();
-app.Map("/ws/{roomId}", async (HttpContext context, IWebSocketHandler handler) =>
+app.Map("/ws/{roomId}/{playerId}", async (HttpContext context, IWebSocketHandler handler) =>
 {
     var roomId = context.Request.RouteValues["roomId"]?.ToString();
+    var playerId = context.Request.RouteValues["playerId"]?.ToString();
     if (context.WebSockets.IsWebSocketRequest)
     {
         var ws = await context.WebSockets.AcceptWebSocketAsync();
-        await handler.HandleWebSocket(context, ws, roomId);
+        await handler.HandleWebSocket(context, ws, roomId, playerId);
     }
     else
     {
