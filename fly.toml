@@ -1,4 +1,4 @@
-# fly.toml app configuration file generated for webgame-oqyj-g on 2025-03-24T01:03:32Z
+# fly.toml app configuration file generated for webgame-oqyj-g on 2025-03-25T01:07:56Z
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
@@ -9,7 +9,7 @@ primary_region = 'sin'
 [build]
 
 [http_service]
-  internal_port = 5000
+  internal_port = 8080
   force_https = true
   auto_stop_machines = 'stop'
   auto_start_machines = true
