@@ -152,10 +152,22 @@ namespace TruthOrDare_Core.Services
             return room;
         }
 
-        public async Task<List<RoomListDTO>> GetListRoom()
+        public async Task<List<RoomListDTO>> GetListRoom(string? roomId)
         {
+            var filter = Builders<Room>.Filter.And(
+                Builders<Room>.Filter.Eq(a => a.IsDeleted, false),
+                Builders<Room>.Filter.Eq(a => a.IsActive, true));
+                
+               
+            if (!string.IsNullOrWhiteSpace(roomId))
+            {
+                filter = Builders<Room>.Filter.And(
+                    filter,
+                    Builders<Room>.Filter.Eq(r => r.RoomId, roomId)
+                );
+            }
             var rooms = await _rooms
-                .Find(r => r.IsActive) // Chỉ lấy các phòng đang hoạt động
+                .Find(filter)
                 .ToListAsync();
 
             return rooms.Select(room => new RoomListDTO
@@ -163,7 +175,9 @@ namespace TruthOrDare_Core.Services
                 RoomId = room.RoomId,
                 RoomName = room.RoomName,
                 PlayerCount = room.Players.Count,
-                HasPassword = !string.IsNullOrEmpty(room.RoomPassword)
+                HasPassword = !string.IsNullOrEmpty(room.RoomPassword),
+                IsActive = room.IsActive,
+                IsDeleted = room.IsDeleted,
             }).ToList();
         }
         public async Task<Room> GetRoom(string roomId)

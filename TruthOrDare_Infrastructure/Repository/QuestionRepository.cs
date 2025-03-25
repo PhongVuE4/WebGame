@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using TruthOrDare_Contract.DTOs.Question;
 using TruthOrDare_Contract.IRepository;
 using TruthOrDare_Contract.Models;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace TruthOrDare_Infrastructure.Repository
 {
@@ -90,9 +91,37 @@ namespace TruthOrDare_Infrastructure.Repository
         {
             try
             {
-                if (question == null || string.IsNullOrWhiteSpace(question.Text) || string.IsNullOrWhiteSpace(question.Type))
+                if (question == null 
+                    || string.IsNullOrWhiteSpace(question.Text) 
+                    || string.IsNullOrWhiteSpace(question.Type)
+                    || string.IsNullOrWhiteSpace(question.Mode)
+                    || string.IsNullOrWhiteSpace(question.Difficulty))
                 {
-                    return "Question text and type are required";
+                    return "Question text, type, mode and difficulty are required";
+                }
+                if (!string.IsNullOrWhiteSpace(question.Mode))
+                {
+                    var modeLower = question.Mode.ToLower();
+                    if (modeLower != "friends" && modeLower != "couples" && modeLower != "party")
+                    {
+                        return "Mode must be 'Friends', 'Couples' or 'Party'.";
+                    }
+                }
+                if (!string.IsNullOrWhiteSpace(question.Type))
+                {
+                    var typeLower = question.Type.ToLower();
+                    if (typeLower != "truth" && typeLower != "dare")
+                    {
+                        return "Type must be 'Truth' or 'Dare'.";
+                    }
+                }
+                if (!string.IsNullOrWhiteSpace(question.Difficulty))
+                {
+                    var difficultyLower = question.Difficulty.ToLower();
+                    if (difficultyLower != "easy" && difficultyLower!= "medium" && difficultyLower!= "hard")
+                    {
+                        return "Difficulty must be 'Easy', 'Medium' or 'Hard'.";
+                    }
                 }
                 var checkq = await _questions
                     .Find(a => a.Text.ToLower() == question.Text.ToLower())
@@ -107,14 +136,14 @@ namespace TruthOrDare_Infrastructure.Repository
                     Type = question.Type,
                     Text = question.Text,
                     Difficulty = question.Difficulty,
-                    AgeGroup = question.AgeGroup,
-                    TimeLimit = question.TimeLimit,
-                    ResponseType = question.ResponseType,
+                    AgeGroup = string.IsNullOrWhiteSpace(question.AgeGroup) ? "all" : question.AgeGroup,
+                    TimeLimit = question.TimeLimit > 0 ? question.TimeLimit : 0,
+                    ResponseType = string.IsNullOrWhiteSpace(question.ResponseType) ? "none" : question.ResponseType,
                     Points = question.Points > 0 ? question.Points : 10,
                     CreatedAt = DateTime.Now,
                     UpdatedAt = DateTime.Now,
-                    Visibility = question.Visibility,
-                    Tags = question.Tags,
+                    Visibility = string.IsNullOrWhiteSpace(question.Visibility) ? "public" : question.Visibility,
+                    Tags = question.Tags ?? new List<string> { "all" },
                     CreatedBy = "Admin",
                 };
                 await _questions.InsertOneAsync(newQuestion);
@@ -170,6 +199,17 @@ namespace TruthOrDare_Infrastructure.Repository
                             continue;
                         }
                     }
+
+                    if (!string.IsNullOrWhiteSpace(question.Mode))
+                    {
+                        var modeLower = question.Mode.ToLower();
+                        if(modeLower != "friends" && modeLower != "couples" && modeLower != "party")
+                        {
+                            errors.Add($"Question at index {i}: mode must be 'Friends' , 'Couples' or 'Party'.");
+                            continue;
+                        }
+                    }
+
                     if (!string.IsNullOrWhiteSpace(question.Difficulty))
                     {
                         var difficultyLower = question.Difficulty.ToLower();
@@ -219,8 +259,8 @@ namespace TruthOrDare_Infrastructure.Repository
                         Points = question.Points > 0 ? question.Points : 10,
                         CreatedAt = DateTime.Now,
                         UpdatedAt = DateTime.Now,
-                        Visibility = question.Visibility,
-                        Tags = question.Tags,
+                        Visibility = string.IsNullOrWhiteSpace(question.Visibility) ? "public" : question.Visibility,
+                        Tags = question.Tags ?? new List<string> { "all" },
                         CreatedBy = "Admin",
                     };
 
@@ -242,6 +282,28 @@ namespace TruthOrDare_Infrastructure.Repository
             {
                 return (0, new List<string> { $"Failed to insert questions: {ex.Message}" });
             }
+        }
+        public async Task<string> DeleteQuestion(string questionId)
+        {
+            try
+            {
+                var question = await _questions
+                    .Find(Builders<Question>.Filter.And(
+                        Builders<Question>.Filter.Eq(a => a.Id, questionId),
+                        Builders<Question>.Filter.Eq(a => a.IsDeleted, false))).SingleOrDefaultAsync();
+                if (question != null)
+                {
+                    var update = Builders<Question>.Update.Set(a => a.IsDeleted, true).Set(a => a.UpdatedAt, DateTime.Now);
+                    await _questions.UpdateOneAsync(Builders<Question>.Filter.Eq(a => a.Id, questionId), update);
+                    return "Question deleted successfully.";
+                }
+                return "Question not found.";
+            }
+            catch (Exception ex)
+            {
+                return $"Failed to delete question: {ex.Message}";
+            }
+            
         }
     }
 }
