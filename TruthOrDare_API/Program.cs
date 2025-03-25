@@ -23,8 +23,9 @@ builder.Services.AddCors(options =>
     {
         builder.WithOrigins("https://webgame-lk6s.onrender.com",
             "http://localhost:3000",
-            "https://webgame-oqyj-g.fly.dev",
             "https://leminhhien.me")
+            "http://localhost:3001",
+            "https://webgame-oqyj-g.fly.dev")
                .AllowAnyMethod()
                .AllowAnyHeader();
     });
@@ -33,19 +34,6 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-//app.UseSwagger();
-//app.UseSwaggerUI(c =>
-//{
-//    c.SwaggerEndpoint("/swagger/v1/swagger.json", "TruthOrDare API v1");
-//    c.RoutePrefix = string.Empty; 
-//});
-
-// Configure the HTTP request pipeline.
-//if (app.Environment.IsDevelopment())
-//{
-//    app.UseSwagger();
-//    app.UseSwaggerUI();
-//}
 app.UseCors("AllowAll");
 app.UseSwagger(); // Kích hoạt Swagger trên mọi môi trường
 app.UseSwaggerUI(c =>
