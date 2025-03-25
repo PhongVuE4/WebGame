@@ -33,6 +33,22 @@
   },
   {
     "ContainingType": "TruthOrDare_API.Controllers.QuestionsController",
+    "Method": "DeleteQuestion",
+    "RelativePath": "api/questions/delete-question",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TruthOrDare_API.Controllers.QuestionsController",
     "Method": "GetQuestions",
     "RelativePath": "api/questions/questions",
     "HttpMethod": "GET",
@@ -133,7 +149,13 @@
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
-    "Parameters": [],
+    "Parameters": [
+      {
+        "Name": "roomId",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
     "ReturnTypes": []
   },
   {

@@ -2,6 +2,8 @@
 using TruthOrDare_Contract.IServices;
 using Newtonsoft.Json;
 using TruthOrDare_Contract.Models;
+using Quartz;
+using TruthOrDare_Core.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,8 +32,27 @@ builder.Services.AddCors(options =>
                .AllowAnyHeader();
     });
 });
+// Cấu hình Quartz
+builder.Services.AddQuartz(q =>
+{
+    // Đăng ký job
+    var jobKey = new JobKey("CleanupJob");
+    q.AddJob<CleanupJob>(opts => opts.WithIdentity(jobKey));
 
-
+    // Cấu hình trigger
+    q.AddTrigger(opts => opts
+        .ForJob(jobKey)
+        .WithIdentity("CleanupTrigger")
+        .StartNow()
+        .WithSimpleSchedule(schedule => schedule
+        //.WithCronSchedule("0 * * ? * *")); // Chạy mỗi phút 
+            .WithIntervalInHours(24)
+            .RepeatForever()));
+    //Mỗi phút: "0 * * ? * *"
+    //Mỗi 5 phút: "0 0/5 * ? * *"
+    //Mỗi giờ: "0 0 * ? * *"
+});
+builder.Services.AddQuartzHostedService();
 var app = builder.Build();
 
 app.UseCors("AllowAll");

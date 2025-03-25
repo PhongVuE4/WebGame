@@ -110,6 +110,27 @@
         }
       }
     },
+    "/api/questions/delete-question": {
+      "delete": {
+        "tags": [
+          "Questions"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/rooms/create": {
       "post": {
         "tags": [
@@ -186,6 +207,15 @@
       "get": {
         "tags": [
           "Rooms"
+        ],
+        "parameters": [
+          {
+            "name": "roomId",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
         ],
         "responses": {
           "200": {

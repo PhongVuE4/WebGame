@@ -13,7 +13,7 @@ namespace TruthOrDare_Contract.IServices
         Task<RoomCreateDTO> CreateRoom(string roomName, string playerName, string roomPassword);
         Task<RoomCreateDTO> JoinRoom(string roomId, string playerName, string roomPassword = null);
         Task<Room> LeaveRoom(string roomId, string playerId);
-        Task<List<RoomListDTO>> GetListRoom();
+        Task<List<RoomListDTO>> GetListRoom(string? roomId);
         Task<Room> GetRoom(string roomId);
         Task ChangePlayerName(string roomId, string playerId, string newName);
     }
