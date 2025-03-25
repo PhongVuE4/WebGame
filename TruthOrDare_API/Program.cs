@@ -23,7 +23,7 @@ builder.Services.AddCors(options =>
     {
         builder.WithOrigins("https://webgame-lk6s.onrender.com",
             "http://localhost:3000",
-            "https://leminhhien.me")
+            "https://leminhhien.me",
             "http://localhost:3001",
             "https://webgame-oqyj-g.fly.dev")
                .AllowAnyMethod()
