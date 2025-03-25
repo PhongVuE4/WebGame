@@ -69,5 +69,17 @@ namespace TruthOrDare_API.Controllers
                 Errors = errors
             });
         }
+        [HttpDelete("delete-question")]
+        public async Task<IActionResult> DeleteQuestion(string id)
+        {
+            var question = await _questionRepository.DeleteQuestion(id);
+
+            if (question != null)
+            {
+                return Ok(question);
+            }
+
+            return BadRequest(question);
+        }
     }
 }

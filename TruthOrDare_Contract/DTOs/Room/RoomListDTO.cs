@@ -12,5 +12,7 @@ namespace TruthOrDare_Contract.DTOs.Room
         public string RoomName { get; set; }
         public int PlayerCount { get; set; }
         public bool HasPassword { get; set; }
+        public bool IsActive { get; set; }
+        public bool IsDeleted { get; set; }
     }
 }

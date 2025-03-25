@@ -68,11 +68,11 @@ namespace TruthOrDare_API.Controllers
         //    return Ok();
         //}
         [HttpGet("list")]
-        public async Task<IActionResult> GetListRoom()
+        public async Task<IActionResult> GetListRoom(string? roomId)
         {
             try
             {
-                var rooms = await _roomService.GetListRoom();
+                var rooms = await _roomService.GetListRoom(roomId);
                 return Ok(rooms);
             }
             catch (Exception ex)

@@ -3,36 +3,32 @@
   "WorkspaceRootPath": "D:\\Somethings\\TruthOrDare\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{40CB5098-22D3-46D6-BCD9-0CE94669973B}|TruthOrDare_Infrastructure\\TruthOrDare_Infrastructure.csproj|d:\\somethings\\truthordare\\truthordare_infrastructure\\repository\\questionrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{40CB5098-22D3-46D6-BCD9-0CE94669973B}|TruthOrDare_Infrastructure\\TruthOrDare_Infrastructure.csproj|solutionrelative:truthordare_infrastructure\\repository\\questionrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{CDECCC2D-DF2D-498F-9C9D-8FED43A52D31}|TruthOrDare_API\\TruthOrDare_API.csproj|d:\\somethings\\truthordare\\truthordare_api\\controllers\\roomscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{CDECCC2D-DF2D-498F-9C9D-8FED43A52D31}|TruthOrDare_API\\TruthOrDare_API.csproj|solutionrelative:truthordare_api\\controllers\\roomscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{4A9D35A5-C37F-4737-BF9D-2781CD3A8C2E}|TruthOrDare_Core\\TruthOrDare_Core.csproj|d:\\somethings\\truthordare\\truthordare_core\\services\\cleanupjob.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4A9D35A5-C37F-4737-BF9D-2781CD3A8C2E}|TruthOrDare_Core\\TruthOrDare_Core.csproj|solutionrelative:truthordare_core\\services\\cleanupjob.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{4A9D35A5-C37F-4737-BF9D-2781CD3A8C2E}|TruthOrDare_Core\\TruthOrDare_Core.csproj|d:\\somethings\\truthordare\\truthordare_core\\services\\roomservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{4A9D35A5-C37F-4737-BF9D-2781CD3A8C2E}|TruthOrDare_Core\\TruthOrDare_Core.csproj|solutionrelative:truthordare_core\\services\\roomservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{0884C710-ED27-4C19-A207-5D32606A2FC9}|TruthOrDare_Contract\\TruthOrDare_Contract.csproj|d:\\somethings\\truthordare\\truthordare_contract\\iservices\\iroomservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{0884C710-ED27-4C19-A207-5D32606A2FC9}|TruthOrDare_Contract\\TruthOrDare_Contract.csproj|solutionrelative:truthordare_contract\\iservices\\iroomservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{40CB5098-22D3-46D6-BCD9-0CE94669973B}|TruthOrDare_Infrastructure\\TruthOrDare_Infrastructure.csproj|d:\\somethings\\truthordare\\truthordare_infrastructure\\repository\\questionrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{40CB5098-22D3-46D6-BCD9-0CE94669973B}|TruthOrDare_Infrastructure\\TruthOrDare_Infrastructure.csproj|solutionrelative:truthordare_infrastructure\\repository\\questionrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{0884C710-ED27-4C19-A207-5D32606A2FC9}|TruthOrDare_Contract\\TruthOrDare_Contract.csproj|d:\\somethings\\truthordare\\truthordare_contract\\dtos\\room\\createroomrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{0884C710-ED27-4C19-A207-5D32606A2FC9}|TruthOrDare_Contract\\TruthOrDare_Contract.csproj|solutionrelative:truthordare_contract\\dtos\\room\\createroomrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{0884C710-ED27-4C19-A207-5D32606A2FC9}|TruthOrDare_Contract\\TruthOrDare_Contract.csproj|d:\\somethings\\truthordare\\truthordare_contract\\dtos\\room\\roomcreatedto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{0884C710-ED27-4C19-A207-5D32606A2FC9}|TruthOrDare_Contract\\TruthOrDare_Contract.csproj|solutionrelative:truthordare_contract\\dtos\\room\\roomcreatedto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{0884C710-ED27-4C19-A207-5D32606A2FC9}|TruthOrDare_Contract\\TruthOrDare_Contract.csproj|d:\\somethings\\truthordare\\truthordare_contract\\models\\room.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0884C710-ED27-4C19-A207-5D32606A2FC9}|TruthOrDare_Contract\\TruthOrDare_Contract.csproj|solutionrelative:truthordare_contract\\models\\room.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{0884C710-ED27-4C19-A207-5D32606A2FC9}|TruthOrDare_Contract\\TruthOrDare_Contract.csproj|d:\\somethings\\truthordare\\truthordare_contract\\dtos\\room\\roomlistdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{0884C710-ED27-4C19-A207-5D32606A2FC9}|TruthOrDare_Contract\\TruthOrDare_Contract.csproj|solutionrelative:truthordare_contract\\dtos\\room\\roomlistdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{0884C710-ED27-4C19-A207-5D32606A2FC9}|TruthOrDare_Contract\\TruthOrDare_Contract.csproj|d:\\somethings\\truthordare\\truthordare_contract\\dtos\\player\\playercreateroomdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{0884C710-ED27-4C19-A207-5D32606A2FC9}|TruthOrDare_Contract\\TruthOrDare_Contract.csproj|solutionrelative:truthordare_contract\\dtos\\player\\playercreateroomdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{0884C710-ED27-4C19-A207-5D32606A2FC9}|TruthOrDare_Contract\\TruthOrDare_Contract.csproj|d:\\somethings\\truthordare\\truthordare_contract\\iservices\\iroomservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0884C710-ED27-4C19-A207-5D32606A2FC9}|TruthOrDare_Contract\\TruthOrDare_Contract.csproj|solutionrelative:truthordare_contract\\iservices\\iroomservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CDECCC2D-DF2D-498F-9C9D-8FED43A52D31}|TruthOrDare_API\\TruthOrDare_API.csproj|d:\\somethings\\truthordare\\truthordare_api\\controllers\\roomscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CDECCC2D-DF2D-498F-9C9D-8FED43A52D31}|TruthOrDare_API\\TruthOrDare_API.csproj|solutionrelative:truthordare_api\\controllers\\roomscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -42,19 +38,71 @@
       "DocumentGroups": [
         {
           "DockedHeight": 271,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 1,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "QuestionRepository.cs",
-              "DocumentMoniker": "D:\\Somethings\\TruthOrDare\\TruthOrDare_Infrastructure\\Repository\\QuestionRepository.cs",
-              "RelativeDocumentMoniker": "TruthOrDare_Infrastructure\\Repository\\QuestionRepository.cs",
-              "ToolTip": "D:\\Somethings\\TruthOrDare\\TruthOrDare_Infrastructure\\Repository\\QuestionRepository.cs",
-              "RelativeToolTip": "TruthOrDare_Infrastructure\\Repository\\QuestionRepository.cs",
-              "ViewState": "AgIAABkAAAAAAAAAAAAowCYAAABbAAAAAAAAAA==",
+              "DocumentIndex": 3,
+              "Title": "Room.cs",
+              "DocumentMoniker": "D:\\Somethings\\TruthOrDare\\TruthOrDare_Contract\\Models\\Room.cs",
+              "RelativeDocumentMoniker": "TruthOrDare_Contract\\Models\\Room.cs",
+              "ToolTip": "D:\\Somethings\\TruthOrDare\\TruthOrDare_Contract\\Models\\Room.cs",
+              "RelativeToolTip": "TruthOrDare_Contract\\Models\\Room.cs",
+              "ViewState": "AgIAABcAAAAAAAAAAAAIwCcAAAAgAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-25T02:18:38.488Z",
+              "WhenOpened": "2025-03-25T16:37:31.775Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "CleanupJob.cs",
+              "DocumentMoniker": "D:\\Somethings\\TruthOrDare\\TruthOrDare_Core\\Services\\CleanupJob.cs",
+              "RelativeDocumentMoniker": "TruthOrDare_Core\\Services\\CleanupJob.cs",
+              "ToolTip": "D:\\Somethings\\TruthOrDare\\TruthOrDare_Core\\Services\\CleanupJob.cs",
+              "RelativeToolTip": "TruthOrDare_Core\\Services\\CleanupJob.cs",
+              "ViewState": "AgIAABsAAAAAAAAAAAAowCEAAABQAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-25T16:37:01.403Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "RoomListDTO.cs",
+              "DocumentMoniker": "D:\\Somethings\\TruthOrDare\\TruthOrDare_Contract\\DTOs\\Room\\RoomListDTO.cs",
+              "RelativeDocumentMoniker": "TruthOrDare_Contract\\DTOs\\Room\\RoomListDTO.cs",
+              "ToolTip": "D:\\Somethings\\TruthOrDare\\TruthOrDare_Contract\\DTOs\\Room\\RoomListDTO.cs",
+              "RelativeToolTip": "TruthOrDare_Contract\\DTOs\\Room\\RoomListDTO.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAqAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-25T16:30:38.775Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "RoomsController.cs",
+              "DocumentMoniker": "D:\\Somethings\\TruthOrDare\\TruthOrDare_API\\Controllers\\RoomsController.cs",
+              "RelativeDocumentMoniker": "TruthOrDare_API\\Controllers\\RoomsController.cs",
+              "ToolTip": "D:\\Somethings\\TruthOrDare\\TruthOrDare_API\\Controllers\\RoomsController.cs",
+              "RelativeToolTip": "TruthOrDare_API\\Controllers\\RoomsController.cs",
+              "ViewState": "AgIAADsAAAAAAAAAAAAwwEYAAAA8AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-25T16:28:57.396Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "IRoomService.cs",
+              "DocumentMoniker": "D:\\Somethings\\TruthOrDare\\TruthOrDare_Contract\\IServices\\IRoomService.cs",
+              "RelativeDocumentMoniker": "TruthOrDare_Contract\\IServices\\IRoomService.cs",
+              "ToolTip": "D:\\Somethings\\TruthOrDare\\TruthOrDare_Contract\\IServices\\IRoomService.cs",
+              "RelativeToolTip": "TruthOrDare_Contract\\IServices\\IRoomService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAzAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-25T16:28:44.199Z",
               "EditorCaption": ""
             },
             {
@@ -219,88 +267,29 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "RoomCreateDTO.cs",
-              "DocumentMoniker": "D:\\Somethings\\TruthOrDare\\TruthOrDare_Contract\\DTOs\\Room\\RoomCreateDTO.cs",
-              "RelativeDocumentMoniker": "TruthOrDare_Contract\\DTOs\\Room\\RoomCreateDTO.cs",
-              "ToolTip": "D:\\Somethings\\TruthOrDare\\TruthOrDare_Contract\\DTOs\\Room\\RoomCreateDTO.cs",
-              "RelativeToolTip": "TruthOrDare_Contract\\DTOs\\Room\\RoomCreateDTO.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAqwA0AAAARAAAAAAAAAA==",
+              "DocumentIndex": 2,
+              "Title": "QuestionRepository.cs",
+              "DocumentMoniker": "D:\\Somethings\\TruthOrDare\\TruthOrDare_Infrastructure\\Repository\\QuestionRepository.cs",
+              "RelativeDocumentMoniker": "TruthOrDare_Infrastructure\\Repository\\QuestionRepository.cs",
+              "ToolTip": "D:\\Somethings\\TruthOrDare\\TruthOrDare_Infrastructure\\Repository\\QuestionRepository.cs",
+              "RelativeToolTip": "TruthOrDare_Infrastructure\\Repository\\QuestionRepository.cs",
+              "ViewState": "AgIAABgAAAAAAAAAAAAowCAAAAAwAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-24T16:23:45.762Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "CreateRoomRequest.cs",
-              "DocumentMoniker": "D:\\Somethings\\TruthOrDare\\TruthOrDare_Contract\\DTOs\\Room\\CreateRoomRequest.cs",
-              "RelativeDocumentMoniker": "TruthOrDare_Contract\\DTOs\\Room\\CreateRoomRequest.cs",
-              "ToolTip": "D:\\Somethings\\TruthOrDare\\TruthOrDare_Contract\\DTOs\\Room\\CreateRoomRequest.cs",
-              "RelativeToolTip": "TruthOrDare_Contract\\DTOs\\Room\\CreateRoomRequest.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAqwA8AAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-24T16:20:13.584Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "RoomListDTO.cs",
-              "DocumentMoniker": "D:\\Somethings\\TruthOrDare\\TruthOrDare_Contract\\DTOs\\Room\\RoomListDTO.cs",
-              "RelativeDocumentMoniker": "TruthOrDare_Contract\\DTOs\\Room\\RoomListDTO.cs",
-              "ToolTip": "D:\\Somethings\\TruthOrDare\\TruthOrDare_Contract\\DTOs\\Room\\RoomListDTO.cs",
-              "RelativeToolTip": "TruthOrDare_Contract\\DTOs\\Room\\RoomListDTO.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAsAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-24T15:50:48.086Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "PlayerCreateRoomDTO.cs",
-              "DocumentMoniker": "D:\\Somethings\\TruthOrDare\\TruthOrDare_Contract\\DTOs\\Player\\PlayerCreateRoomDTO.cs",
-              "RelativeDocumentMoniker": "TruthOrDare_Contract\\DTOs\\Player\\PlayerCreateRoomDTO.cs",
-              "ToolTip": "D:\\Somethings\\TruthOrDare\\TruthOrDare_Contract\\DTOs\\Player\\PlayerCreateRoomDTO.cs",
-              "RelativeToolTip": "TruthOrDare_Contract\\DTOs\\Player\\PlayerCreateRoomDTO.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAnAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-24T15:18:11.094Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "RoomsController.cs",
-              "DocumentMoniker": "D:\\Somethings\\TruthOrDare\\TruthOrDare_API\\Controllers\\RoomsController.cs",
-              "RelativeDocumentMoniker": "TruthOrDare_API\\Controllers\\RoomsController.cs",
-              "ToolTip": "D:\\Somethings\\TruthOrDare\\TruthOrDare_API\\Controllers\\RoomsController.cs",
-              "RelativeToolTip": "TruthOrDare_API\\Controllers\\RoomsController.cs",
-              "ViewState": "AgIAABAAAAAAAAAAAAAowCwAAAAJAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-24T14:16:39.439Z",
+              "WhenOpened": "2025-03-25T15:46:59.627Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "IRoomService.cs",
-              "DocumentMoniker": "D:\\Somethings\\TruthOrDare\\TruthOrDare_Contract\\IServices\\IRoomService.cs",
-              "RelativeDocumentMoniker": "TruthOrDare_Contract\\IServices\\IRoomService.cs",
-              "ToolTip": "D:\\Somethings\\TruthOrDare\\TruthOrDare_Contract\\IServices\\IRoomService.cs",
-              "RelativeToolTip": "TruthOrDare_Contract\\IServices\\IRoomService.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAqwAwAAAAaAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-24T13:51:27.073Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 1,
               "Title": "RoomService.cs",
               "DocumentMoniker": "D:\\Somethings\\TruthOrDare\\TruthOrDare_Core\\Services\\RoomService.cs",
               "RelativeDocumentMoniker": "TruthOrDare_Core\\Services\\RoomService.cs",
               "ToolTip": "D:\\Somethings\\TruthOrDare\\TruthOrDare_Core\\Services\\RoomService.cs",
               "RelativeToolTip": "TruthOrDare_Core\\Services\\RoomService.cs",
-              "ViewState": "AgIAABsAAAAAAAAAAAAlwEYAAAAdAAAAAAAAAA==",
+              "ViewState": "AgIAAH4AAAAAAAAAAAAawI4AAAAqAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-24T13:51:49.137Z"
+              "WhenOpened": "2025-03-24T13:51:49.137Z",
+              "EditorCaption": ""
             }
           ]
         },
