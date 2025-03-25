@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using TruthOrDare_Contract.DTOs.Question;
 using TruthOrDare_Contract.IRepository;
@@ -32,11 +33,17 @@ namespace TruthOrDare_Infrastructure.Repository
             {
                 return await _questions.Find(baseFilter).ToListAsync();
             }
+            Dictionary<string, string> filterDict;
+            try
+            {
+                filterDict = JsonSerializer.Deserialize<Dictionary<string, string>>(filters);
+            }
+            catch (JsonException)
+            {
+                // Nếu JSON không hợp lệ, trả về danh sách rỗng hoặc xử lý lỗi tùy ý
+                return new List<Question>();
+            }
 
-            var filterDict = filters.Split(',')
-        .Select(part => part.Split('='))
-        .Where(parts => parts.Length == 2)
-        .ToDictionary(parts => parts[0].Trim(), parts => parts[1].Trim());
 
             var conditions = new List<FilterDefinition<Question>>();
 
