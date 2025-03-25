@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TruthOrDare_Contract.DTOs;
+using TruthOrDare_Contract.DTOs.Question;
 using TruthOrDare_Contract.IRepository;
 using TruthOrDare_Contract.Models;
 
@@ -24,40 +24,41 @@ namespace TruthOrDare_Infrastructure.Repository
             var filter = Builders<Question>.Filter.Not(Builders<Question>.Filter.In(q => q.Id, excludeIds));
             return await _questions.Find(filter).Limit(1).FirstOrDefaultAsync();
         }
-        public async Task<List<Question>> GetQuestions(string? mode, string? type, string? difficulty, string? age_group)
+        public async Task<List<Question>> GetQuestions(string? filters)
         {
             var baseFilter = Builders<Question>.Filter.Eq(q => q.IsDeleted, false);
 
-            if (string.IsNullOrWhiteSpace(mode) &&
-                string.IsNullOrWhiteSpace(type) &&
-                string.IsNullOrWhiteSpace(difficulty) &&
-                string.IsNullOrWhiteSpace(age_group))
+            if (string.IsNullOrWhiteSpace(filters))
             {
                 return await _questions.Find(baseFilter).ToListAsync();
             }
 
+            var filterDict = filters.Split(',')
+        .Select(part => part.Split('='))
+        .Where(parts => parts.Length == 2)
+        .ToDictionary(parts => parts[0].Trim(), parts => parts[1].Trim());
+
             var conditions = new List<FilterDefinition<Question>>();
 
-            if (!string.IsNullOrWhiteSpace(mode))
+            if (filterDict.TryGetValue("mode", out var mode) && !string.IsNullOrWhiteSpace(mode))
             {
                 conditions.Add(Builders<Question>.Filter.Eq(q => q.Mode, mode));
             }
 
-            if (!string.IsNullOrWhiteSpace(type))
+            if (filterDict.TryGetValue("type", out var type) && !string.IsNullOrWhiteSpace(type))
             {
                 conditions.Add(Builders<Question>.Filter.Eq(q => q.Type, type));
             }
 
-            if (!string.IsNullOrWhiteSpace(difficulty))
+            if (filterDict.TryGetValue("difficulty", out var difficulty) && !string.IsNullOrWhiteSpace(difficulty))
             {
                 conditions.Add(Builders<Question>.Filter.Eq(q => q.Difficulty, difficulty));
             }
 
-            if (!string.IsNullOrWhiteSpace(age_group))
+            if (filterDict.TryGetValue("age_group", out var ageGroup) && !string.IsNullOrWhiteSpace(ageGroup))
             {
-                conditions.Add(Builders<Question>.Filter.Eq(q => q.AgeGroup, age_group));
+                conditions.Add(Builders<Question>.Filter.Eq(q => q.AgeGroup, ageGroup));
             }
-
             FilterDefinition<Question> filterBuilder;
             if (conditions.Any())
             {

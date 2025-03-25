@@ -9,96 +9,201 @@ using TruthOrDare_Contract.IServices;
 using TruthOrDare_Contract;
 using TruthOrDare_Contract.Models;
 using TruthOrDare_Infrastructure;
+using TruthOrDare_Contract.DTOs.Room;
+using TruthOrDare_Contract.DTOs.Player;
+using TruthOrDare_Common;
 
 namespace TruthOrDare_Core.Services
 {
     public class RoomService : IRoomService
     {
         private readonly IMongoCollection<Room> _rooms;
-        private readonly IQuestionRepository _questionRepository;
-        private readonly IMongoCollection<GameSession> _gameSessions;
-        private readonly IWebSocketHandler _wsHandler;
-
-        public RoomService(MongoDbContext context, IQuestionRepository questionRepository, IWebSocketHandler wsHandler)
+        private readonly IPasswordHashingService _passwordHashingService;
+        public RoomService(MongoDbContext dbContext, IPasswordHashingService passwordHashingService)
         {
-            _rooms = context.Rooms;
-            _questionRepository = questionRepository;
-            _gameSessions = context.GameSessions;
-            _wsHandler = wsHandler;
+            _rooms = dbContext.Rooms;
+            _passwordHashingService = passwordHashingService;
         }
 
-        public async Task CreateRoomAsync(string roomId, List<string> players)
+        public async Task<RoomCreateDTO> CreateRoom(string roomName, string playerName, string roomPassword)
         {
-            var room = new Room
+            var existingRoom = await _rooms
+                .Find(r => r.RoomName == roomName && r.IsActive)
+                .FirstOrDefaultAsync();
+
+            if (existingRoom != null)
+            {
+                throw new Exception($"Room with name '{roomName}' already exists.");
+            }
+            if (string.IsNullOrWhiteSpace(playerName))
+            {
+                playerName = NameGenerator.GenerateRandomName();
+            }
+
+            var roomId = IdGenerator.GenerateRoomId(); 
+            var playerId = Guid.NewGuid().ToString();
+
+            string hashedPassword = null;
+            if (!string.IsNullOrWhiteSpace(roomPassword))
+            {
+                var salt = _passwordHashingService.GenerateSalt();
+                hashedPassword = _passwordHashingService.HashPassword(roomPassword, salt);
+            }
+
+            var roomDTO = new RoomCreateDTO
             {
                 RoomId = roomId,
-                Players = players,
-                CurrentPlayerTurn = players[0],
-                Status = "active",
+                RoomName = roomName,
+                RoomPassword = hashedPassword,
+                CreatedBy = playerName,
                 CreatedAt = DateTime.UtcNow,
-                TtlExpiry = DateTime.UtcNow.AddHours(1)
-            };
-            await _rooms.InsertOneAsync(room);
-
-            var session = new GameSession { RoomId = roomId, StartTime = DateTime.UtcNow };
-            await _gameSessions.InsertOneAsync(session);
-
-            await NextTurnAsync(roomId);
-        }
-
-        public async Task NextTurnAsync(string roomId)
-        {
-            var room = await _rooms.Find(r => r.RoomId == roomId).FirstOrDefaultAsync();
-            if (room == null || room.Status != "active" || room.Players.Count == 0)
-            {
-                await _wsHandler.BroadcastToRoom(roomId, "Room not found, inactive, or empty!");
-                return;
-            }
-
-            var session = await _gameSessions.Find(s => s.RoomId == roomId).FirstOrDefaultAsync();
-            var usedQuestionIds = session?.History.Select(h => h.QuestionId).ToList() ?? new List<string>();
-
-            var question = await _questionRepository.GetRandomQuestionAsync(usedQuestionIds);
-            if (question == null)
-            {
-                await _wsHandler.BroadcastToRoom(roomId, "No more unique questions available!");
-                return;
-            }
-
-            int currentIndex = room.Players.IndexOf(room.CurrentPlayerTurn);
-            int nextIndex = (currentIndex + 1) % room.Players.Count;
-            var nextPlayer = room.Players[nextIndex];
-
-            var roomFilter = Builders<Room>.Filter.Eq(r => r.RoomId, roomId);
-            var roomUpdate = Builders<Room>.Update
-                .Set(r => r.CurrentPlayerTurn, nextPlayer)
-                .Set(r => r.CurrentQuestionId, question.Id);
-            await _rooms.UpdateOneAsync(roomFilter, roomUpdate);
-
-            await _wsHandler.BroadcastToRoom(roomId, $"Turn: {nextPlayer}, Question: {question.Text}");
-        }
-
-        public async Task CompleteTurnAsync(string roomId, string playerId, string response, string responseUrl = null)
-        {
-            var room = await _rooms.Find(r => r.RoomId == roomId).FirstOrDefaultAsync();
-            if (room != null && room.CurrentPlayerTurn == playerId)
-            {
-                var sessionFilter = Builders<GameSession>.Filter.Eq(s => s.RoomId, roomId);
-                var historyEntry = new SessionHistory
-                {
-                    QuestionId = room.CurrentQuestionId,
+                IsActive = true,
+                Status = "Waiting",
+                Players = new List<PlayerCreateRoomDTO> {
+                new PlayerCreateRoomDTO {
                     PlayerId = playerId,
-                    Status = "completed",
-                    Response = response,
-                    ResponseUrl = responseUrl,
-                    PointsEarned = await _questionRepository.GetPointsForQuestionAsync(room.CurrentQuestionId),
-                    Timestamp = DateTime.UtcNow
-                };
-                var update = Builders<GameSession>.Update.Push(s => s.History, historyEntry);
-                await _gameSessions.UpdateOneAsync(sessionFilter, update);
+                    PlayerName = playerName,
+                    IsHost = true
+                    }
+                }
+            };
 
-                await NextTurnAsync(roomId);
+            var room = Mapper.ToRoom(roomDTO);
+            await _rooms.InsertOneAsync(room);
+            return Mapper.ToRoomCreateDTO(room);
+        }
+
+        public async Task<RoomCreateDTO> JoinRoom(string roomId, string playerName, string roomPassword = null)
+        {
+            var room = await _rooms
+                .Find(r => r.RoomId == roomId && r.IsActive && r.IsDeleted ==  false)
+                .FirstOrDefaultAsync();
+
+            if (room == null)
+            {
+                throw new Exception($"Room with ID '{roomId}' does not exist or is not active.");
             }
+
+            if (!string.IsNullOrEmpty(room.RoomPassword))
+            {
+                if (string.IsNullOrEmpty(roomPassword))
+                {
+                    throw new Exception("Password is required to join this room.");
+                }
+
+                if (!_passwordHashingService.VerifyPassword(roomPassword, room.RoomPassword))
+                {
+                    throw new Exception("Incorrect password.");
+                }
+            }
+
+            if (string.IsNullOrWhiteSpace(playerName))
+            {
+                playerName = NameGenerator.GenerateRandomName();
+            }
+
+            if (room.Players.Any(p => p.PlayerName == playerName))
+            {
+                throw new Exception($"Player name '{playerName}' is already taken in the room. Please choose a different name.");
+            }
+            Console.WriteLine($"roomPassword: '{roomPassword}', room.RoomPassword: '{room.RoomPassword}'");
+            Console.WriteLine($"VerifyPassword result: {_passwordHashingService.VerifyPassword(roomPassword, room.RoomPassword)}");
+            var playerId = Guid.NewGuid().ToString();
+            var newPlayer = new Player
+            {
+                PlayerId = playerId,
+                PlayerName = playerName,
+                IsHost = false
+            };
+
+            room.Players.Add(newPlayer);
+            await _rooms.ReplaceOneAsync(r => r.RoomId == roomId, room);
+
+            return Mapper.ToRoomCreateDTO(room);
+        }
+
+        public async Task<Room> LeaveRoom(string roomId, string playerId)
+        {
+            var room = await _rooms
+                .Find(r => r.RoomId == roomId && r.IsActive)
+                .FirstOrDefaultAsync();
+
+            if (room == null)
+            {
+                throw new Exception($"Room with ID '{roomId}' does not exist or is not active.");
+            }
+
+            var player = room.Players.FirstOrDefault(p => p.PlayerId == playerId);
+            if (player != null)
+            {
+                room.Players.Remove(player);
+
+                if (!room.Players.Any())
+                {
+                    room.IsActive = false;
+                }
+                else if (player.IsHost && room.Players.Any())
+                {
+                    room.Players.First().IsHost = true;
+                }
+
+                await _rooms.ReplaceOneAsync(r => r.RoomId == roomId, room);
+            }
+            return room;
+        }
+
+        public async Task<List<RoomListDTO>> GetListRoom()
+        {
+            var rooms = await _rooms
+                .Find(r => r.IsActive) // Chỉ lấy các phòng đang hoạt động
+                .ToListAsync();
+
+            return rooms.Select(room => new RoomListDTO
+            {
+                RoomId = room.RoomId,
+                RoomName = room.RoomName,
+                PlayerCount = room.Players.Count,
+                HasPassword = !string.IsNullOrEmpty(room.RoomPassword)
+            }).ToList();
+        }
+        public async Task<Room> GetRoom(string roomId)
+        {
+            var room = await _rooms
+                .Find(r => r.RoomId == roomId && r.IsActive)
+                .FirstOrDefaultAsync();
+
+            if (room == null)
+            {
+                throw new Exception($"Room with ID '{roomId}' does not exist or is not active.");
+            }
+
+            return room;
+        }
+
+        public async Task ChangePlayerName(string roomId, string playerId, string newName)
+        {
+            var room = await _rooms
+                .Find(r => r.RoomId == roomId && r.IsActive)
+                .FirstOrDefaultAsync();
+
+            if (room == null)
+            {
+                throw new Exception($"Room with ID '{roomId}' does not exist or is not active.");
+            }
+
+            var player = room.Players.FirstOrDefault(p => p.PlayerId == playerId);
+            if (player == null)
+            {
+                throw new Exception($"Player with ID '{playerId}' not found in the room.");
+            }
+
+            if (room.Players.Any(p => p.PlayerName == newName && p.PlayerId != playerId))
+            {
+                throw new Exception($"Player name '{newName}' is already taken in the room. Please choose a different name.");
+            }
+
+            player.PlayerName = newName;
+            await _rooms.ReplaceOneAsync(r => r.RoomId == roomId, room);
         }
     }
 }

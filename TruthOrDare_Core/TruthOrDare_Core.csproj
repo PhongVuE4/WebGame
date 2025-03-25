@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\TruthOrDare_Common\TruthOrDare_Common.csproj" />
     <ProjectReference Include="..\TruthOrDare_Contract\TruthOrDare_Contract.csproj" />
     <ProjectReference Include="..\TruthOrDare_Infrastructure\TruthOrDare_Infrastructure.csproj" />
   </ItemGroup>
