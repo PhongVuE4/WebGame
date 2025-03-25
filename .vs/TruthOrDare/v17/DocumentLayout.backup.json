@@ -3,6 +3,10 @@
   "WorkspaceRootPath": "D:\\Somethings\\TruthOrDare\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{40CB5098-22D3-46D6-BCD9-0CE94669973B}|TruthOrDare_Infrastructure\\TruthOrDare_Infrastructure.csproj|d:\\somethings\\truthordare\\truthordare_infrastructure\\repository\\questionrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{40CB5098-22D3-46D6-BCD9-0CE94669973B}|TruthOrDare_Infrastructure\\TruthOrDare_Infrastructure.csproj|solutionrelative:truthordare_infrastructure\\repository\\questionrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{CDECCC2D-DF2D-498F-9C9D-8FED43A52D31}|TruthOrDare_API\\TruthOrDare_API.csproj|d:\\somethings\\truthordare\\truthordare_api\\controllers\\roomscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{CDECCC2D-DF2D-498F-9C9D-8FED43A52D31}|TruthOrDare_API\\TruthOrDare_API.csproj|solutionrelative:truthordare_api\\controllers\\roomscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -38,8 +42,21 @@
       "DocumentGroups": [
         {
           "DockedHeight": 271,
-          "SelectedChildIndex": 44,
+          "SelectedChildIndex": 0,
           "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "QuestionRepository.cs",
+              "DocumentMoniker": "D:\\Somethings\\TruthOrDare\\TruthOrDare_Infrastructure\\Repository\\QuestionRepository.cs",
+              "RelativeDocumentMoniker": "TruthOrDare_Infrastructure\\Repository\\QuestionRepository.cs",
+              "ToolTip": "D:\\Somethings\\TruthOrDare\\TruthOrDare_Infrastructure\\Repository\\QuestionRepository.cs*",
+              "RelativeToolTip": "TruthOrDare_Infrastructure\\Repository\\QuestionRepository.cs*",
+              "ViewState": "AgIAABkAAAAAAAAAAAAowCYAAABbAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-25T02:18:38.488Z",
+              "EditorCaption": ""
+            },
             {
               "$type": "Bookmark",
               "Name": "ST:39:0:{e8034f19-ab72-4f06-83fd-f6832b41aa63}"
@@ -202,7 +219,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 5,
               "Title": "RoomCreateDTO.cs",
               "DocumentMoniker": "D:\\Somethings\\TruthOrDare\\TruthOrDare_Contract\\DTOs\\Room\\RoomCreateDTO.cs",
               "RelativeDocumentMoniker": "TruthOrDare_Contract\\DTOs\\Room\\RoomCreateDTO.cs",
@@ -214,7 +231,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 4,
               "Title": "CreateRoomRequest.cs",
               "DocumentMoniker": "D:\\Somethings\\TruthOrDare\\TruthOrDare_Contract\\DTOs\\Room\\CreateRoomRequest.cs",
               "RelativeDocumentMoniker": "TruthOrDare_Contract\\DTOs\\Room\\CreateRoomRequest.cs",
@@ -222,12 +239,11 @@
               "RelativeToolTip": "TruthOrDare_Contract\\DTOs\\Room\\CreateRoomRequest.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAqwA8AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-24T16:20:13.584Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-03-24T16:20:13.584Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 6,
               "Title": "RoomListDTO.cs",
               "DocumentMoniker": "D:\\Somethings\\TruthOrDare\\TruthOrDare_Contract\\DTOs\\Room\\RoomListDTO.cs",
               "RelativeDocumentMoniker": "TruthOrDare_Contract\\DTOs\\Room\\RoomListDTO.cs",
@@ -239,7 +255,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 7,
               "Title": "PlayerCreateRoomDTO.cs",
               "DocumentMoniker": "D:\\Somethings\\TruthOrDare\\TruthOrDare_Contract\\DTOs\\Player\\PlayerCreateRoomDTO.cs",
               "RelativeDocumentMoniker": "TruthOrDare_Contract\\DTOs\\Player\\PlayerCreateRoomDTO.cs",
@@ -251,20 +267,20 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "RoomsController.cs",
               "DocumentMoniker": "D:\\Somethings\\TruthOrDare\\TruthOrDare_API\\Controllers\\RoomsController.cs",
               "RelativeDocumentMoniker": "TruthOrDare_API\\Controllers\\RoomsController.cs",
-              "ToolTip": "D:\\Somethings\\TruthOrDare\\TruthOrDare_API\\Controllers\\RoomsController.cs*",
-              "RelativeToolTip": "TruthOrDare_API\\Controllers\\RoomsController.cs*",
-              "ViewState": "AgIAAA8AAAAAAAAAAAA9wCIAAABzAAAAAAAAAA==",
+              "ToolTip": "D:\\Somethings\\TruthOrDare\\TruthOrDare_API\\Controllers\\RoomsController.cs",
+              "RelativeToolTip": "TruthOrDare_API\\Controllers\\RoomsController.cs",
+              "ViewState": "AgIAABAAAAAAAAAAAAAowCwAAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-03-24T14:16:39.439Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
               "Title": "IRoomService.cs",
               "DocumentMoniker": "D:\\Somethings\\TruthOrDare\\TruthOrDare_Contract\\IServices\\IRoomService.cs",
               "RelativeDocumentMoniker": "TruthOrDare_Contract\\IServices\\IRoomService.cs",
@@ -272,12 +288,11 @@
               "RelativeToolTip": "TruthOrDare_Contract\\IServices\\IRoomService.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAqwAwAAAAaAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-24T13:51:27.073Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-03-24T13:51:27.073Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
               "Title": "RoomService.cs",
               "DocumentMoniker": "D:\\Somethings\\TruthOrDare\\TruthOrDare_Core\\Services\\RoomService.cs",
               "RelativeDocumentMoniker": "TruthOrDare_Core\\Services\\RoomService.cs",
@@ -285,8 +300,7 @@
               "RelativeToolTip": "TruthOrDare_Core\\Services\\RoomService.cs",
               "ViewState": "AgIAABsAAAAAAAAAAAAlwEYAAAAdAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-24T13:51:49.137Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-03-24T13:51:49.137Z"
             }
           ]
         },
