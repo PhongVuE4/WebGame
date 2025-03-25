@@ -9,6 +9,7 @@
       "TruthOrDare_Core/1.0.0": {
         "dependencies": {
           "Microsoft.AspNetCore.Http.Abstractions": "2.3.0",
+          "TruthOrDare_Common": "1.0.0",
           "TruthOrDare_Contract": "1.0.0",
           "TruthOrDare_Infrastructure": "1.0.0"
         },
@@ -176,6 +177,17 @@
           "lib/net7.0/ZstdSharp.dll": {
             "assemblyVersion": "0.7.3.0",
             "fileVersion": "0.7.3.0"
+          }
+        }
+      },
+      "TruthOrDare_Common/1.0.0": {
+        "dependencies": {
+          "TruthOrDare_Contract": "1.0.0"
+        },
+        "runtime": {
+          "TruthOrDare_Common.dll": {
+            "assemblyVersion": "1.0.0",
+            "fileVersion": "1.0.0.0"
           }
         }
       },
@@ -365,6 +377,11 @@
       "sha512": "sha512-U9Ix4l4cl58Kzz1rJzj5hoVTjmbx1qGMwzAcbv1j/d3NzrFaESIurQyg+ow4mivCgkE3S413y+U9k4WdnEIkRA==",
       "path": "zstdsharp.port/0.7.3",
       "hashPath": "zstdsharp.port.0.7.3.nupkg.sha512"
+    },
+    "TruthOrDare_Common/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
     },
     "TruthOrDare_Contract/1.0.0": {
       "type": "project",

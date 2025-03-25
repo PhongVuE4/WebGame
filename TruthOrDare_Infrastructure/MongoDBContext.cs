@@ -13,6 +13,15 @@ namespace TruthOrDare_Infrastructure
     public class MongoDbContext
     {
         private readonly IMongoDatabase _database;
+        public IMongoCollection<T> GetCollection<T>(string name)
+        {
+            return _database.GetCollection<T>(name);
+        }
+
+        public IMongoCollection<Question> Questions => GetCollection<Question>("questions");
+        public IMongoCollection<Player> Players => GetCollection<Player>("players");
+        public IMongoCollection<Room> Rooms => GetCollection<Room>("rooms");
+        public IMongoCollection<GameSession> GameSessions => GetCollection<GameSession>("game_sessions");
 
         public MongoDbContext(IConfiguration config)
         {
@@ -40,15 +49,6 @@ namespace TruthOrDare_Infrastructure
             }
         }
 
-        public IMongoCollection<T> GetCollection<T>(string name)
-        {
-            return _database.GetCollection<T>(name);
-        }
-
-        // Nếu bạn muốn giữ cách cũ với các property cụ thể
-        public IMongoCollection<Question> Questions => GetCollection<Question>("questions");
-        public IMongoCollection<Player> Players => GetCollection<Player>("players");
-        public IMongoCollection<Room> Rooms => GetCollection<Room>("rooms");
-        public IMongoCollection<GameSession> GameSessions => GetCollection<GameSession>("game_sessions");
+        
     }
 }
