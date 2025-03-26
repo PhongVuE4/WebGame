@@ -32,6 +32,10 @@ namespace TruthOrDare_Contract.Models
 
         [BsonElement("status")]
         public string Status { get; set; }
+        [BsonElement("age_group")]
+        public string AgeGroup { get; set; }
+        [BsonElement("mode")]
+        public string Mode { get; set; }
         [BsonElement("created_by")]
         public string CreatedBy { get; set; }
 
@@ -46,5 +50,7 @@ namespace TruthOrDare_Contract.Models
         public DateTime TtlExpiry { get; set; }
         [BsonElement("is_deleted")]
         public bool IsDeleted { get; set; }
+        [BsonElement("used_question_ids")]
+        public List<string> UsedQuestionIds { get; set; } = new List<string>(); // Câu hỏi đã dùng
     }
 }
