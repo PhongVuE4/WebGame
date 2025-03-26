@@ -38,5 +38,7 @@ namespace TruthOrDare_Contract.Models
         public WebSocket WebSocket { get; set; }
         [BsonElement("is_deleted")]
         public bool IsDeleted { get; set; }
+        [BsonElement("questions_answered")]
+        public int QuestionsAnswered { get; set; } = 0;
     }
 }
