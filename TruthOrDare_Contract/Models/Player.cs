@@ -29,6 +29,8 @@ namespace TruthOrDare_Contract.Models
 
         [BsonElement("created_at")]
         public DateTime CreatedAt { get; set; }
+        [BsonElement("updated_at")]
+        public DateTime UpdatedAt { get; set; }
 
         [BsonElement("last_active")]
         public DateTime LastActive { get; set; }
