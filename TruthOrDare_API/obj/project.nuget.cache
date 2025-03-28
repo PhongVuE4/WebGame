@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "yURiNgz/KaE=",
+  "dgSpecHash": "UrB4Z0+bX8o=",
   "success": true,
   "projectFilePath": "D:\\Somethings\\TruthOrDare\\TruthOrDare_API\\TruthOrDare_API.csproj",
   "expectedPackageFiles": [
@@ -37,6 +37,7 @@
     "C:\\Users\\ducth\\.nuget\\packages\\sharpcompress\\0.30.1\\sharpcompress.0.30.1.nupkg.sha512",
     "C:\\Users\\ducth\\.nuget\\packages\\snappier\\1.0.0\\snappier.1.0.0.nupkg.sha512",
     "C:\\Users\\ducth\\.nuget\\packages\\swashbuckle.aspnetcore\\8.0.0\\swashbuckle.aspnetcore.8.0.0.nupkg.sha512",
+    "C:\\Users\\ducth\\.nuget\\packages\\swashbuckle.aspnetcore.annotations\\8.0.0\\swashbuckle.aspnetcore.annotations.8.0.0.nupkg.sha512",
     "C:\\Users\\ducth\\.nuget\\packages\\swashbuckle.aspnetcore.swagger\\8.0.0\\swashbuckle.aspnetcore.swagger.8.0.0.nupkg.sha512",
     "C:\\Users\\ducth\\.nuget\\packages\\swashbuckle.aspnetcore.swaggergen\\8.0.0\\swashbuckle.aspnetcore.swaggergen.8.0.0.nupkg.sha512",
     "C:\\Users\\ducth\\.nuget\\packages\\swashbuckle.aspnetcore.swaggerui\\8.0.0\\swashbuckle.aspnetcore.swaggerui.8.0.0.nupkg.sha512",

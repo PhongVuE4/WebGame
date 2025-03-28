@@ -15,7 +15,8 @@
             "name": "filters",
             "in": "query",
             "schema": {
-              "type": "string"
+              "type": "string",
+              "example": "{\"mode\": \"party\", \"type\": \"dare\", \"difficulty\": \"medium\", \"age_group\": \"all\"}\r\n\r\n"
             }
           }
         ],

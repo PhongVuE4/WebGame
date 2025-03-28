@@ -59,3 +59,4 @@ D:\Somethings\TruthOrDare\TruthOrDare_API\bin\Debug\net8.0\Quartz.Extensions.Dep
 D:\Somethings\TruthOrDare\TruthOrDare_API\bin\Debug\net8.0\Quartz.Extensions.Hosting.dll
 D:\Somethings\TruthOrDare\TruthOrDare_API\bin\Debug\net8.0\appsettings.Development.json
 D:\Somethings\TruthOrDare\TruthOrDare_API\bin\Debug\net8.0\appsettings.json
+D:\Somethings\TruthOrDare\TruthOrDare_API\bin\Debug\net8.0\Swashbuckle.AspNetCore.Annotations.dll
