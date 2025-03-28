@@ -6,6 +6,9 @@ using TruthOrDare_Contract.DTOs.Question;
 using TruthOrDare_Contract.IRepository;
 using TruthOrDare_Contract.IServices;
 using TruthOrDare_Infrastructure;
+using Swashbuckle.AspNetCore.Annotations;
+using TruthOrDare_Common.Exceptions;
+using TruthOrDare_Contract.Models;
 
 namespace TruthOrDare_API.Controllers
 {
@@ -18,10 +21,11 @@ namespace TruthOrDare_API.Controllers
         {
             _questionRepository = questionRepository;
         }
+
         [HttpGet("questions")]
-        public async Task<IActionResult> GetQuestions(string? filters)
+        public async Task<IActionResult> GetQuestions([FromQuery] string? filters)
         {
-            var question =  await _questionRepository.GetQuestions(filters);
+            var question = await _questionRepository.GetQuestions(filters);
             return Ok(new { message = "Get questions successfully.", data = question });
         }
         [HttpPost("add-a-question")]

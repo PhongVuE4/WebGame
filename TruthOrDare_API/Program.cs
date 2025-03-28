@@ -22,6 +22,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "TruthOrDare API", Version = "v1" });
+    // Thêm mô tả chi tiết cho tham số filters
+    c.ParameterFilter<FiltersParameterFilter>();
 });
 builder.Services.AddDependencyInjection();
 // Tùy chỉnh xử lý lỗi validation
