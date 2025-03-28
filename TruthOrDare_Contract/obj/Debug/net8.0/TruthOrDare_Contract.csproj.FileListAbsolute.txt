@@ -10,3 +10,4 @@ D:\Somethings\TruthOrDare\TruthOrDare_Contract\obj\Debug\net8.0\TruthOrDare_Cont
 D:\Somethings\TruthOrDare\TruthOrDare_Contract\obj\Debug\net8.0\refint\TruthOrDare_Contract.dll
 D:\Somethings\TruthOrDare\TruthOrDare_Contract\obj\Debug\net8.0\TruthOrDare_Contract.pdb
 D:\Somethings\TruthOrDare\TruthOrDare_Contract\obj\Debug\net8.0\ref\TruthOrDare_Contract.dll
+D:\Somethings\TruthOrDare\TruthOrDare_Contract\obj\Debug\net8.0\TruthOrDare_Contract.sourcelink.json

@@ -15,3 +15,6 @@ D:\Somethings\TruthOrDare\TruthOrDare_Core\obj\Debug\net8.0\TruthOrDare_Core.dll
 D:\Somethings\TruthOrDare\TruthOrDare_Core\obj\Debug\net8.0\refint\TruthOrDare_Core.dll
 D:\Somethings\TruthOrDare\TruthOrDare_Core\obj\Debug\net8.0\TruthOrDare_Core.pdb
 D:\Somethings\TruthOrDare\TruthOrDare_Core\obj\Debug\net8.0\ref\TruthOrDare_Core.dll
+D:\Somethings\TruthOrDare\TruthOrDare_Core\obj\Debug\net8.0\TruthOrDare_Core.sourcelink.json
+D:\Somethings\TruthOrDare\TruthOrDare_Core\bin\Debug\net8.0\TruthOrDare_Common.dll
+D:\Somethings\TruthOrDare\TruthOrDare_Core\bin\Debug\net8.0\TruthOrDare_Common.pdb

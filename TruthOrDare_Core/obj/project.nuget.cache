@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "mCdsDI7yZVo=",
+  "dgSpecHash": "8CznHCyalo8=",
   "success": true,
   "projectFilePath": "D:\\Somethings\\TruthOrDare\\TruthOrDare_Core\\TruthOrDare_Core.csproj",
   "expectedPackageFiles": [
@@ -11,12 +11,13 @@
     "C:\\Users\\ducth\\.nuget\\packages\\microsoft.extensions.configuration.abstractions\\8.0.0\\microsoft.extensions.configuration.abstractions.8.0.0.nupkg.sha512",
     "C:\\Users\\ducth\\.nuget\\packages\\microsoft.extensions.dependencyinjection\\9.0.3\\microsoft.extensions.dependencyinjection.9.0.3.nupkg.sha512",
     "C:\\Users\\ducth\\.nuget\\packages\\microsoft.extensions.dependencyinjection.abstractions\\9.0.3\\microsoft.extensions.dependencyinjection.abstractions.9.0.3.nupkg.sha512",
-    "C:\\Users\\ducth\\.nuget\\packages\\microsoft.extensions.logging.abstractions\\2.0.0\\microsoft.extensions.logging.abstractions.2.0.0.nupkg.sha512",
+    "C:\\Users\\ducth\\.nuget\\packages\\microsoft.extensions.logging.abstractions\\2.1.1\\microsoft.extensions.logging.abstractions.2.1.1.nupkg.sha512",
     "C:\\Users\\ducth\\.nuget\\packages\\microsoft.extensions.primitives\\8.0.0\\microsoft.extensions.primitives.8.0.0.nupkg.sha512",
     "C:\\Users\\ducth\\.nuget\\packages\\microsoft.netcore.platforms\\5.0.0\\microsoft.netcore.platforms.5.0.0.nupkg.sha512",
     "C:\\Users\\ducth\\.nuget\\packages\\microsoft.win32.registry\\5.0.0\\microsoft.win32.registry.5.0.0.nupkg.sha512",
     "C:\\Users\\ducth\\.nuget\\packages\\mongodb.bson\\3.2.1\\mongodb.bson.3.2.1.nupkg.sha512",
     "C:\\Users\\ducth\\.nuget\\packages\\mongodb.driver\\3.2.1\\mongodb.driver.3.2.1.nupkg.sha512",
+    "C:\\Users\\ducth\\.nuget\\packages\\quartz\\3.14.0\\quartz.3.14.0.nupkg.sha512",
     "C:\\Users\\ducth\\.nuget\\packages\\sharpcompress\\0.30.1\\sharpcompress.0.30.1.nupkg.sha512",
     "C:\\Users\\ducth\\.nuget\\packages\\snappier\\1.0.0\\snappier.1.0.0.nupkg.sha512",
     "C:\\Users\\ducth\\.nuget\\packages\\system.buffers\\4.5.1\\system.buffers.4.5.1.nupkg.sha512",

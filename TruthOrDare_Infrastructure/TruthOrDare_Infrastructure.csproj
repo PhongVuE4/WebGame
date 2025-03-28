@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\TruthOrDare_Common\TruthOrDare_Common.csproj" />
     <ProjectReference Include="..\TruthOrDare_Contract\TruthOrDare_Contract.csproj" />
   </ItemGroup>
 

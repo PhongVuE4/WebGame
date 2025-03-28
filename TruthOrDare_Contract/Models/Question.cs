@@ -43,13 +43,15 @@ namespace TruthOrDare_Contract.Models
 
         [BsonElement("created_at")]
         public DateTime CreatedAt { get; set; }
+        [BsonElement("updated_at")]
+        public DateTime UpdatedAt { get; set; }
 
         [BsonElement("created_by")]
         [BsonIgnoreIfNull]
         public string CreatedBy { get; set; }
 
         [BsonElement("is_custom")]
-        public bool IsCustom { get; set; }
+        public bool IsCustom { get; set; } = true;
 
         [BsonElement("visibility")]
         public string Visibility { get; set; } = "public";
@@ -57,5 +59,7 @@ namespace TruthOrDare_Contract.Models
         [BsonElement("tags")]
         [BsonIgnoreIfNull]
         public List<string> Tags { get; set; }
+        [BsonElement("is_deleted")]
+        public bool IsDeleted { get; set; } = false;
     }
 }

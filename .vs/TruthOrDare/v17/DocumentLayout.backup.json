@@ -3,32 +3,32 @@
   "WorkspaceRootPath": "D:\\Somethings\\TruthOrDare\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{40CB5098-22D3-46D6-BCD9-0CE94669973B}|TruthOrDare_Infrastructure\\TruthOrDare_Infrastructure.csproj|d:\\somethings\\truthordare\\truthordare_infrastructure\\mongodbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{40CB5098-22D3-46D6-BCD9-0CE94669973B}|TruthOrDare_Infrastructure\\TruthOrDare_Infrastructure.csproj|solutionrelative:truthordare_infrastructure\\mongodbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{40CB5098-22D3-46D6-BCD9-0CE94669973B}|TruthOrDare_Infrastructure\\TruthOrDare_Infrastructure.csproj|d:\\somethings\\truthordare\\truthordare_infrastructure\\repository\\questionrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{40CB5098-22D3-46D6-BCD9-0CE94669973B}|TruthOrDare_Infrastructure\\TruthOrDare_Infrastructure.csproj|solutionrelative:truthordare_infrastructure\\repository\\questionrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{CDECCC2D-DF2D-498F-9C9D-8FED43A52D31}|TruthOrDare_API\\TruthOrDare_API.csproj|d:\\somethings\\truthordare\\truthordare_api\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{CDECCC2D-DF2D-498F-9C9D-8FED43A52D31}|TruthOrDare_API\\TruthOrDare_API.csproj|solutionrelative:truthordare_api\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+      "AbsoluteMoniker": "D:0:0:{CDECCC2D-DF2D-498F-9C9D-8FED43A52D31}|TruthOrDare_API\\TruthOrDare_API.csproj|d:\\somethings\\truthordare\\truthordare_api\\controllers\\questionscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CDECCC2D-DF2D-498F-9C9D-8FED43A52D31}|TruthOrDare_API\\TruthOrDare_API.csproj|solutionrelative:truthordare_api\\controllers\\questionscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{CDECCC2D-DF2D-498F-9C9D-8FED43A52D31}|TruthOrDare_API\\TruthOrDare_API.csproj|d:\\somethings\\truthordare\\truthordare_api\\diconfig.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{CDECCC2D-DF2D-498F-9C9D-8FED43A52D31}|TruthOrDare_API\\TruthOrDare_API.csproj|solutionrelative:truthordare_api\\diconfig.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{AE26A1BD-76E9-4DF6-9797-5FA255F2CC35}|TruthOrDare_Common\\TruthOrDare_Common.csproj|d:\\somethings\\truthordare\\truthordare_common\\exceptions\\question\\questionexception.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AE26A1BD-76E9-4DF6-9797-5FA255F2CC35}|TruthOrDare_Common\\TruthOrDare_Common.csproj|solutionrelative:truthordare_common\\exceptions\\question\\questionexception.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{CDECCC2D-DF2D-498F-9C9D-8FED43A52D31}|TruthOrDare_API\\TruthOrDare_API.csproj|d:\\somethings\\truthordare\\truthordare_api\\controllers\\gamecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{CDECCC2D-DF2D-498F-9C9D-8FED43A52D31}|TruthOrDare_API\\TruthOrDare_API.csproj|solutionrelative:truthordare_api\\controllers\\gamecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{AE26A1BD-76E9-4DF6-9797-5FA255F2CC35}|TruthOrDare_Common\\TruthOrDare_Common.csproj|d:\\somethings\\truthordare\\truthordare_common\\middleware\\exceptionmiddleware.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AE26A1BD-76E9-4DF6-9797-5FA255F2CC35}|TruthOrDare_Common\\TruthOrDare_Common.csproj|solutionrelative:truthordare_common\\middleware\\exceptionmiddleware.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{CDECCC2D-DF2D-498F-9C9D-8FED43A52D31}|TruthOrDare_API\\TruthOrDare_API.csproj|d:\\somethings\\truthordare\\truthordare_api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{CDECCC2D-DF2D-498F-9C9D-8FED43A52D31}|TruthOrDare_API\\TruthOrDare_API.csproj|solutionrelative:truthordare_api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{0884C710-ED27-4C19-A207-5D32606A2FC9}|TruthOrDare_Contract\\TruthOrDare_Contract.csproj|d:\\somethings\\truthordare\\truthordare_contract\\irepository\\iquestionrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0884C710-ED27-4C19-A207-5D32606A2FC9}|TruthOrDare_Contract\\TruthOrDare_Contract.csproj|solutionrelative:truthordare_contract\\irepository\\iquestionrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{4A9D35A5-C37F-4737-BF9D-2781CD3A8C2E}|TruthOrDare_Core\\TruthOrDare_Core.csproj|d:\\somethings\\truthordare\\truthordare_core\\services\\roomservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{4A9D35A5-C37F-4737-BF9D-2781CD3A8C2E}|TruthOrDare_Core\\TruthOrDare_Core.csproj|solutionrelative:truthordare_core\\services\\roomservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{0884C710-ED27-4C19-A207-5D32606A2FC9}|TruthOrDare_Contract\\TruthOrDare_Contract.csproj|d:\\somethings\\truthordare\\truthordare_contract\\iservices\\iroomservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{0884C710-ED27-4C19-A207-5D32606A2FC9}|TruthOrDare_Contract\\TruthOrDare_Contract.csproj|solutionrelative:truthordare_contract\\iservices\\iroomservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{AE26A1BD-76E9-4DF6-9797-5FA255F2CC35}|TruthOrDare_Common\\TruthOrDare_Common.csproj|d:\\somethings\\truthordare\\truthordare_common\\errorcode.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AE26A1BD-76E9-4DF6-9797-5FA255F2CC35}|TruthOrDare_Common\\TruthOrDare_Common.csproj|solutionrelative:truthordare_common\\errorcode.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -38,32 +38,19 @@
       "DocumentGroups": [
         {
           "DockedHeight": 271,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 46,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "MongoDBContext.cs",
-              "DocumentMoniker": "D:\\Somethings\\TruthOrDare\\TruthOrDare_Infrastructure\\MongoDBContext.cs",
-              "RelativeDocumentMoniker": "TruthOrDare_Infrastructure\\MongoDBContext.cs",
-              "ToolTip": "D:\\Somethings\\TruthOrDare\\TruthOrDare_Infrastructure\\MongoDBContext.cs",
-              "RelativeToolTip": "TruthOrDare_Infrastructure\\MongoDBContext.cs",
-              "ViewState": "AgIAABAAAAAAAAAAAAAwwCcAAAANAAAAAAAAAA==",
+              "DocumentIndex": 2,
+              "Title": "QuestionException.cs",
+              "DocumentMoniker": "D:\\Somethings\\TruthOrDare\\TruthOrDare_Common\\Exceptions\\Question\\QuestionException.cs",
+              "RelativeDocumentMoniker": "TruthOrDare_Common\\Exceptions\\Question\\QuestionException.cs",
+              "ToolTip": "D:\\Somethings\\TruthOrDare\\TruthOrDare_Common\\Exceptions\\Question\\QuestionException.cs",
+              "RelativeToolTip": "TruthOrDare_Common\\Exceptions\\Question\\QuestionException.cs",
+              "ViewState": "AgIAAEcAAAAAAAAAAADgv1QAAAAPAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-22T18:13:04.806Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "appsettings.json",
-              "DocumentMoniker": "D:\\Somethings\\TruthOrDare\\TruthOrDare_API\\appsettings.json",
-              "RelativeDocumentMoniker": "TruthOrDare_API\\appsettings.json",
-              "ToolTip": "D:\\Somethings\\TruthOrDare\\TruthOrDare_API\\appsettings.json",
-              "RelativeToolTip": "TruthOrDare_API\\appsettings.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAACfAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2025-03-22T17:51:45.432Z",
+              "WhenOpened": "2025-03-28T15:31:26.753Z",
               "EditorCaption": ""
             },
             {
@@ -227,8 +214,43 @@
               "Name": "ST:45:0:{d212f56b-c48a-434c-a121-1c5d80b59b9f}"
             },
             {
-              "$type": "Bookmark",
-              "Name": "ST:41:0:{e8034f19-ab72-4f06-83fd-f6832b41aa63}"
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "QuestionsController.cs",
+              "DocumentMoniker": "D:\\Somethings\\TruthOrDare\\TruthOrDare_API\\Controllers\\QuestionsController.cs",
+              "RelativeDocumentMoniker": "TruthOrDare_API\\Controllers\\QuestionsController.cs",
+              "ToolTip": "D:\\Somethings\\TruthOrDare\\TruthOrDare_API\\Controllers\\QuestionsController.cs",
+              "RelativeToolTip": "TruthOrDare_API\\Controllers\\QuestionsController.cs",
+              "ViewState": "AgIAAAkAAAAAAAAAAAAhwBgAAABUAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-28T16:08:44.612Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "IQuestionRepository.cs",
+              "DocumentMoniker": "D:\\Somethings\\TruthOrDare\\TruthOrDare_Contract\\IRepository\\IQuestionRepository.cs",
+              "RelativeDocumentMoniker": "TruthOrDare_Contract\\IRepository\\IQuestionRepository.cs",
+              "ToolTip": "D:\\Somethings\\TruthOrDare\\TruthOrDare_Contract\\IRepository\\IQuestionRepository.cs",
+              "RelativeToolTip": "TruthOrDare_Contract\\IRepository\\IQuestionRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAAMAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-28T16:06:41.973Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "ExceptionMiddleware.cs",
+              "DocumentMoniker": "D:\\Somethings\\TruthOrDare\\TruthOrDare_Common\\Middleware\\ExceptionMiddleware.cs",
+              "RelativeDocumentMoniker": "TruthOrDare_Common\\Middleware\\ExceptionMiddleware.cs",
+              "ToolTip": "D:\\Somethings\\TruthOrDare\\TruthOrDare_Common\\Middleware\\ExceptionMiddleware.cs",
+              "RelativeToolTip": "TruthOrDare_Common\\Middleware\\ExceptionMiddleware.cs",
+              "ViewState": "AgIAAF4AAAAAAAAAAAAAwG8AAAAqAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-28T15:45:51.322Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -238,61 +260,35 @@
               "RelativeDocumentMoniker": "TruthOrDare_Core\\Services\\RoomService.cs",
               "ToolTip": "D:\\Somethings\\TruthOrDare\\TruthOrDare_Core\\Services\\RoomService.cs",
               "RelativeToolTip": "TruthOrDare_Core\\Services\\RoomService.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAADMAAAAAAAAAAAAowFoAAAA4AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-22T17:26:09.172Z",
+              "WhenOpened": "2025-03-28T15:41:53.034Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 6,
-              "Title": "IRoomService.cs",
-              "DocumentMoniker": "D:\\Somethings\\TruthOrDare\\TruthOrDare_Contract\\IServices\\IRoomService.cs",
-              "RelativeDocumentMoniker": "TruthOrDare_Contract\\IServices\\IRoomService.cs",
-              "ToolTip": "D:\\Somethings\\TruthOrDare\\TruthOrDare_Contract\\IServices\\IRoomService.cs",
-              "RelativeToolTip": "TruthOrDare_Contract\\IServices\\IRoomService.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAAAAAAAAAAAA==",
+              "Title": "ErrorCode.cs",
+              "DocumentMoniker": "D:\\Somethings\\TruthOrDare\\TruthOrDare_Common\\ErrorCode.cs",
+              "RelativeDocumentMoniker": "TruthOrDare_Common\\ErrorCode.cs",
+              "ToolTip": "D:\\Somethings\\TruthOrDare\\TruthOrDare_Common\\ErrorCode.cs",
+              "RelativeToolTip": "TruthOrDare_Common\\ErrorCode.cs",
+              "ViewState": "AgIAAAgAAAAAAAAAAAAxwBgAAAAcAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-22T17:25:51.937Z",
+              "WhenOpened": "2025-03-28T15:32:20.67Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "DIConfig.cs",
-              "DocumentMoniker": "D:\\Somethings\\TruthOrDare\\TruthOrDare_API\\DIConfig.cs",
-              "RelativeDocumentMoniker": "TruthOrDare_API\\DIConfig.cs",
-              "ToolTip": "D:\\Somethings\\TruthOrDare\\TruthOrDare_API\\DIConfig.cs",
-              "RelativeToolTip": "TruthOrDare_API\\DIConfig.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABkAAAA0AAAAAAAAAA==",
+              "DocumentIndex": 0,
+              "Title": "QuestionRepository.cs",
+              "DocumentMoniker": "D:\\Somethings\\TruthOrDare\\TruthOrDare_Infrastructure\\Repository\\QuestionRepository.cs",
+              "RelativeDocumentMoniker": "TruthOrDare_Infrastructure\\Repository\\QuestionRepository.cs",
+              "ToolTip": "D:\\Somethings\\TruthOrDare\\TruthOrDare_Infrastructure\\Repository\\QuestionRepository.cs*",
+              "RelativeToolTip": "TruthOrDare_Infrastructure\\Repository\\QuestionRepository.cs*",
+              "ViewState": "AgIAAKwAAAAAAAAAAAA5wCYBAAAPAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-22T17:18:17.728Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "Program.cs",
-              "DocumentMoniker": "D:\\Somethings\\TruthOrDare\\TruthOrDare_API\\Program.cs",
-              "RelativeDocumentMoniker": "TruthOrDare_API\\Program.cs",
-              "ToolTip": "D:\\Somethings\\TruthOrDare\\TruthOrDare_API\\Program.cs",
-              "RelativeToolTip": "TruthOrDare_API\\Program.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-22T17:08:23.097Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "GameController.cs",
-              "DocumentMoniker": "D:\\Somethings\\TruthOrDare\\TruthOrDare_API\\Controllers\\GameController.cs",
-              "RelativeDocumentMoniker": "TruthOrDare_API\\Controllers\\GameController.cs",
-              "ToolTip": "D:\\Somethings\\TruthOrDare\\TruthOrDare_API\\Controllers\\GameController.cs",
-              "RelativeToolTip": "TruthOrDare_API\\Controllers\\GameController.cs",
-              "ViewState": "AgIAABsAAAAAAAAAAAAgwCYAAAAJAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-22T17:07:42.388Z",
+              "WhenOpened": "2025-03-28T15:23:09.2Z",
               "EditorCaption": ""
             }
           ]

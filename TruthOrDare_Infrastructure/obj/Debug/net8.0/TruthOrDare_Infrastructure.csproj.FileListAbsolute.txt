@@ -13,3 +13,6 @@ D:\Somethings\TruthOrDare\TruthOrDare_Infrastructure\obj\Debug\net8.0\TruthOrDar
 D:\Somethings\TruthOrDare\TruthOrDare_Infrastructure\obj\Debug\net8.0\refint\TruthOrDare_Infrastructure.dll
 D:\Somethings\TruthOrDare\TruthOrDare_Infrastructure\obj\Debug\net8.0\TruthOrDare_Infrastructure.pdb
 D:\Somethings\TruthOrDare\TruthOrDare_Infrastructure\obj\Debug\net8.0\ref\TruthOrDare_Infrastructure.dll
+D:\Somethings\TruthOrDare\TruthOrDare_Infrastructure\obj\Debug\net8.0\TruthOrDare_Infrastructure.sourcelink.json
+D:\Somethings\TruthOrDare\TruthOrDare_Infrastructure\bin\Debug\net8.0\TruthOrDare_Common.dll
+D:\Somethings\TruthOrDare\TruthOrDare_Infrastructure\bin\Debug\net8.0\TruthOrDare_Common.pdb
