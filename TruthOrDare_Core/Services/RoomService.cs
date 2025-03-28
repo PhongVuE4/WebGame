@@ -12,6 +12,8 @@ using TruthOrDare_Infrastructure;
 using TruthOrDare_Contract.DTOs.Room;
 using TruthOrDare_Contract.DTOs.Player;
 using TruthOrDare_Common;
+using static MongoDB.Driver.WriteConcern;
+using TruthOrDare_Infrastructure.Repository;
 
 namespace TruthOrDare_Core.Services
 {
@@ -19,13 +21,14 @@ namespace TruthOrDare_Core.Services
     {
         private readonly IMongoCollection<Room> _rooms;
         private readonly IPasswordHashingService _passwordHashingService;
-        public RoomService(MongoDbContext dbContext, IPasswordHashingService passwordHashingService)
+        private readonly IQuestionRepository _questionRepository;
+        public RoomService(MongoDbContext dbContext, IPasswordHashingService passwordHashingService, IQuestionRepository questionRepository)
         {
             _rooms = dbContext.Rooms;
             _passwordHashingService = passwordHashingService;
+            _questionRepository = questionRepository;
         }
-
-        public async Task<RoomCreateDTO> CreateRoom(string roomName, string playerName, string roomPassword)
+        public async Task<RoomCreateDTO> CreateRoom(string roomName, string playerName, string roomPassword, string ageGroup, string mode)
         {
             var existingRoom = await _rooms
                 .Find(r => r.RoomName == roomName && r.IsActive)
@@ -39,7 +42,17 @@ namespace TruthOrDare_Core.Services
             {
                 playerName = NameGenerator.GenerateRandomName();
             }
-
+            var agegroupLower = ageGroup?.ToLower();
+            if (string.IsNullOrWhiteSpace(agegroupLower) 
+                || (agegroupLower != "kids" && agegroupLower != "teen" && agegroupLower != "adult" && agegroupLower != "all"))
+            {
+                throw new Exception("Age group must be 'Kids', 'Teen', 'Adult' and 'All'");
+            }
+            var modeLower = mode?.ToLower();
+            if (string.IsNullOrWhiteSpace(modeLower) || (modeLower != "friends" && modeLower != "couples" && modeLower != "party"))
+            {
+                throw new Exception("Mode must be 'Friends', 'Couples', or 'Party'.");
+            }
             var roomId = IdGenerator.GenerateRoomId(); 
             var playerId = Guid.NewGuid().ToString();
 
@@ -56,9 +69,12 @@ namespace TruthOrDare_Core.Services
                 RoomName = roomName,
                 RoomPassword = hashedPassword,
                 CreatedBy = playerName,
-                CreatedAt = DateTime.UtcNow,
+                CreatedAt = DateTime.Now,
+                UpdatedAt = DateTime.Now,
                 IsActive = true,
                 Status = "Waiting",
+                AgeGroup = ageGroup,
+                Mode = mode,
                 Players = new List<PlayerCreateRoomDTO> {
                 new PlayerCreateRoomDTO {
                     PlayerId = playerId,
@@ -70,10 +86,10 @@ namespace TruthOrDare_Core.Services
 
             var room = Mapper.ToRoom(roomDTO);
             await _rooms.InsertOneAsync(room);
-            return Mapper.ToRoomCreateDTO(room);
+            return Mapper.ToRoomCreate(room);
         }
 
-        public async Task<RoomCreateDTO> JoinRoom(string roomId, string playerName, string roomPassword = null)
+        public async Task<RoomCreateDTO> JoinRoom(string roomId, string? playerName, string? roomPassword)
         {
             var room = await _rooms
                 .Find(r => r.RoomId == roomId && r.IsActive && r.IsDeleted ==  false)
@@ -84,7 +100,8 @@ namespace TruthOrDare_Core.Services
                 throw new Exception($"Room with ID '{roomId}' does not exist or is not active.");
             }
 
-            if (!string.IsNullOrEmpty(room.RoomPassword))
+            bool requiresPassword = !string.IsNullOrEmpty(room.RoomPassword);
+            if (requiresPassword)
             {
                 if (string.IsNullOrEmpty(roomPassword))
                 {
@@ -119,7 +136,7 @@ namespace TruthOrDare_Core.Services
             room.Players.Add(newPlayer);
             await _rooms.ReplaceOneAsync(r => r.RoomId == roomId, room);
 
-            return Mapper.ToRoomCreateDTO(room);
+            return Mapper.ToRoomCreate(room);
         }
 
         public async Task<Room> LeaveRoom(string roomId, string playerId)
@@ -180,7 +197,41 @@ namespace TruthOrDare_Core.Services
                 IsDeleted = room.IsDeleted,
             }).ToList();
         }
-        public async Task<Room> GetRoom(string roomId)
+        public async Task<RoomDetailDTO> GetRoom(string roomId)
+        {
+            var room = await _rooms
+                .Find(r => r.RoomId == roomId && r.IsActive)
+                .FirstOrDefaultAsync();
+
+            if (room == null)
+            {
+                throw new Exception($"Room with ID '{roomId}' does not exist or is not active.");
+            }
+
+            return new RoomDetailDTO
+            {
+                RoomId = room.RoomId,
+                RoomName = room.RoomName,
+                Status = room.Status,
+                AgeGroup = room.AgeGroup,
+                Mode = room.Mode,
+                CreatedBy = room.CreatedBy,
+                CreatedAt = room.CreatedAt,
+                UpdatedAt = room.UpdatedAt,
+                IsActive = room.IsActive,
+                Players = room.Players.Select(p => new PlayerDTO
+                {
+                    PlayerId = p.PlayerId,
+                    PlayerName = p.PlayerName,
+                    AgeGroup = p.AgeGroup,
+                    TotalPoints = p.TotalPoints,
+                    CreatedAt = p.CreatedAt,
+                    IsHost = p.IsHost,
+                    QuestionsAnswered = p.QuestionsAnswered
+                }).ToList()
+            };
+        }
+        public async Task<Room> GetRoomEntity(string roomId)
         {
             var room = await _rooms
                 .Find(r => r.RoomId == roomId && r.IsActive)
@@ -193,7 +244,6 @@ namespace TruthOrDare_Core.Services
 
             return room;
         }
-
         public async Task ChangePlayerName(string roomId, string playerId, string newName)
         {
             var room = await _rooms
@@ -218,6 +268,139 @@ namespace TruthOrDare_Core.Services
 
             player.PlayerName = newName;
             await _rooms.ReplaceOneAsync(r => r.RoomId == roomId, room);
+        }
+
+        public async Task StartGame(string roomId, string playerId)
+        {
+            var room = await GetRoom(roomId);
+            if (room.Status != "Waiting")
+            {
+                throw new Exception("Game can only be started from Waiting status.");
+            }
+            var player = room.Players.FirstOrDefault(a => a.PlayerId == playerId);
+            if (player == null)
+            {
+                throw new Exception($"Player with ID '{playerId}' is not in the room.");
+            }
+            if (!player.IsHost)
+            {
+                throw new Exception("Only the host can start the game.");
+            }
+            var roomUpdate = await _rooms.Find(r => r.RoomId == roomId).FirstOrDefaultAsync();
+            roomUpdate.Status = "Playing";
+            roomUpdate.UpdatedAt = DateTime.UtcNow;
+            await _rooms.ReplaceOneAsync(r => r.RoomId == roomId, roomUpdate);
+        }
+        public async Task<Question> GetRandomQuestionForRoom(string roomId, string playerId, string questionType)
+        {
+            var room = await GetRoom(roomId);
+            if (room.Status != "Playing")
+            {
+                throw new Exception("Game must be in Playing status to get questions.");
+            }
+
+            var player = room.Players.FirstOrDefault(p => p.PlayerId == playerId);
+            if (player == null)
+            {
+                throw new Exception($"Player with ID '{playerId}' not found in room.");
+            }
+            var roomEntity = await _rooms.Find(a => a.RoomId == roomId).FirstOrDefaultAsync();
+            if(roomEntity == null)
+            {
+                throw new Exception($"Room with ID '{roomId}' not found in database.");
+            }
+            if (string.IsNullOrWhiteSpace(questionType.ToLower()) || (questionType.ToLower() != "dare" && questionType.ToLower() != "truth"))
+            {
+                throw new Exception($"Question type must be Truth or Dare");
+            }
+            var question = await _questionRepository.GetRandomQuestionAsync(
+                questionType,
+                room.AgeGroup,
+                roomEntity.UsedQuestionIds
+            );
+
+            if (question == null)
+            {
+                roomEntity.Status = "Ended"; // Hết câu hỏi, kết thúc game
+                await _rooms.ReplaceOneAsync(r => r.RoomId == roomId, roomEntity);
+                return null;
+            }
+
+            roomEntity.UsedQuestionIds.Add(question.Id);
+            var playerEntity = roomEntity.Players.FirstOrDefault(p => p.PlayerId == playerId);
+            if (playerEntity != null)
+            {
+                playerEntity.QuestionsAnswered++;
+            }
+            await _rooms.ReplaceOneAsync(r => r.RoomId == roomId, roomEntity);
+            return question;
+        }
+        public async Task<EndGameSummaryDTO> EndGame(string roomId)
+        {
+            var roomDto = await GetRoom(roomId);
+            if (roomDto.Status != "Playing")
+            {
+                throw new Exception("Game must be in Playing status to end.");
+            }
+            var roomEntity = await _rooms
+                .Find(r => r.RoomId == roomId)
+                .FirstOrDefaultAsync();
+
+            if (roomEntity == null)
+            {
+                throw new Exception($"Room with ID '{roomId}' not found in database.");
+            }
+            roomEntity.Status = "Ended";
+            roomEntity.UpdatedAt = DateTime.UtcNow;
+
+            await _rooms.ReplaceOneAsync(r => r.RoomId == roomId, roomEntity);
+
+            return new EndGameSummaryDTO
+            {
+                RoomId = roomId,
+                TotalQuestions = roomEntity.UsedQuestionIds.Count,
+                PlayerStats = roomDto.Players.Select(p => new PlayerStatDTO
+                {
+                    PlayerId = p.PlayerId,
+                    PlayerName = p.PlayerName,
+                    QuestionsAnswered = p.QuestionsAnswered
+                }).ToList()
+            };
+        }
+        public async Task ResetGame(string roomId, string playerId)
+        {
+            var roomDto = await GetRoom(roomId);
+            if (roomDto.Status != "Ended")
+            {
+                throw new Exception("Game can only be reset from Ended status.");
+            }
+
+            var roomEntity = await _rooms
+                .Find(r => r.RoomId == roomId)
+                .FirstOrDefaultAsync();
+
+            if (roomEntity == null)
+            {
+                throw new Exception($"Room with ID '{roomId}' not found in database.");
+            }
+            var playercheck = roomDto.Players.FirstOrDefault(p => p.PlayerId == playerId);
+            if (playercheck == null)
+            {
+                throw new Exception($"Player with ID '{playerId}' not found in room.");
+            }
+            if(!playercheck.IsHost)
+            {
+                throw new Exception($"Only the host can start the game.");
+            }
+            roomEntity.Status = "Waiting";
+            roomEntity.UsedQuestionIds.Clear();
+            foreach (var player in roomEntity.Players)
+            {
+                player.QuestionsAnswered = 0;
+            }
+            roomEntity.UpdatedAt = DateTime.UtcNow;
+
+            await _rooms.ReplaceOneAsync(r => r.RoomId == roomId, roomEntity);
         }
     }
 }

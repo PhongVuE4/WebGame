@@ -32,7 +32,7 @@ namespace TruthOrDare_API.Controllers
             try
             {
                 string playerName = roomCreate.PlayerName;
-                var room = await _roomService.CreateRoom(roomCreate.RoomName, playerName, roomCreate.RoomPassword);
+                var room = await _roomService.CreateRoom(roomCreate.RoomName, playerName, roomCreate.RoomPassword, roomCreate.AgeGroup, roomCreate.Mode);
                 return Ok(room);
             }
             catch (Exception ex)
@@ -41,20 +41,65 @@ namespace TruthOrDare_API.Controllers
             }
         }
         [HttpPost("join")]
-        public async Task<IActionResult> JoinRoom([FromBody] JoinRoomDTO request)
+        public async Task<IActionResult> JoinRoom(string roomId, string? playerName, string? roomPassword)
         {
             try
             {
                 bool isAuthenticated = User.Identity?.IsAuthenticated ?? false;
-                string playerName = request.PlayerName;
+                string playerNameRandom = playerName;
 
                 if (isAuthenticated)
                 {
-                    playerName = User.Identity.Name;
+                    playerNameRandom = User.Identity.Name;
                 }
 
-                var room = await _roomService.JoinRoom(request.RoomId, playerName, request.RoomPassword);
+                var room = await _roomService.JoinRoom(roomId, playerNameRandom, roomPassword);
                 return Ok(room);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Error = ex.Message });
+            }
+        }
+        [HttpPost("start")]
+        public async Task<ActionResult> StartGame(string roomId, string playerId)
+        {
+            try
+            {
+                await _roomService.StartGame(roomId, playerId);
+                return Ok("Game is started.");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Error = ex.Message });
+            }
+
+        }
+        [HttpPost("reset-game")]
+        public async Task<ActionResult> ResetGame(string roomId, string playerId)
+        {
+            try
+            {
+                await _roomService.ResetGame(roomId, playerId);
+                return Ok("Reset game successful.");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Error = ex.Message });
+            }
+
+        }
+        [HttpPost("get-question")]
+        public async Task<ActionResult> GetRandomQuestion(string roomId, string playerId, string questionType)
+        {
+            try
+            {
+                var question = await _roomService.GetRandomQuestionForRoom(roomId, playerId, questionType);
+                if (question == null)
+                {
+                    return Ok(new { Message = "No more questions available. Game has ended." });
+                }
+                return Ok(question);
             }
             catch (Exception ex)
             {
@@ -100,7 +145,7 @@ namespace TruthOrDare_API.Controllers
             try
             {
                 var room = await _roomService.LeaveRoom(roomId, playerId);
-                var roomDto = Mapper.ToRoomCreateDTO(room);
+                var roomDto = Mapper.ToRoomCreate(room);
                 return Ok(roomDto);
             }
             catch (Exception ex)
@@ -131,5 +176,6 @@ namespace TruthOrDare_API.Controllers
                 return BadRequest(new { Error = ex.Message });
             }
         }
+        
     }
 }

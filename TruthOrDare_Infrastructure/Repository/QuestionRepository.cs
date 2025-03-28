@@ -21,10 +21,21 @@ namespace TruthOrDare_Infrastructure.Repository
             _questions = context.Questions;
         }
 
-        public async Task<Question> GetRandomQuestionAsync(List<string> excludeIds)
+        public async Task<Question> GetRandomQuestionAsync(string questionType, string ageGroup, List<string> excludeIds)
         {
-            var filter = Builders<Question>.Filter.Not(Builders<Question>.Filter.In(q => q.Id, excludeIds));
-            return await _questions.Find(filter).Limit(1).FirstOrDefaultAsync();
+            var filter = Builders<Question>.Filter.And(
+                Builders<Question>.Filter.Eq(a => a.Type, questionType),
+                Builders<Question>.Filter.Eq(a => a.AgeGroup, ageGroup),
+                Builders<Question>.Filter.Not(Builders<Question>.Filter.In(q => q.Id, excludeIds)),
+                Builders<Question>.Filter.Eq(a => a.IsDeleted, false));
+            var question = await _questions.Find(filter).Limit(1).FirstOrDefaultAsync();
+
+            if (question != null)
+            {
+                excludeIds.Add(question.Id); // Thêm ID để tránh trùng lặp
+            }
+
+            return question;
         }
         public async Task<List<Question>> GetQuestions(string? filters)
         {

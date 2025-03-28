@@ -107,6 +107,32 @@
   },
   {
     "ContainingType": "TruthOrDare_API.Controllers.RoomsController",
+    "Method": "GetRandomQuestion",
+    "RelativePath": "api/rooms/get-question",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "roomId",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "playerId",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "questionType",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TruthOrDare_API.Controllers.RoomsController",
     "Method": "JoinRoom",
     "RelativePath": "api/rooms/join",
     "HttpMethod": "POST",
@@ -114,9 +140,19 @@
     "Order": 0,
     "Parameters": [
       {
-        "Name": "request",
-        "Type": "TruthOrDare_Contract.DTOs.Room.JoinRoomDTO",
-        "IsRequired": true
+        "Name": "roomId",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "playerName",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "roomPassword",
+        "Type": "System.String",
+        "IsRequired": false
       }
     ],
     "ReturnTypes": []
@@ -160,6 +196,27 @@
   },
   {
     "ContainingType": "TruthOrDare_API.Controllers.RoomsController",
+    "Method": "ResetGame",
+    "RelativePath": "api/rooms/reset-game",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "roomId",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "playerId",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TruthOrDare_API.Controllers.RoomsController",
     "Method": "ChangeName",
     "RelativePath": "api/rooms/rooms/change-name",
     "HttpMethod": "POST",
@@ -170,6 +227,27 @@
         "Name": "request",
         "Type": "TruthOrDare_Contract.DTOs.Room.ChangeNameInRoomDTO",
         "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TruthOrDare_API.Controllers.RoomsController",
+    "Method": "StartGame",
+    "RelativePath": "api/rooms/start",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "roomId",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "playerId",
+        "Type": "System.String",
+        "IsRequired": false
       }
     ],
     "ReturnTypes": []

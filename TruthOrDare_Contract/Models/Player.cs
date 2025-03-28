@@ -29,6 +29,8 @@ namespace TruthOrDare_Contract.Models
 
         [BsonElement("created_at")]
         public DateTime CreatedAt { get; set; }
+        [BsonElement("updated_at")]
+        public DateTime UpdatedAt { get; set; }
 
         [BsonElement("last_active")]
         public DateTime LastActive { get; set; }
@@ -38,5 +40,7 @@ namespace TruthOrDare_Contract.Models
         public WebSocket WebSocket { get; set; }
         [BsonElement("is_deleted")]
         public bool IsDeleted { get; set; }
+        [BsonElement("questions_answered")]
+        public int QuestionsAnswered { get; set; } = 0;
     }
 }

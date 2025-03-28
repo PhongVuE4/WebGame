@@ -24,7 +24,7 @@ namespace TruthOrDare_Core.Services
             Room room;
             try
             {
-                room = await _roomService.GetRoom(roomId);
+                room = await _roomService.GetRoomEntity(roomId);
             }
             catch (Exception ex)
             {
