@@ -1,9 +1,131 @@
 [
   {
-    "ContainingType": "TruthOrDare_API.Controllers.GameController",
-    "Method": "CompleteTurn",
-    "RelativePath": "api/Game/complete-turn",
+    "ContainingType": "TruthOrDare_API.Controllers.QuestionsController",
+    "Method": "CreateQuestion",
+    "RelativePath": "api/questions/add-a-question",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "questionCreate",
+        "Type": "TruthOrDare_Contract.DTOs.Question.QuestionCreateDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TruthOrDare_API.Controllers.QuestionsController",
+    "Method": "InsertManyQuestions",
+    "RelativePath": "api/questions/add-many-question",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "questions",
+        "Type": "System.Collections.Generic.List\u00601[[TruthOrDare_Contract.DTOs.Question.QuestionCreateDTO, TruthOrDare_Contract, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TruthOrDare_API.Controllers.QuestionsController",
+    "Method": "DeleteQuestion",
+    "RelativePath": "api/questions/delete-question",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "questionId",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TruthOrDare_API.Controllers.QuestionsController",
+    "Method": "GetQuestions",
+    "RelativePath": "api/questions/questions",
     "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "filters",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TruthOrDare_API.Controllers.RoomsController",
+    "Method": "GetRoom",
+    "RelativePath": "api/rooms/{roomId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "roomId",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TruthOrDare_API.Controllers.RoomsController",
+    "Method": "CreateRoom",
+    "RelativePath": "api/rooms/create",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "roomCreate",
+        "Type": "TruthOrDare_Contract.DTOs.Room.CreateRoomRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TruthOrDare_API.Controllers.RoomsController",
+    "Method": "GetGameSessions",
+    "RelativePath": "api/rooms/game-sessions",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TruthOrDare_API.Controllers.RoomsController",
+    "Method": "JoinRoom",
+    "RelativePath": "api/rooms/join",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "TruthOrDare_Contract.DTOs.Room.JoinRoomDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TruthOrDare_API.Controllers.RoomsController",
+    "Method": "LeaveRoom",
+    "RelativePath": "api/rooms/leave-room",
+    "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
     "Parameters": [
@@ -16,9 +138,20 @@
         "Name": "playerId",
         "Type": "System.String",
         "IsRequired": false
-      },
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TruthOrDare_API.Controllers.RoomsController",
+    "Method": "GetListRoom",
+    "RelativePath": "api/rooms/list",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
       {
-        "Name": "response",
+        "Name": "roomId",
         "Type": "System.String",
         "IsRequired": false
       }
@@ -26,33 +159,19 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "TruthOrDare_API.Controllers.GameController",
-    "Method": "CreateRoom",
-    "RelativePath": "api/Game/create-room",
-    "HttpMethod": "GET",
+    "ContainingType": "TruthOrDare_API.Controllers.RoomsController",
+    "Method": "ChangeName",
+    "RelativePath": "api/rooms/rooms/change-name",
+    "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
-    "Parameters": [],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "TruthOrDare_API.Controllers.GameController",
-    "Method": "GetGameSessions",
-    "RelativePath": "api/Game/game-sessions",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "TruthOrDare_API.Controllers.GameController",
-    "Method": "GetQuestions",
-    "RelativePath": "api/Game/questions",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "TruthOrDare_Contract.DTOs.Room.ChangeNameInRoomDTO",
+        "IsRequired": true
+      }
+    ],
     "ReturnTypes": []
   }
 ]

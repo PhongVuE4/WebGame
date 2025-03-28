@@ -3,14 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TruthOrDare_Contract.DTOs.Room;
+using TruthOrDare_Contract.Models;
 
 namespace TruthOrDare_Contract.IServices
 {
     public interface IRoomService
     {
-        Task CreateRoomAsync(string roomId, List<string> players);
-        Task NextTurnAsync(string roomId);
-        Task CompleteTurnAsync(string roomId, string playerId, string response, string responseUrl = null);
+        Task<RoomCreateDTO> CreateRoom(string roomName, string playerName, string roomPassword, int maxPlayer);
+        Task<RoomCreateDTO> JoinRoom(string roomId, string playerName, string roomPassword = null);
+        Task<Room> LeaveRoom(string roomId, string playerId);
+        Task<List<RoomListDTO>> GetListRoom(string? roomId);
+        Task<Room> GetRoom(string roomId);
+        Task ChangePlayerName(string roomId, string playerId, string newName);
     }
 
 }

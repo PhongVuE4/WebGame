@@ -12,7 +12,7 @@ namespace TruthOrDare_Contract.IServices
 {
     public interface IWebSocketHandler
     {
-        Task HandleWebSocket(HttpContext context, WebSocket webSocket, string roomId);
-        Task BroadcastToRoom(string roomId, string message);
+        Task HandleWebSocket(HttpContext context, WebSocket webSocket, string roomId, string playerId);
+        Task BroadcastMessage(string roomId, string message);
     }
 }

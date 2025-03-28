@@ -1,5 +1,3 @@
-D:\Somethings\TruthOrDare\TruthOrDare_API\bin\Debug\net8.0\appsettings.Development.json
-D:\Somethings\TruthOrDare\TruthOrDare_API\bin\Debug\net8.0\appsettings.json
 D:\Somethings\TruthOrDare\TruthOrDare_API\bin\Debug\net8.0\TruthOrDare_API.staticwebassets.endpoints.json
 D:\Somethings\TruthOrDare\TruthOrDare_API\bin\Debug\net8.0\TruthOrDare_API.exe
 D:\Somethings\TruthOrDare\TruthOrDare_API\bin\Debug\net8.0\TruthOrDare_API.deps.json
@@ -48,3 +46,16 @@ D:\Somethings\TruthOrDare\TruthOrDare_API\obj\Debug\net8.0\refint\TruthOrDare_AP
 D:\Somethings\TruthOrDare\TruthOrDare_API\obj\Debug\net8.0\TruthOrDare_API.pdb
 D:\Somethings\TruthOrDare\TruthOrDare_API\obj\Debug\net8.0\TruthOrDare_API.genruntimeconfig.cache
 D:\Somethings\TruthOrDare\TruthOrDare_API\obj\Debug\net8.0\ref\TruthOrDare_API.dll
+D:\Somethings\TruthOrDare\TruthOrDare_API\obj\Debug\net8.0\TruthOrDare_API.sourcelink.json
+D:\Somethings\TruthOrDare\TruthOrDare_API\bin\Debug\net8.0\Microsoft.AspNetCore.JsonPatch.dll
+D:\Somethings\TruthOrDare\TruthOrDare_API\bin\Debug\net8.0\Microsoft.AspNetCore.Mvc.NewtonsoftJson.dll
+D:\Somethings\TruthOrDare\TruthOrDare_API\bin\Debug\net8.0\Newtonsoft.Json.dll
+D:\Somethings\TruthOrDare\TruthOrDare_API\bin\Debug\net8.0\Newtonsoft.Json.Bson.dll
+D:\Somethings\TruthOrDare\TruthOrDare_API\bin\Debug\net8.0\TruthOrDare_Common.dll
+D:\Somethings\TruthOrDare\TruthOrDare_API\bin\Debug\net8.0\TruthOrDare_Common.pdb
+D:\Somethings\TruthOrDare\TruthOrDare_API\bin\Debug\net8.0\Quartz.dll
+D:\Somethings\TruthOrDare\TruthOrDare_API\bin\Debug\net8.0\Quartz.AspNetCore.dll
+D:\Somethings\TruthOrDare\TruthOrDare_API\bin\Debug\net8.0\Quartz.Extensions.DependencyInjection.dll
+D:\Somethings\TruthOrDare\TruthOrDare_API\bin\Debug\net8.0\Quartz.Extensions.Hosting.dll
+D:\Somethings\TruthOrDare\TruthOrDare_API\bin\Debug\net8.0\appsettings.Development.json
+D:\Somethings\TruthOrDare\TruthOrDare_API\bin\Debug\net8.0\appsettings.json

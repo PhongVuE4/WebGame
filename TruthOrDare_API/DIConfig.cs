@@ -21,7 +21,8 @@ namespace TruthOrDare_API
             services.AddScoped<IQuestionRepository, QuestionRepository>();
             //Add service
             services.AddScoped<IRoomService, RoomService>();
-            services.AddSingleton<IWebSocketHandler, WebSocketHandler>();
+            services.AddScoped<IWebSocketHandler, WebSocketHandler>();
+            services.AddScoped<IPasswordHashingService, PasswordHashingService>();
             // Register MongoDbContext
             services.AddSingleton<MongoDbContext>();
             return services;

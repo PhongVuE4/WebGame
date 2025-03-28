@@ -53,21 +53,20 @@ CodeCoverage/
 TestResult.xml
 nunit-*.xml
 
-#appsettings.json
+# appsettings files
 /TruthOrDare_API/appsettings.json
+/TruthOrDare_API/appsettings.*.json
 
-#bin and obj
-/BussinessObject/bin
-/BussinessObject/obj
-/Contract/bin
-/Contract/obj
-/Implementation/bin
-/Implementation/obj
-/TruthOrDare_API/bin
-/TruthOrDare_API/obj
-/TruthOrDare_API/appsettings.json
-/TruthOrDare_API/appsettings.json
-/TruthOrDare_API/appsettings.Development.json
+# bin and obj
+/BussinessObject/bin/
+/BussinessObject/obj/
+/Contract/bin/
+/Contract/obj/
+/Implementation/bin/
+/Implementation/obj/
+/TruthOrDare_API/bin/
+/TruthOrDare_API/obj/
 
+# Other
 .env
 .vs/
