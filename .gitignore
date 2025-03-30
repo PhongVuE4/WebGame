@@ -54,8 +54,10 @@ TestResult.xml
 nunit-*.xml
 
 # appsettings files
-/TruthOrDare_API/appsettings.json
-/TruthOrDare_API/appsettings.*.json
+appsettings.json
+appsettings.*.json
+**/appsettings.json
+**/appsettings.*.json
 
 # bin and obj
 /BussinessObject/bin/
