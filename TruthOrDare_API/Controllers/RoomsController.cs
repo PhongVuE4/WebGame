@@ -46,7 +46,7 @@ namespace TruthOrDare_API.Controllers
             }
 
             var room = await _roomService.JoinRoom(roomId, playerName, request.RoomPassword);
-            return Ok(new { room.RoomId, room.PlayerName });
+            return Ok(new { room.RoomId, room.PlayerId,room.PlayerName });
 
         }
         //[HttpGet("complete-turn")]
