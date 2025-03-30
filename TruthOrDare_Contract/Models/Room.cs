@@ -22,9 +22,13 @@ namespace TruthOrDare_Contract.Models
         public string? RoomPassword { get; set; }
         [BsonElement("max_player")]
         public int MaxPlayer { get; set; }
+        [BsonElement("player_count")]
+        public int PlayerCount { get; set; }
 
         [BsonElement("players")]
         public List<Player> Players { get; set; } = new List<Player>();
+        [BsonElement("has_password")]
+        public bool HasPassword { get; set; }
 
         [BsonElement("current_question_id")]
         public string CurrentQuestionId { get; set; }

@@ -8,7 +8,6 @@ namespace TruthOrDare_Contract.DTOs.Room
 {
     public class ChangeNameInRoomDTO
     {
-        public string RoomId { get; set; }
         public string PlayerId { get; set; }
         public string NewName { get; set; }
     }

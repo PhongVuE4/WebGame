@@ -5,6 +5,18 @@
     "version": "v1"
   },
   "paths": {
+    "/api/GgameSessions/game-sessions": {
+      "get": {
+        "tags": [
+          "GgameSessions"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/questions/questions": {
       "get": {
         "tags": [
@@ -168,10 +180,20 @@
         }
       }
     },
-    "/api/rooms/join": {
-      "post": {
+    "/api/rooms/{roomId}/join": {
+      "patch": {
         "tags": [
           "Rooms"
+        ],
+        "parameters": [
+          {
+            "name": "roomId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
         ],
         "requestBody": {
           "content": {
@@ -247,50 +269,66 @@
         }
       }
     },
-    "/api/rooms/leave-room": {
-      "post": {
+    "/api/rooms/{roomId}/leave-room": {
+      "patch": {
         "tags": [
           "Rooms"
         ],
         "parameters": [
           {
             "name": "roomId",
-            "in": "query",
+            "in": "path",
+            "required": true,
             "schema": {
               "type": "string"
             }
-          },
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/LeaveRoomDTO"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LeaveRoomDTO"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LeaveRoomDTO"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/LeaveRoomDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/rooms/{roomId}/change-name": {
+      "patch": {
+        "tags": [
+          "Rooms"
+        ],
+        "parameters": [
           {
-            "name": "playerId",
-            "in": "query",
+            "name": "roomId",
+            "in": "path",
+            "required": true,
             "schema": {
               "type": "string"
             }
           }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/api/rooms/game-sessions": {
-      "get": {
-        "tags": [
-          "Rooms"
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/api/rooms/rooms/change-name": {
-      "post": {
-        "tags": [
-          "Rooms"
         ],
         "requestBody": {
           "content": {
@@ -329,10 +367,6 @@
       "ChangeNameInRoomDTO": {
         "type": "object",
         "properties": {
-          "roomId": {
-            "type": "string",
-            "nullable": true
-          },
           "playerId": {
             "type": "string",
             "nullable": true
@@ -367,20 +401,23 @@
         "additionalProperties": false
       },
       "JoinRoomDTO": {
-        "required": [
-          "roomId"
-        ],
         "type": "object",
         "properties": {
-          "roomId": {
-            "minLength": 1,
-            "type": "string"
-          },
           "roomPassword": {
             "type": "string",
             "nullable": true
           },
           "playerName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "LeaveRoomDTO": {
+        "type": "object",
+        "properties": {
+          "playerId": {
             "type": "string",
             "nullable": true
           }
