@@ -15,6 +15,7 @@ using TruthOrDare_Common;
 using TruthOrDare_Common.Exceptions.Room;
 using TruthOrDare_Common.Exceptions;
 using TruthOrDare_Common.Exceptions.Player;
+using System.Text.Json;
 
 namespace TruthOrDare_Core.Services
 {
@@ -166,19 +167,28 @@ namespace TruthOrDare_Core.Services
             return "Leave room success";
         }
 
-        public async Task<List<RoomListDTO>> GetListRoom(string? roomId)
+        public async Task<List<RoomListDTO>> GetListRoom(string? filters)
         {
             var filter = Builders<Room>.Filter.And(
                 Builders<Room>.Filter.Eq(a => a.IsDeleted, false),
                 Builders<Room>.Filter.Eq(a => a.IsActive, true));
-                
-               
-            if (!string.IsNullOrWhiteSpace(roomId))
+
+
+            if (!string.IsNullOrWhiteSpace(filters))
             {
-                filter = Builders<Room>.Filter.And(
-                    filter,
-                    Builders<Room>.Filter.Eq(r => r.RoomId, roomId)
-                );
+                var filtersDictionary = JsonSerializer.Deserialize<Dictionary<string, string>>(filters);
+
+                if (filtersDictionary != null)
+                {
+                    // Apply each filter from the dictionary
+                    if (filtersDictionary.TryGetValue("roomId", out var roomId) && !string.IsNullOrWhiteSpace(roomId))
+                    {
+                        filter = Builders<Room>.Filter.And(
+                            filter,
+                            Builders<Room>.Filter.Eq(r => r.RoomId, roomId)
+                        );
+                    }
+                }
             }
             var rooms = await _rooms
                 .Find(filter)
@@ -197,15 +207,34 @@ namespace TruthOrDare_Core.Services
                 IsDeleted = room.IsDeleted,
             }).ToList();
         }
-        public async Task<Room> GetRoom(string roomId)
+        public async Task<Room> GetRoom(string filters)
         {
+            var filter = Builders<Room>.Filter.And(
+                Builders<Room>.Filter.Eq(a => a.IsDeleted, false),
+                Builders<Room>.Filter.Eq(a => a.IsActive, true));
+            if (!string.IsNullOrWhiteSpace(filters))
+            {
+                var filtersDictionary = JsonSerializer.Deserialize<Dictionary<string, string>>(filters);
+
+                if (filtersDictionary != null)
+                {
+                    // Apply each filter from the dictionary
+                    if (filtersDictionary.TryGetValue("roomId", out var roomId) && !string.IsNullOrWhiteSpace(roomId))
+                    {
+                        filter = Builders<Room>.Filter.And(
+                            filter,
+                            Builders<Room>.Filter.Eq(r => r.RoomId, roomId)
+                        );
+                    }
+                }
+            }
             var room = await _rooms
-                .Find(r => r.RoomId == roomId && r.IsActive && !r.IsDeleted)
+                .Find(filter)
                 .FirstOrDefaultAsync();
 
             if (room == null)
             {
-                throw new RoomNotExistException(roomId);
+                throw new RoomNotExistException(filters);
             }
 
             return room;
