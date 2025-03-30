@@ -40,6 +40,20 @@ namespace TruthOrDare_Common
                 Players = room.Players.Select(p => ToPlayerCreateRoomDTO(p)).ToList()
             };
         }
+        public static RoomDetailDTO ToRoomDetailDTO(Room room)
+        {
+            return new RoomDetailDTO
+            {
+                RoomId = room.RoomId,
+                RoomName = room.RoomName,
+                PlayerCount = room.PlayerCount,
+                MaxPlayer = room.MaxPlayer,
+                HasPassword = room.HasPassword,
+                Status = room.Status,
+                IsActive = room.IsActive,
+                Players = room.Players.Select(p => ToPlayerCreateRoomDTO(p)).ToList()
+            };
+        }
 
         public static Player ToPlayer(PlayerCreateRoomDTO dto)
         {
