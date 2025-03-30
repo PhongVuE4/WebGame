@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("TruthOrDare_Contract")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9d2d6ef0c2b98a9e2cf431216a809d372903b9c9")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+fbf093658a7b3b234014415fac9b9a65afaec43c")]
 [assembly: System.Reflection.AssemblyProductAttribute("TruthOrDare_Contract")]
 [assembly: System.Reflection.AssemblyTitleAttribute("TruthOrDare_Contract")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
