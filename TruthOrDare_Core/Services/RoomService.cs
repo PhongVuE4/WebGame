@@ -207,34 +207,15 @@ namespace TruthOrDare_Core.Services
                 IsDeleted = room.IsDeleted,
             }).ToList();
         }
-        public async Task<Room> GetRoom(string filters)
+        public async Task<Room> GetRoom(string roomId)
         {
-            var filter = Builders<Room>.Filter.And(
-                Builders<Room>.Filter.Eq(a => a.IsDeleted, false),
-                Builders<Room>.Filter.Eq(a => a.IsActive, true));
-            if (!string.IsNullOrWhiteSpace(filters))
-            {
-                var filtersDictionary = JsonSerializer.Deserialize<Dictionary<string, string>>(filters);
-
-                if (filtersDictionary != null)
-                {
-                    // Apply each filter from the dictionary
-                    if (filtersDictionary.TryGetValue("roomId", out var roomId) && !string.IsNullOrWhiteSpace(roomId))
-                    {
-                        filter = Builders<Room>.Filter.And(
-                            filter,
-                            Builders<Room>.Filter.Eq(r => r.RoomId, roomId)
-                        );
-                    }
-                }
-            }
             var room = await _rooms
-                .Find(filter)
-                .FirstOrDefaultAsync();
+        .Find(r => r.RoomId == roomId && r.IsActive)
+        .FirstOrDefaultAsync();
 
             if (room == null)
             {
-                throw new RoomNotExistException(filters);
+                throw new Exception($"Room with ID '{roomId}' does not exist or is not active.");
             }
 
             return room;
