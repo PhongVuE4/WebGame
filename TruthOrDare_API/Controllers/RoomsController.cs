@@ -8,6 +8,7 @@ using TruthOrDare_Contract.DTOs.Room;
 using TruthOrDare_Core.Services;
 using TruthOrDare_Contract.Models;
 using TruthOrDare_Common;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace TruthOrDare_API.Controllers
 {
@@ -16,13 +17,11 @@ namespace TruthOrDare_API.Controllers
     public class RoomsController : ControllerBase
     {
         private readonly IRoomService _roomService;
-        private readonly MongoDbContext _dbContext;
         private readonly IWebSocketHandler _websocketHandler;
 
-        public RoomsController(IRoomService roomService, MongoDbContext dbContext, IWebSocketHandler webSocketHandler)
+        public RoomsController(IRoomService roomService, IWebSocketHandler webSocketHandler)
         {
             _roomService = roomService;
-            _dbContext = dbContext;
             _websocketHandler = webSocketHandler;
         }
 
@@ -35,8 +34,8 @@ namespace TruthOrDare_API.Controllers
             return Ok(room);
         }
 
-        [HttpPost("join")]
-        public async Task<IActionResult> JoinRoom([FromBody] JoinRoomDTO request)
+        [HttpPatch("{roomId}/join")]
+        public async Task<IActionResult> JoinRoom(string roomId, [FromBody] JoinRoomDTO request)
         {
             bool isAuthenticated = User.Identity?.IsAuthenticated ?? false;
             string playerName = request.PlayerName;
@@ -46,8 +45,8 @@ namespace TruthOrDare_API.Controllers
                 playerName = User.Identity.Name;
             }
 
-            var room = await _roomService.JoinRoom(request.RoomId, playerName, request.RoomPassword);
-            return Ok(room);
+            var room = await _roomService.JoinRoom(roomId, playerName, request.RoomPassword);
+            return Ok(new { room.RoomId, room.PlayerName });
 
         }
         //[HttpGet("complete-turn")]
@@ -59,58 +58,31 @@ namespace TruthOrDare_API.Controllers
         [HttpGet("list")]
         public async Task<IActionResult> GetListRoom(string? roomId)
         {
-            try
-            {
-                var rooms = await _roomService.GetListRoom(roomId);
-                return Ok(rooms);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { Error = ex.Message });
-            }
+            var rooms = await _roomService.GetListRoom(roomId);
+            return Ok(rooms);
         }
         [HttpGet("{roomId}")]
         public async Task<IActionResult> GetRoom(string roomId)
         {
-            try
-            {
-                var room = await _roomService.GetRoom(roomId);
-                var roomDto = Mapper.ToRoomCreateDTO(room);
-                return Ok(roomDto);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { Error = ex.Message });
-            }
+
+            var room = await _roomService.GetRoom(roomId);
+            var roomDto = Mapper.ToRoomDetailDTO(room);
+            return Ok(roomDto);
         }
-        [HttpPost("leave-room")]
-        public async Task<ActionResult> LeaveRoom(string roomId, string playerId)
+        [HttpPatch("{roomId}/leave-room")]
+        public async Task<ActionResult> LeaveRoom(string roomId, [FromBody] LeaveRoomDTO leave)
         {
-            try
-            {
-                var room = await _roomService.LeaveRoom(roomId, playerId);
-                var roomDto = Mapper.ToRoomCreateDTO(room);
-                return Ok(roomDto);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { Error = ex.Message });
-            }
+
+            var room = await _roomService.LeaveRoom(roomId, leave.PlayerId);
+            return Ok(new { Message = room });
+
         }
-        [HttpGet("game-sessions")]
-        public async Task<IActionResult> GetGameSessions()
+       
+        [HttpPatch("{roomId}/change-name")]
+        public async Task<IActionResult> ChangeName(string roomId, [FromBody] ChangeNameInRoomDTO request)
         {
-            var gameSessions = await _dbContext.GameSessions
-                .Find(_ => true)
-                .Limit(10) // Giới hạn 10 session để test
-                .ToListAsync();
-            return Ok(gameSessions);
-        }
-        [HttpPost("rooms/change-name")]
-        public async Task<IActionResult> ChangeName([FromBody] ChangeNameInRoomDTO request)
-        {
-            await _roomService.ChangePlayerName(request.RoomId, request.PlayerId, request.NewName);
-            await _websocketHandler.BroadcastMessage(request.RoomId, $"Player {request.PlayerId} has changed their name to {request.NewName}");
+            await _roomService.ChangePlayerName(roomId, request.PlayerId, request.NewName);
+            await _websocketHandler.BroadcastMessage(roomId, $"Player {request.PlayerId} has changed their name to {request.NewName}");
             return Ok(new { Message = "Name changed successfully." });
         }
     }
