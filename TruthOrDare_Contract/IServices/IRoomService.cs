@@ -11,9 +11,9 @@ namespace TruthOrDare_Contract.IServices
     public interface IRoomService
     {
         Task<Question> GetRandomQuestionForRoom(string roomId, string playerId, string questionType);
-        Task<RoomCreateDTO> CreateRoom(string roomName, string playerName, string roomPassword,string ageGroup, string mode);
-        Task<RoomCreateDTO> JoinRoom(string roomId, string? playerName, string? roomPassword);
-        Task<Room> LeaveRoom(string roomId, string playerId);
+        Task<(string RoomId, string PlayerName)> CreateRoom(string roomName, string playerName, string roomPassword,string ageGroup, string mode, int maxPlayer);
+        Task<(string RoomId, string PlayerId, string PlayerName)> JoinRoom(string roomId, string playerName, string roomPassword);
+        Task<string> LeaveRoom(string roomId, string playerId);
         Task<List<RoomListDTO>> GetListRoom(string? roomId);
         Task<RoomDetailDTO> GetRoom(string roomId);
         Task<Room> GetRoomEntity(string roomId);

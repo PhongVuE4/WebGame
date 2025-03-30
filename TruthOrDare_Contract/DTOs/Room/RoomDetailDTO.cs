@@ -14,12 +14,12 @@ namespace TruthOrDare_Contract.DTOs.Room
         public string RoomId { get; set; }
         public string RoomName { get; set; }
         public List<PlayerDTO> Players { get; set; } = new List<PlayerDTO>();
+        public int MaxPlayer { get; set; }
+        public bool HasPassword { get; set; }
         public string Status { get; set; }// "Waiting", "Playing", "Ended"
         public string AgeGroup { get; set; }
         public string Mode { get; set; }
         public string CreatedBy { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public DateTime UpdatedAt { get; set; }
         public bool IsActive { get; set; }
     }
 }

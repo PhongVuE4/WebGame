@@ -15,7 +15,9 @@ namespace TruthOrDare_Contract.DTOs.Room
     {
         public string RoomId { get; set; }
         public string RoomName { get; set; }
+        [Newtonsoft.Json.JsonIgnore]
         public string RoomPassword { get; set; }
+        public int MaxPlayer { get; set; }
         public List<PlayerCreateRoomDTO> Players { get; set; } = new List<PlayerCreateRoomDTO>();
         public string Mode { get; set; }
         public string Status { get; set; }

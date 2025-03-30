@@ -55,12 +55,24 @@ namespace TruthOrDare_Common
                 RoomId = room.RoomId,
                 RoomName = room.RoomName,
                 CreatedBy = room.CreatedBy,
-                CreatedAt = room.CreatedAt,
                 IsActive = room.IsActive,
                 Status = room.Status,
                 AgeGroup = room.AgeGroup,
                 Mode = room.Mode,
                 Players = room.Players.Select(p => ToPlayerCreateRoomDTO(p)).ToList()
+            };
+        }
+        public static RoomDetailDTO ToRoomDetailDTO(Room room)
+        {
+            return new RoomDetailDTO
+            {
+                RoomId = room.RoomId,
+                RoomName = room.RoomName,
+                MaxPlayer = room.MaxPlayer,
+                HasPassword = room.HasPassword,
+                Status = room.Status,
+                IsActive = room.IsActive,
+                Players = room.Players.Select(p => ToPlayerDTO(p)).ToList()
             };
         }
         // PlayerCreateRoomDTO -> Player (entity)
@@ -74,6 +86,17 @@ namespace TruthOrDare_Common
                 TotalPoints = 0, // Giá trị mặc định
                 CreatedAt = DateTime.Now, // Giá trị mặc định
                 QuestionsAnswered = 0, // Giá trị mặc định
+            };
+        }
+        // Player -> PlayerDTO (entity)
+
+        public static PlayerDTO ToPlayerDTO(Player player)
+        {
+            return new PlayerDTO
+            {
+                PlayerId = player.PlayerId,
+                PlayerName = player.PlayerName,
+                IsHost = player.IsHost,
             };
         }
         // Player (entity) -> PlayerCreateRoomDTO

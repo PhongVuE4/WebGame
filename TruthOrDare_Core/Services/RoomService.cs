@@ -14,6 +14,9 @@ using TruthOrDare_Contract.DTOs.Player;
 using TruthOrDare_Common;
 using static MongoDB.Driver.WriteConcern;
 using TruthOrDare_Infrastructure.Repository;
+using TruthOrDare_Common.Exceptions;
+using TruthOrDare_Common.Exceptions.Room;
+using TruthOrDare_Common.Exceptions.Player;
 
 namespace TruthOrDare_Core.Services
 {
@@ -28,7 +31,7 @@ namespace TruthOrDare_Core.Services
             _passwordHashingService = passwordHashingService;
             _questionRepository = questionRepository;
         }
-        public async Task<RoomCreateDTO> CreateRoom(string roomName, string playerName, string roomPassword, string ageGroup, string mode)
+        public async Task<(string RoomId, string PlayerName)> CreateRoom(string roomName, string playerName, string roomPassword, string ageGroup, string mode, int maxPlayer)
         {
             var existingRoom = await _rooms
                 .Find(r => r.RoomName == roomName && r.IsActive)
@@ -68,6 +71,7 @@ namespace TruthOrDare_Core.Services
                 RoomId = roomId,
                 RoomName = roomName,
                 RoomPassword = hashedPassword,
+                MaxPlayer = maxPlayer > 0 ? maxPlayer : 2,
                 CreatedBy = playerName,
                 CreatedAt = DateTime.Now,
                 UpdatedAt = DateTime.Now,
@@ -86,10 +90,10 @@ namespace TruthOrDare_Core.Services
 
             var room = Mapper.ToRoom(roomDTO);
             await _rooms.InsertOneAsync(room);
-            return Mapper.ToRoomCreate(room);
+            return  (roomId, playerName);
         }
 
-        public async Task<RoomCreateDTO> JoinRoom(string roomId, string? playerName, string? roomPassword)
+        public async Task<(string RoomId, string PlayerId, string PlayerName)> JoinRoom(string roomId, string? playerName, string? roomPassword)
         {
             var room = await _rooms
                 .Find(r => r.RoomId == roomId && r.IsActive && r.IsDeleted ==  false)
@@ -136,37 +140,42 @@ namespace TruthOrDare_Core.Services
             room.Players.Add(newPlayer);
             await _rooms.ReplaceOneAsync(r => r.RoomId == roomId, room);
 
-            return Mapper.ToRoomCreate(room);
+            return (roomId, playerId, playerName);
         }
 
-        public async Task<Room> LeaveRoom(string roomId, string playerId)
+        public async Task<string> LeaveRoom(string roomId, string playerId)
         {
             var room = await _rooms
-                .Find(r => r.RoomId == roomId && r.IsActive)
-                .FirstOrDefaultAsync();
+                 .Find(r => r.RoomId == roomId && r.IsActive)
+                 .FirstOrDefaultAsync();
 
             if (room == null)
             {
-                throw new Exception($"Room with ID '{roomId}' does not exist or is not active.");
+                throw new RoomNotExistException(roomId);
             }
-
-            var player = room.Players.FirstOrDefault(p => p.PlayerId == playerId);
-            if (player != null)
+            if (string.IsNullOrWhiteSpace(playerId))
             {
-                room.Players.Remove(player);
-
-                if (!room.Players.Any())
-                {
-                    room.IsActive = false;
-                }
-                else if (player.IsHost && room.Players.Any())
-                {
-                    room.Players.First().IsHost = true;
-                }
-
-                await _rooms.ReplaceOneAsync(r => r.RoomId == roomId, room);
+                throw new PlayerIdCannotNull();
             }
-            return room;
+            var player = room.Players.SingleOrDefault(p => p.PlayerId == playerId);
+            if (player == null)
+            {
+                throw new PlayerIdNotFound(playerId);
+            }
+            room.Players.Remove(player);
+
+            if (!room.Players.Any())
+            {
+                room.IsActive = false;
+            }
+            else if (player.IsHost && room.Players.Any())
+            {
+                room.Players.First().IsHost = true;
+            }
+
+            await _rooms.ReplaceOneAsync(r => r.RoomId == roomId, room);
+
+            return "Leave room success";
         }
 
         public async Task<List<RoomListDTO>> GetListRoom(string? roomId)
@@ -191,8 +200,11 @@ namespace TruthOrDare_Core.Services
             {
                 RoomId = room.RoomId,
                 RoomName = room.RoomName,
+                HostName = room.Players.FirstOrDefault(a => a.IsHost).PlayerName ?? "No host",
                 PlayerCount = room.Players.Count,
+                MaxPlayer = room.MaxPlayer,
                 HasPassword = !string.IsNullOrEmpty(room.RoomPassword),
+                Status = room.Status,
                 IsActive = room.IsActive,
                 IsDeleted = room.IsDeleted,
             }).ToList();
@@ -200,24 +212,24 @@ namespace TruthOrDare_Core.Services
         public async Task<RoomDetailDTO> GetRoom(string roomId)
         {
             var room = await _rooms
-                .Find(r => r.RoomId == roomId && r.IsActive)
+                .Find(r => r.RoomId == roomId && r.IsActive && !r.IsDeleted)
                 .FirstOrDefaultAsync();
 
             if (room == null)
             {
-                throw new Exception($"Room with ID '{roomId}' does not exist or is not active.");
+                throw new RoomNotExistException(roomId);
             }
 
             return new RoomDetailDTO
             {
                 RoomId = room.RoomId,
                 RoomName = room.RoomName,
+                MaxPlayer = room.MaxPlayer,
+                HasPassword = room.HasPassword,
                 Status = room.Status,
                 AgeGroup = room.AgeGroup,
                 Mode = room.Mode,
                 CreatedBy = room.CreatedBy,
-                CreatedAt = room.CreatedAt,
-                UpdatedAt = room.UpdatedAt,
                 IsActive = room.IsActive,
                 Players = room.Players.Select(p => new PlayerDTO
                 {
@@ -247,7 +259,7 @@ namespace TruthOrDare_Core.Services
         public async Task ChangePlayerName(string roomId, string playerId, string newName)
         {
             var room = await _rooms
-                .Find(r => r.RoomId == roomId && r.IsActive)
+                .Find(r => r.RoomId == roomId && r.IsActive && !r.IsDeleted)
                 .FirstOrDefaultAsync();
 
             if (room == null)

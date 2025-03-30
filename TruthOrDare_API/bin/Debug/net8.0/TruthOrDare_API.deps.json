@@ -345,7 +345,8 @@
       "TruthOrDare_Contract/1.0.0": {
         "dependencies": {
           "Microsoft.AspNetCore.Http.Abstractions": "2.3.0",
-          "MongoDB.Driver": "3.2.1"
+          "MongoDB.Driver": "3.2.1",
+          "Newtonsoft.Json": "13.0.3"
         },
         "runtime": {
           "TruthOrDare_Contract.dll": {

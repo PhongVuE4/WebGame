@@ -16,50 +16,38 @@ namespace TruthOrDare_API.Controllers
     public class RoomsController : ControllerBase
     {
         private readonly IRoomService _roomService;
-        private readonly MongoDbContext _dbContext;
         private readonly IWebSocketHandler _websocketHandler;
 
-        public RoomsController(IRoomService roomService, MongoDbContext dbContext, IWebSocketHandler webSocketHandler)
+        public RoomsController(IRoomService roomService, IWebSocketHandler webSocketHandler)
         {
             _roomService = roomService;
-            _dbContext = dbContext;
             _websocketHandler = webSocketHandler;
         }
 
         [HttpPost("create")]
         public async Task<ActionResult> CreateRoom([FromBody] CreateRoomRequest roomCreate)
         {
-            try
             {
                 string playerName = roomCreate.PlayerName;
-                var room = await _roomService.CreateRoom(roomCreate.RoomName, playerName, roomCreate.RoomPassword, roomCreate.AgeGroup, roomCreate.Mode);
+                var room = await _roomService.CreateRoom(roomCreate.RoomName, playerName, roomCreate.RoomPassword, roomCreate.AgeGroup, roomCreate.Mode, roomCreate.MaxPlayer);
                 return Ok(room);
             }
-            catch (Exception ex)
-            {
-                return BadRequest(new { Error = ex.Message });
-            }
         }
-        [HttpPost("join")]
-        public async Task<IActionResult> JoinRoom(string roomId, string? playerName, string? roomPassword)
+        [HttpPatch("{roomId}/join")]
+        public async Task<IActionResult> JoinRoom(string roomId, [FromBody] JoinRoomDTO request)
         {
-            try
-            {
+
                 bool isAuthenticated = User.Identity?.IsAuthenticated ?? false;
-                string playerNameRandom = playerName;
+                string playerName = request.PlayerName;
 
                 if (isAuthenticated)
                 {
-                    playerNameRandom = User.Identity.Name;
+                    playerName = User.Identity.Name;
                 }
 
-                var room = await _roomService.JoinRoom(roomId, playerNameRandom, roomPassword);
-                return Ok(room);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { Error = ex.Message });
-            }
+                var room = await _roomService.JoinRoom(roomId, playerName, request.RoomPassword);
+                return Ok(new { room.RoomId, room.PlayerName });
+
         }
         [HttpPost("start")]
         public async Task<ActionResult> StartGame(string roomId, string playerId)
@@ -113,68 +101,29 @@ namespace TruthOrDare_API.Controllers
         //    return Ok();
         //}
         [HttpGet("list")]
-        public async Task<IActionResult> GetListRoom(string? roomId)
+        public async Task<IActionResult> GetListRoom(string? filters)
         {
-            try
-            {
-                var rooms = await _roomService.GetListRoom(roomId);
-                return Ok(rooms);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { Error = ex.Message });
-            }
+            var rooms = await _roomService.GetListRoom(filters);
+            return Ok(rooms);
         }
-        [HttpGet("{roomId}")]
-        public async Task<IActionResult> GetRoom(string roomId)
+        [HttpGet("{filters}")]
+        public async Task<IActionResult> GetRoom(string filters)
         {
-            try
-            {
-                var room = await _roomService.GetRoom(roomId);
-                var roomDto = Mapper.ToRoomCreateDTO(room);
-                return Ok(roomDto);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { Error = ex.Message });
-            }
+            var room = await _roomService.GetRoom(filters);
+            return Ok(room);
         }
-        [HttpPost("leave-room")]
-        public async Task<ActionResult> LeaveRoom(string roomId, string playerId)
+        [HttpPatch("{roomId}/leave-room")]
+        public async Task<ActionResult> LeaveRoom(string roomId, [FromBody] LeaveRoomDTO leave)
         {
-            try
-            {
-                var room = await _roomService.LeaveRoom(roomId, playerId);
-                var roomDto = Mapper.ToRoomCreate(room);
-                return Ok(roomDto);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { Error = ex.Message });
-            }
+            var room = await _roomService.LeaveRoom(roomId, leave.PlayerId);
+            return Ok(new { Message = room });
         }
-        [HttpGet("game-sessions")]
-        public async Task<IActionResult> GetGameSessions()
+        [HttpPatch("{roomId}/change-name")]
+        public async Task<IActionResult> ChangeName(string roomId, [FromBody] ChangeNameInRoomDTO request)
         {
-            var gameSessions = await _dbContext.GameSessions
-                .Find(_ => true)
-                .Limit(10) // Giới hạn 10 session để test
-                .ToListAsync();
-            return Ok(gameSessions);
-        }
-        [HttpPost("rooms/change-name")]
-        public async Task<IActionResult> ChangeName([FromBody] ChangeNameInRoomDTO request)
-        {
-            try
-            {
-                await _roomService.ChangePlayerName(request.RoomId, request.PlayerId, request.NewName);
-                await _websocketHandler.BroadcastMessage(request.RoomId, $"Player {request.PlayerId} has changed their name to {request.NewName}");
-                return Ok(new { Message = "Name changed successfully." });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { Error = ex.Message });
-            }
+            await _roomService.ChangePlayerName(roomId, request.PlayerId, request.NewName);
+            await _websocketHandler.BroadcastMessage(roomId, $"Player {request.PlayerId} has changed their name to {request.NewName}");
+            return Ok(new { Message = "Name changed successfully." });
         }
         
     }
