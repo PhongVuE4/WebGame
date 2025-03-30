@@ -61,7 +61,7 @@ namespace TruthOrDare_API.Controllers
             var rooms = await _roomService.GetListRoom(filters);
             return Ok(rooms);
         }
-        [HttpGet("{roomId}")]
+        [HttpGet("{filters}")]
         public async Task<IActionResult> GetRoom(string filters)
         {
 
