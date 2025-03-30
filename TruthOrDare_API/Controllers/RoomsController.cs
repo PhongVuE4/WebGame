@@ -56,16 +56,16 @@ namespace TruthOrDare_API.Controllers
         //    return Ok();
         //}
         [HttpGet("list")]
-        public async Task<IActionResult> GetListRoom(string? roomId)
+        public async Task<IActionResult> GetListRoom(string? filters)
         {
-            var rooms = await _roomService.GetListRoom(roomId);
+            var rooms = await _roomService.GetListRoom(filters);
             return Ok(rooms);
         }
         [HttpGet("{roomId}")]
-        public async Task<IActionResult> GetRoom(string roomId)
+        public async Task<IActionResult> GetRoom(string filters)
         {
 
-            var room = await _roomService.GetRoom(roomId);
+            var room = await _roomService.GetRoom(filters);
             var roomDto = Mapper.ToRoomDetailDTO(room);
             return Ok(roomDto);
         }
