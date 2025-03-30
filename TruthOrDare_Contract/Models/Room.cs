@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Text.Json.Serialization;
 
 namespace TruthOrDare_Contract.Models
 {
@@ -19,6 +20,7 @@ namespace TruthOrDare_Contract.Models
         [BsonElement("room_name")]
         public string RoomName { get; set; }
         [BsonElement("room_password")]
+        [JsonIgnore]
         public string? RoomPassword { get; set; }
         [BsonElement("max_player")]
         public int MaxPlayer { get; set; }

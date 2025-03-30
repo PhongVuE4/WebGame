@@ -7,7 +7,7 @@ namespace TruthOrDare_API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class GgameSessionsController : ControllerBase
+    public class GameSessionsController : ControllerBase
     {
         private readonly MongoDbContext _dbContext;
 

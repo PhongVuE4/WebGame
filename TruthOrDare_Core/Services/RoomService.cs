@@ -61,7 +61,7 @@ namespace TruthOrDare_Core.Services
                 RoomId = roomId,
                 RoomName = roomName,
                 RoomPassword = hashedPassword,
-                MaxPlayer = maxPlayer,
+                MaxPlayer = maxPlayer > 0 ? maxPlayer : 2,
                 CreatedBy = playerName,
                 CreatedAt = DateTime.UtcNow,
                 IsActive = true,
@@ -80,7 +80,7 @@ namespace TruthOrDare_Core.Services
             return Mapper.ToRoomCreateDTO(room);
         }
 
-        public async Task<(string RoomId, string PlayerName)> JoinRoom(string roomId, string playerName, string roomPassword = null)
+        public async Task<(string RoomId,string PlayerId, string PlayerName)> JoinRoom(string roomId, string playerName, string roomPassword)
         {
             var room = await _rooms
                 .Find(r => r.RoomId == roomId && r.IsActive && r.IsDeleted ==  false)
@@ -128,7 +128,7 @@ namespace TruthOrDare_Core.Services
             room.Players.Add(newPlayer);
             await _rooms.ReplaceOneAsync(r => r.RoomId == roomId, room);
 
-            return (roomId, playerName);
+            return (roomId, playerId, playerName);
         }
 
         public async Task<string> LeaveRoom(string roomId, string playerId)

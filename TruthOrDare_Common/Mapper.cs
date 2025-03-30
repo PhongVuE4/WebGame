@@ -32,7 +32,6 @@ namespace TruthOrDare_Common
             {
                 RoomId = room.RoomId,
                 RoomName = room.RoomName,
-                RoomPassword = room.RoomPassword,
                 MaxPlayer = room.MaxPlayer,
                 CreatedBy = room.CreatedBy,
                 CreatedAt = room.CreatedAt,
