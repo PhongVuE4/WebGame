@@ -35,9 +35,10 @@ namespace TruthOrDare_Infrastructure
 
                 var client = new MongoClient(connectionString);
                 _database = client.GetDatabase(config["MongoDb:DatabaseName"]);
-
+                Console.WriteLine($"Database: {_database.DatabaseNamespace.DatabaseName}");
                 // Kiểm tra kết nối bằng cách gọi một lệnh đơn giản
                 var dbList = client.ListDatabaseNames().ToList();
+                Console.WriteLine("Connected successfully, databases: " + string.Join(", ", dbList));
             }
             catch (MongoAuthenticationException ex)
             {
