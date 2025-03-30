@@ -1,8 +1,8 @@
 [
   {
-    "ContainingType": "TruthOrDare_API.Controllers.GgameSessionsController",
+    "ContainingType": "TruthOrDare_API.Controllers.GameSessionsController",
     "Method": "GetGameSessions",
-    "RelativePath": "api/GgameSessions/game-sessions",
+    "RelativePath": "api/GameSessions/game-sessions",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,

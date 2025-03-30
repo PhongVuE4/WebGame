@@ -7,7 +7,7 @@ using TruthOrDare_Core.Services;
 using TruthOrDare_Common.Middleware;
 using Microsoft.AspNetCore.Mvc;
 using TruthOrDare_Common.Exceptions;
-
+using Newtonsoft.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
