@@ -1,6 +1,7 @@
 ﻿using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using System.Reflection;
 
 namespace TruthOrDare_API
 {
@@ -10,11 +11,40 @@ namespace TruthOrDare_API
         {
             if (parameter.Name.Equals("filters", StringComparison.OrdinalIgnoreCase))
             {
-                parameter.Schema = new OpenApiSchema
+                // Get the controller and action names to determine which schema to use
+                var actionDescriptor = context.ParameterInfo?.Member as MethodInfo;
+                var controllerName = actionDescriptor?.DeclaringType?.Name;
+                var actionName = actionDescriptor?.Name;
+
+                if (controllerName?.Contains("Room", StringComparison.OrdinalIgnoreCase) == true ||
+                    actionName?.Contains("Room", StringComparison.OrdinalIgnoreCase) == true)
                 {
-                    Type = "string",
-                    Example = new OpenApiString("{\"mode\": \"party\", \"type\": \"dare\", \"difficulty\": \"medium\", \"age_group\": \"all\"}\r\n\r\n")
-                };
+                    // Room filters
+                    parameter.Schema = new OpenApiSchema
+                    {
+                        Type = "string",
+                        Example = new OpenApiString("{\"roomId\": \"AVC123\"}")
+                    };
+                }
+                else if (controllerName?.Contains("Question", StringComparison.OrdinalIgnoreCase) == true ||
+                         actionName?.Contains("Question", StringComparison.OrdinalIgnoreCase) == true)
+                {
+                    // Question filters
+                    parameter.Schema = new OpenApiSchema
+                    {
+                        Type = "string",
+                        Example = new OpenApiString("{\"mode\": \"party\", \"type\": \"dare\", \"difficulty\": \"medium\", \"age_group\": \"all\"}")
+                    };
+                }
+                else
+                {
+                    // Default filters schema
+                    parameter.Schema = new OpenApiSchema
+                    {
+                        Type = "string",
+                        Example = new OpenApiString("{\"key\": \"value\"}")
+                    };
+                }
             }
         }
     }

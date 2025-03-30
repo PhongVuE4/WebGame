@@ -61,11 +61,11 @@ namespace TruthOrDare_API.Controllers
             var rooms = await _roomService.GetListRoom(filters);
             return Ok(rooms);
         }
-        [HttpGet("{filters}")]
-        public async Task<IActionResult> GetRoom(string filters)
+        [HttpGet("{roomId}")]
+        public async Task<IActionResult> GetRoom(string roomId)
         {
 
-            var room = await _roomService.GetRoom(filters);
+            var room = await _roomService.GetRoom(roomId);
             var roomDto = Mapper.ToRoomDetailDTO(room);
             return Ok(roomDto);
         }
