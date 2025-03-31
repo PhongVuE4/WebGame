@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace TruthOrDare_Contract.DTOs.Room
 {
-    public class LeaveRoomDTO
+    public class RoomGetQuestionDTO
     {
-        public string PlayerId {  get; set; }
+        public string PlayerId { get; set; }
+        public string QuestionType { get; set; }
     }
 }
