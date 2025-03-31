@@ -107,9 +107,9 @@ namespace TruthOrDare_API.Controllers
             return Ok(rooms);
         }
         [HttpGet("{filters}")]
-        public async Task<IActionResult> GetRoom(string filters)
+        public async Task<IActionResult> GetRoom(string roomId)
         {
-            var room = await _roomService.GetRoom(filters);
+            var room = await _roomService.GetRoom(roomId);
             return Ok(room);
         }
         [HttpPatch("{roomId}/leave-room")]

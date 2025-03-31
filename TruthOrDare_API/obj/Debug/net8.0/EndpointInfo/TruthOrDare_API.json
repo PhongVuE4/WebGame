@@ -344,6 +344,13 @@
         ],
         "parameters": [
           {
+            "name": "roomId",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
             "name": "filters",
             "in": "path",
             "required": true,
