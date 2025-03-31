@@ -19,6 +19,9 @@ namespace TruthOrDare_Common
                 RoomName = dto.RoomName,
                 RoomPassword = dto.RoomPassword,
                 MaxPlayer = dto.MaxPlayer,
+                Status = dto.Status,
+                Mode = dto.Mode,
+                AgeGroup = dto.AgeGroup,
                 CreatedBy = dto.CreatedBy,
                 CreatedAt = dto.CreatedAt,
                 IsActive = dto.IsActive,
@@ -49,6 +52,8 @@ namespace TruthOrDare_Common
                 MaxPlayer = room.MaxPlayer,
                 HasPassword = room.HasPassword,
                 Status = room.Status,
+                Mode = room.Mode,
+                AgeGroup = room.AgeGroup,
                 IsActive = room.IsActive,
                 Players = room.Players.Select(p => ToPlayerCreateRoomDTO(p)).ToList()
             };

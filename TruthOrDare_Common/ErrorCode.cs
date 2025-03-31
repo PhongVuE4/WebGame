@@ -14,12 +14,25 @@ namespace TruthOrDare_Common
         RoomIdNotFound = 1003, // roomid ko ton tai
         RoomPasswordRequired = 1004,
         RoomPasswordIsWrong = 1005,
+        RoomRequiredHost = 1006,
+        RoomModeException = 1007,
+        GameMustbePlaying = 1008,
+        RoomNotFoundPlayerIdException = 1009,
+        QuestionTypeWrong = 1010,
+        RoomEndStatusException = 1011,
+        RoomResetStatusException = 1012,
+        RoomAgeGroupException= 1013,
+        RoomNameRequiredException = 1014,
+        RoomStartStatusException = 1015,
+
+
 
         //player
         PlayerNameLength = 2001, // do dai ten player
         FullPlayer = 2002, //phong full nguoi choi
         PlayerIdNotFound = 2003, // ko tim thay player id
         PlayerNameExisted = 2004, // ten player da ton tai
+        PlayerNameRequiredException = 2005,
 
         //question
         QuestionTextRequired = 3001, // bat buoc nhap text question

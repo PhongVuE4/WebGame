@@ -10,7 +10,7 @@ namespace TruthOrDare_Contract.IRepository
 {
     public interface IQuestionRepository
     {
-        Task<Question> GetRandomQuestionAsync(List<string> excludeIds);
+        Task<Question> GetRandomQuestionAsync(string questionType, string ageGroup, List<string> excludeIds);
         Task<int> GetPointsForQuestionAsync(string questionId);
         Task<Question> CreateQuestion(QuestionCreateDTO question);
         Task<List<Question>> GetQuestions(string? filter);

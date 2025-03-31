@@ -109,6 +109,50 @@ namespace TruthOrDare_Common.Middleware
             {
                 await HandleExceptionAsync(context, (int)HttpStatusCode.UnprocessableEntity, (int)ErrorCode.MultipleValidationErrors, ex.Message, ex.Errors.ToDictionary(e => e, e => new string[] { e }));
             }
+            catch (RoomRequiredHost ex)
+            {
+                await HandleExceptionAsync(context, (int)HttpStatusCode.UnprocessableEntity, (int)ErrorCode.RoomRequiredHost, ex.Message);
+            }
+            catch (RoomModeException ex)
+            {
+                await HandleExceptionAsync(context, (int)HttpStatusCode.UnprocessableEntity, (int)ErrorCode.RoomModeException, ex.Message);
+            }
+            catch (GameMustbePlaying ex)
+            {
+                await HandleExceptionAsync(context, (int)HttpStatusCode.UnprocessableEntity, (int)ErrorCode.GameMustbePlaying, ex.Message);
+            }
+            catch (RoomNotFoundPlayerIdException ex)
+            {
+                await HandleExceptionAsync(context, (int)HttpStatusCode.UnprocessableEntity, (int)ErrorCode.RoomNotFoundPlayerIdException, ex.Message);
+            }
+            catch (QuestionTypeWrong ex)
+            {
+                await HandleExceptionAsync(context, (int)HttpStatusCode.UnprocessableEntity, (int)ErrorCode.QuestionTypeWrong, ex.Message);
+            }
+            catch (RoomEndStatusException ex)
+            {
+                await HandleExceptionAsync(context, (int)HttpStatusCode.UnprocessableEntity, (int)ErrorCode.RoomEndStatusException, ex.Message);
+            }
+            catch (RoomResetStatusException ex)
+            {
+                await HandleExceptionAsync(context, (int)HttpStatusCode.UnprocessableEntity, (int)ErrorCode.RoomResetStatusException, ex.Message);
+            }
+            catch (RoomAgeGroupException ex)
+            {
+                await HandleExceptionAsync(context, (int)HttpStatusCode.UnprocessableEntity, (int)ErrorCode.RoomAgeGroupException, ex.Message);
+            }
+            catch (RoomNameRequiredException ex)
+            {
+                await HandleExceptionAsync(context, (int)HttpStatusCode.UnprocessableEntity, (int)ErrorCode.RoomNameRequiredException, ex.Message);
+            }
+            catch (PlayerNameRequiredException ex)
+            {
+                await HandleExceptionAsync(context, (int)HttpStatusCode.UnprocessableEntity, (int)ErrorCode.PlayerNameRequiredException, ex.Message);
+            }
+            catch (RoomStartStatusException ex)
+            {
+                await HandleExceptionAsync(context, (int)HttpStatusCode.UnprocessableEntity, (int)ErrorCode.RoomStartStatusException, ex.Message);
+            }
             catch (ArgumentException ex)
             {
                 await HandleExceptionAsync(context, (int)HttpStatusCode.UnprocessableEntity, (int)ErrorCode.ValidationError, ex.Message);
@@ -128,7 +172,7 @@ namespace TruthOrDare_Common.Middleware
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = statusCode;
 
-            var errorResponse = new ErrorResponse(statusCode, errorCode, message, errors);
+            var errorResponse = new ErrorResponse(statusCode, errorCode, message);
             var result = JsonSerializer.Serialize(errorResponse);
             return context.Response.WriteAsync(result);
         }
