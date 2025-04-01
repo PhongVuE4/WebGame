@@ -153,6 +153,22 @@ namespace TruthOrDare_Common.Middleware
             {
                 await HandleExceptionAsync(context, (int)HttpStatusCode.UnprocessableEntity, (int)ErrorCode.RoomStartStatusException, ex.Message);
             }
+            catch (RoomNotYourTurn ex)
+            {
+                await HandleExceptionAsync(context, (int)HttpStatusCode.UnprocessableEntity, (int)ErrorCode.RoomNotYourTurn, ex.Message);
+            }
+            catch (RoomNoTimestampException ex)
+            {
+                await HandleExceptionAsync(context, (int)HttpStatusCode.UnprocessableEntity, (int)ErrorCode.RoomNoTimestampException, ex.Message);
+            }
+            catch (RoomNeedMoreTimeException ex)
+            {
+                await HandleExceptionAsync(context, (int)HttpStatusCode.UnprocessableEntity, (int)ErrorCode.RoomNeedMoreTimeException, ex.Message);
+            }
+            catch (RoomNextPlayerException ex)
+            {
+                await HandleExceptionAsync(context, (int)HttpStatusCode.UnprocessableEntity, (int)ErrorCode.RoomNextPlayerException, ex.Message);
+            }
             catch (ArgumentException ex)
             {
                 await HandleExceptionAsync(context, (int)HttpStatusCode.UnprocessableEntity, (int)ErrorCode.ValidationError, ex.Message);
