@@ -36,7 +36,7 @@ namespace TruthOrDare_Contract.Models
         public string CurrentQuestionId { get; set; }
 
         [BsonElement("current_player_turn")]
-        public string CurrentPlayerTurn { get; set; }
+        public string CurrentPlayerIdTurn { get; set; }
 
         [BsonElement("status")]
         public string Status { get; set; }
@@ -60,5 +60,19 @@ namespace TruthOrDare_Contract.Models
         public bool IsDeleted { get; set; }
         [BsonElement("used_question_ids")]
         public List<string> UsedQuestionIds { get; set; } = new List<string>(); // Câu hỏi đã dùng
+
+        [BsonElement("history")]
+        public List<SessionHistory> History { get; set; } = new List<SessionHistory>();
+
+        // Thêm trường để lưu thời gian lấy câu hỏi cuối cùng
+        [BsonElement("last_question_timestamp")]
+        [BsonIgnoreIfNull]
+        public DateTime? LastQuestionTimestamp { get; set; }// Thời gian trả lời câu hỏi
+        [BsonElement("last_turn_timestamp")]
+        [BsonIgnoreIfNull]
+        public DateTime? LastTurnTimestamp { get; set; } // Thời gian bắt đầu lượt
+        [BsonElement("is_last_question_assigned")]
+        [BsonIgnoreIfNull]
+        public bool? IsLastQuestionAssigned { get; set; }
     }
 }

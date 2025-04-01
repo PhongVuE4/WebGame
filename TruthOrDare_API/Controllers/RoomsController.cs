@@ -30,7 +30,7 @@ namespace TruthOrDare_API.Controllers
 
         {
             string playerName = roomCreate.PlayerName;
-            var room = await _roomService.CreateRoom(roomCreate.RoomName, playerName, roomCreate.RoomPassword, roomCreate.MaxPlayer);
+            var room = await _roomService.CreateRoom(roomCreate.RoomName, playerName, roomCreate.RoomPassword, roomCreate.AgeGroup, roomCreate.Mode, roomCreate.MaxPlayer);
             return Ok(room);
         }
 
@@ -44,17 +44,10 @@ namespace TruthOrDare_API.Controllers
             {
                 playerName = User.Identity.Name;
             }
-
             var room = await _roomService.JoinRoom(roomId, playerName, request.RoomPassword);
-            return Ok(new { room.RoomId, room.PlayerId,room.PlayerName });
+            return Ok(new { room.roomId, room.playerId,room.playerName});
 
         }
-        //[HttpGet("complete-turn")]
-        //public async Task<IActionResult> CompleteTurn(string roomId, string playerId, string response)
-        //{
-        //    await _roomService.CompleteTurnAsync(roomId, playerId, response);
-        //    return Ok();
-        //}
         [HttpGet("list")]
         public async Task<IActionResult> GetListRoom(string? filters)
         {
@@ -64,18 +57,15 @@ namespace TruthOrDare_API.Controllers
         [HttpGet("{roomId}")]
         public async Task<IActionResult> GetRoom(string roomId)
         {
-
             var room = await _roomService.GetRoom(roomId);
             var roomDto = Mapper.ToRoomDetailDTO(room);
             return Ok(roomDto);
         }
         [HttpPatch("{roomId}/leave-room")]
-        public async Task<ActionResult> LeaveRoom(string roomId, [FromBody] LeaveRoomDTO leave)
+        public async Task<ActionResult> LeaveRoom(string roomId, [FromBody] RoomActionDTO action)
         {
-
-            var room = await _roomService.LeaveRoom(roomId, leave.PlayerId);
-            return Ok(new { Message = room });
-
+            var room = await _roomService.LeaveRoom(roomId, action.PlayerId);
+            return Ok(new { message = room });
         }
        
         [HttpPatch("{roomId}/change-name")]
@@ -83,7 +73,46 @@ namespace TruthOrDare_API.Controllers
         {
             await _roomService.ChangePlayerName(roomId, request.PlayerId, request.NewName);
             await _websocketHandler.BroadcastMessage(roomId, $"Player {request.PlayerId} has changed their name to {request.NewName}");
-            return Ok(new { Message = "Name changed successfully." });
+            return Ok(new { message = "Name changed successfully." });
+        }
+        [HttpPatch("{roomId}/start")]
+        public async Task<ActionResult> StartGame(string roomId, [FromBody] RoomActionDTO action)
+        {
+                await _roomService.StartGame(roomId, action.PlayerId);
+                return Ok(new {  message = "Game is started."});
+        }
+        [HttpPatch("{roomId}/reset-game")]
+        public async Task<ActionResult> ResetGame(string roomId, [FromBody] RoomActionDTO action)
+        { 
+                await _roomService.ResetGame(roomId, action.PlayerId);
+                return Ok(new { message = "Reset game successful." });
+
+        }
+        [HttpPatch("{roomId}/get-question")]
+        public async Task<ActionResult> GetRandomQuestion(string roomId, [FromBody] RoomGetQuestionDTO action)
+        {
+                var (_question, _isLastQuestion, _totalQuestions, _usedQuestions) = await _roomService.GetRandomQuestionForRoom(roomId, action.PlayerId, action.QuestionType);
+                if (_question == null)
+                {
+                    return Ok(new { message = "No more questions available. Game has ended.", isGameEnded = true });
+                }
+                return Ok(new
+                {
+                    question = _question,
+                    isLastQuestion = _isLastQuestion,
+                    totalQuestions = _totalQuestions,
+                    usedQuestions = _usedQuestions
+                });
+        }
+        [HttpPatch("{roomId}/next-player")]
+        public async Task<ActionResult> NextPlayer(string roomId, [FromBody] RoomActionDTO action)
+        {
+                var (_nextPlayerId, _isGameEnded, _message) = await _roomService.NextPlayer(roomId, action.PlayerId);
+            if (_isGameEnded)
+            {
+                return Ok(new { IsGameEnded = true, Message = _message });
+            }
+            return Ok(new {  nextPlayerId = _nextPlayerId, isGameEnded = false });
         }
     }
 }

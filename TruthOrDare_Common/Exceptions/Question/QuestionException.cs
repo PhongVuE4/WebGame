@@ -96,7 +96,22 @@ namespace TruthOrDare_Common.Exceptions.Question
         {
         }
     }
-
+    // Lỗi logic nghiệp vụ: Trạng thái phòng phải là playing
+    public class GameMustbePlaying : Exception
+    {
+        public GameMustbePlaying()
+            : base("Game must be in Playing status to get questions.")
+        {
+        }
+    }
+    // Lỗi logic nghiệp vụ: type phải là truth hoặc dare
+    public class QuestionTypeWrong : Exception
+    {
+        public QuestionTypeWrong()
+            : base("Question type must be truth or dare.")
+        {
+        }
+    }
     // Lỗi validation: JSON filters không hợp lệ
     public class InvalidFiltersException : Exception
     {
