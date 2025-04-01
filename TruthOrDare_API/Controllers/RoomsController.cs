@@ -48,12 +48,6 @@ namespace TruthOrDare_API.Controllers
             return Ok(new { room.roomId, room.playerId,room.playerName});
 
         }
-        //[HttpGet("complete-turn")]
-        //public async Task<IActionResult> CompleteTurn(string roomId, string playerId, string response)
-        //{
-        //    await _roomService.CompleteTurnAsync(roomId, playerId, response);
-        //    return Ok();
-        //}
         [HttpGet("list")]
         public async Task<IActionResult> GetListRoom(string? filters)
         {
@@ -97,12 +91,28 @@ namespace TruthOrDare_API.Controllers
         [HttpPatch("{roomId}/get-question")]
         public async Task<ActionResult> GetRandomQuestion(string roomId, [FromBody] RoomGetQuestionDTO action)
         {
-                var question = await _roomService.GetRandomQuestionForRoom(roomId, action.PlayerId, action.QuestionType);
-                if (question == null)
+                var (_question, _isLastQuestion, _totalQuestions, _usedQuestions) = await _roomService.GetRandomQuestionForRoom(roomId, action.PlayerId, action.QuestionType);
+                if (_question == null)
                 {
-                    return Ok(new { message = "No more questions available. Game has ended." });
+                    return Ok(new { message = "No more questions available. Game has ended.", isGameEnded = true });
                 }
-                return Ok(question);
+                return Ok(new
+                {
+                    question = _question,
+                    isLastQuestion = _isLastQuestion,
+                    totalQuestions = _totalQuestions,
+                    usedQuestions = _usedQuestions
+                });
+        }
+        [HttpPatch("{roomId}/next-player")]
+        public async Task<ActionResult> NextPlayer(string roomId, [FromBody] RoomActionDTO action)
+        {
+                var (_nextPlayerId, _isGameEnded, _message) = await _roomService.NextPlayer(roomId, action.PlayerId);
+            if (_isGameEnded)
+            {
+                return Ok(new { IsGameEnded = true, Message = _message });
+            }
+            return Ok(new {  nextPlayerId = _nextPlayerId, isGameEnded = false });
         }
     }
 }

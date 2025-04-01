@@ -24,6 +24,10 @@ namespace TruthOrDare_Common
         RoomAgeGroupException= 1013,
         RoomNameRequiredException = 1014,
         RoomStartStatusException = 1015,
+        RoomNotYourTurn = 1016,
+        RoomNextPlayerException = 1017,
+        RoomNoTimestampException = 1018,
+        RoomNeedMoreTimeException = 1019,
 
 
 

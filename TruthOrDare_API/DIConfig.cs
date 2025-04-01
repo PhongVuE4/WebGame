@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using TruthOrDare_Contract;
 using TruthOrDare_Contract.IRepository;
 using TruthOrDare_Contract.IServices;
@@ -24,7 +25,9 @@ namespace TruthOrDare_API
             services.AddScoped<IWebSocketHandler, WebSocketHandler>();
             services.AddScoped<IPasswordHashingService, PasswordHashingService>();
             // Register MongoDbContext
-            services.AddSingleton<MongoDbContext>();
+            services.AddSingleton<MongoDbContext>(sp => new MongoDbContext(sp.GetRequiredService<IConfiguration>()));
+            //Register AutoNextPlayerService
+            services.AddHostedService<AutoNextPlayerService>();
             return services;
         }
     }

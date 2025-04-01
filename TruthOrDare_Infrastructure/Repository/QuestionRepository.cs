@@ -23,22 +23,44 @@ namespace TruthOrDare_Infrastructure.Repository
             _questions = context.Questions;
         }
 
-        public async Task<Question> GetRandomQuestionAsync(string questionType, string ageGroup, List<string> excludeIds)
+        public async Task<Question> GetRandomQuestionAsync(string questionType,string mode, string ageGroup, List<string> excludeIds)
         {
             var filter = Builders<Question>.Filter.And(
-                Builders<Question>.Filter.Eq(a => a.Type, questionType),
-                Builders<Question>.Filter.Eq(a => a.AgeGroup, ageGroup),
-                Builders<Question>.Filter.Not(Builders<Question>.Filter.In(q => q.Id, excludeIds)),
+                Builders<Question>.Filter.Eq(a => a.AgeGroup, ageGroup.ToLower()),
+                Builders<Question>.Filter.Nin(q => q.Id, excludeIds),
                 Builders<Question>.Filter.Eq(a => a.IsDeleted, false));
-            var question = await _questions.Find(filter).Limit(1).FirstOrDefaultAsync();
-
-            if (question != null)
+            // Nếu mode là "party", lọc theo mode và lấy cả "truth" lẫn "dare"
+            if (mode.ToLower() == "party")
             {
-                excludeIds.Add(question.Id); // Thêm ID để tránh trùng lặp
+                filter = Builders<Question>.Filter.And(
+                    filter,
+                    Builders<Question>.Filter.Eq(q => q.Mode, "party")
+                );
+            }
+            var questions = await _questions.Find(filter).ToListAsync();
+            if (questions.Count == 0) return null;
+
+            // Lấy ngẫu nhiên từ danh sách (không cần ưu tiên type trong "party")
+            return questions[new Random().Next(questions.Count)];
+        }
+        public async Task<int> GetTotalQuestionsAsync(string questionType,string mode, string ageGroup)
+        {
+            var filter = Builders<Question>.Filter.And(
+        Builders<Question>.Filter.Eq(q => q.AgeGroup, ageGroup.ToLower()),
+        Builders<Question>.Filter.Eq(q => q.IsDeleted, false));
+
+            if (mode.ToLower() == "party")
+            {
+                filter = Builders<Question>.Filter.And(
+                    filter,
+                    Builders<Question>.Filter.Eq(q => q.Mode, "party")
+                );
             }
 
-            return question;
+            var count = await _questions.CountDocumentsAsync(filter);
+            return (int)count;
         }
+
         public async Task<List<Question>> GetQuestions(string? filters)
         {
             var baseFilter = Builders<Question>.Filter.Eq(q => q.IsDeleted, false);
