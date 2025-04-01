@@ -518,7 +518,7 @@ namespace TruthOrDare_Core.Services
             Console.WriteLine($"Time elapsed in room {roomId}: {timeElapsed} seconds");
 
             // Yêu cầu 5 giây cho thao tác thủ công nếu đã lấy câu hỏi
-            if (roomEntity.LastQuestionTimestamp.HasValue && timeElapsed < 5)
+            if (roomEntity.LastQuestionTimestamp.HasValue && timeElapsed < 1)
             {
                 throw new RoomNeedMoreTimeException();
             }
