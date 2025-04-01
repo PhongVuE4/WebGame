@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.WebSockets;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using TruthOrDare_Contract.IServices;
 using TruthOrDare_Contract.Models;
@@ -13,6 +14,7 @@ namespace TruthOrDare_Core.Services
     public class WebSocketHandler : IWebSocketHandler
     {
         private readonly IRoomService _roomService;
+        private readonly CancellationTokenSource _cts = new CancellationTokenSource();
 
         public WebSocketHandler(IRoomService roomService)
         {
@@ -25,10 +27,15 @@ namespace TruthOrDare_Core.Services
             try
             {
                 room = await _roomService.GetRoom(roomId);
+                if (room.Status.ToLower() != "waiting" && room.Status.ToLower() != "playing")
+                {
+                    await webSocket.CloseAsync(WebSocketCloseStatus.PolicyViolation, "Room is not active.", CancellationToken.None);
+                    return;
+                }
             }
             catch (Exception ex)
             {
-                await webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, ex.Message, CancellationToken.None);
+                await webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, $"Error getting room: {ex.Message}", CancellationToken.None);
                 return;
             }
 
@@ -39,17 +46,20 @@ namespace TruthOrDare_Core.Services
                 return;
             }
 
-            player.WebSocket = webSocket;
+            // Đồng bộ hóa gán WebSocket để tránh race condition
+            lock (player)
+            {
+                player.WebSocket = webSocket;
+            }
+
             await BroadcastMessage(roomId, $"{player.PlayerName} has joined the room.");
 
             var buffer = new byte[1024 * 4];
-            WebSocketReceiveResult result;
-
             try
             {
-                while (webSocket.State == WebSocketState.Open)
+                while (webSocket.State == WebSocketState.Open && !_cts.IsCancellationRequested)
                 {
-                    result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
+                    var result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), _cts.Token);
 
                     if (result.MessageType == WebSocketMessageType.Text)
                     {
@@ -58,30 +68,58 @@ namespace TruthOrDare_Core.Services
                     }
                     else if (result.MessageType == WebSocketMessageType.Close)
                     {
-                        await _roomService.LeaveRoom(roomId, playerId);
-                        await BroadcastMessage(roomId, $"{player.PlayerName} has left the room.");
-                        await webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Client disconnected", CancellationToken.None);
+                        await HandlePlayerDisconnect(roomId, playerId, webSocket, "Client disconnected");
                         break;
                     }
                 }
             }
+            catch (OperationCanceledException)
+            {
+                // Ứng dụng đang tắt, xử lý ngắt kết nối
+                await HandlePlayerDisconnect(roomId, playerId, webSocket, "Server shutdown");
+            }
             catch (Exception ex)
             {
+                await HandlePlayerDisconnect(roomId, playerId, webSocket, $"Error: {ex.Message}");
+            }
+        }
+
+        private async Task HandlePlayerDisconnect(string roomId, string playerId, WebSocket webSocket, string reason)
+        {
+            try
+            {
                 await _roomService.LeaveRoom(roomId, playerId);
-                await BroadcastMessage(roomId, $"{player.PlayerName} has left the room due to an error: {ex.Message}");
+                await BroadcastMessage(roomId, $"{(await _roomService.GetRoom(roomId))?.Players.FirstOrDefault(p => p.PlayerId == playerId)?.PlayerName ?? "A player"} has left the room: {reason}");
+            }
+            finally
+            {
+                if (webSocket.State == WebSocketState.Open)
+                {
+                    await webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, reason, CancellationToken.None);
+                }
             }
         }
 
         public async Task BroadcastMessage(string roomId, string message)
         {
-            var room = await _roomService.GetRoom(roomId);
-            if (room == null) return;
+            Room room;
+            try
+            {
+                room = await _roomService.GetRoom(roomId);
+                if (room == null) return;
+            }
+            catch (Exception)
+            {
+                return; // Bỏ qua nếu không lấy được phòng
+            }
 
             var messageBytes = Encoding.UTF8.GetBytes(message);
+            var tasks = new List<Task>();
             foreach (var player in room.Players.Where(p => p.WebSocket != null && p.WebSocket.State == WebSocketState.Open))
             {
-                await player.WebSocket.SendAsync(new ArraySegment<byte>(messageBytes), WebSocketMessageType.Text, true, CancellationToken.None);
+                tasks.Add(player.WebSocket.SendAsync(new ArraySegment<byte>(messageBytes), WebSocketMessageType.Text, true, _cts.Token));
             }
+            await Task.WhenAll(tasks);
         }
     }
 }

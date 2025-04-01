@@ -9,17 +9,23 @@ namespace TruthOrDare_Common.Exceptions
 {
     public class ErrorResponse
     {
-        public int StatusCode { get; set; }
-        public int ErrorCode { get; set; }
-        public string Message { get; set; }
-        public IDictionary<string, string[]> Errors { get; set; }
+        public int statusCode { get; set; }
+        public ErrorDetails errors { get; set; }
 
-        public ErrorResponse(int statusCode, int errorCode, string message, IDictionary<string, string[]> errors = null)
+        public ErrorResponse(int statusCode, int errorCode, string message = null)
         {
-            StatusCode = statusCode;
-            ErrorCode = errorCode;
-            Message = message;
-            Errors = errors;
+            this.statusCode = statusCode;
+            this.errors = new ErrorDetails
+            {
+                errorCode = errorCode,
+                message = message
+            };
+        }
+
+        public class ErrorDetails
+        {
+            public int errorCode { get; set; }
+            public string message { get; set; }
         }
     }
 }
