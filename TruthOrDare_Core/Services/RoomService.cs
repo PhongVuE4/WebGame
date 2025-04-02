@@ -370,7 +370,9 @@ namespace TruthOrDare_Core.Services
             roomEntity.History.Add(new SessionHistory
             {
                 QuestionId = question.Id,
+                QuestionText = question.Text,
                 PlayerId = playerId,
+                PlayerName = player.PlayerName,
                 Timestamp = DateTime.Now,
                 Status = "assigned"
             });
@@ -381,7 +383,6 @@ namespace TruthOrDare_Core.Services
             roomEntity.LastTurnTimestamp = DateTime.Now; // Đặt thời gian lượt đầu tiên
 
             var result = await _rooms.ReplaceOneAsync(r => r.RoomId == roomId, roomEntity);
-            Console.WriteLine($"Updated room {roomId}: History={roomEntity.History.Count}, UsedQuestionIds={roomEntity.UsedQuestionIds.Count}, LastQuestionTimestamp={roomEntity.LastQuestionTimestamp}, Modified={result.ModifiedCount}");
            
             int usedQuestionsAfter = roomEntity.UsedQuestionIds.Count;
             int remainingQuestionsAfter = totalQuestions - roomEntity.UsedQuestionIds.Count;
@@ -515,7 +516,6 @@ namespace TruthOrDare_Core.Services
             {
                 throw new RoomNoTimestampException();
             }
-            Console.WriteLine($"Time elapsed in room {roomId}: {timeElapsed} seconds");
 
             // Yêu cầu 5 giây cho thao tác thủ công nếu đã lấy câu hỏi
             if (roomEntity.LastQuestionTimestamp.HasValue && timeElapsed < 5)
@@ -530,7 +530,6 @@ namespace TruthOrDare_Core.Services
             roomEntity.LastTurnTimestamp = DateTime.Now; // Đặt lại thời gian lượt mới
 
             var result = await _rooms.ReplaceOneAsync(r => r.RoomId == roomId, roomEntity);
-            Console.WriteLine($"Switched from {currentPlayerId} to {roomEntity.CurrentPlayerIdTurn} in room {roomId}, Modified={result.ModifiedCount}");
 
             
             return (roomEntity.CurrentPlayerIdTurn, false, null); // Trả về ID của người chơi tiếp theo
@@ -560,6 +559,7 @@ namespace TruthOrDare_Core.Services
             {
                 Id = ObjectId.GenerateNewId().ToString(), // Dùng ObjectId cho MongoDB
                 RoomId = roomEntity.RoomId,
+                RoomName = roomEntity.RoomName,
                 StartTime = roomEntity.CreatedAt,
                 EndTime = DateTime.Now,
                 History = roomEntity.History, // Chuyển toàn bộ lịch sử từ RoomEntity
@@ -568,7 +568,6 @@ namespace TruthOrDare_Core.Services
             };
 
             await _gameSessions.InsertOneAsync(gameSession);
-            Console.WriteLine($"Saved GameSession for room {roomEntity.RoomId}: History={gameSession.History.Count}, TotalQuestions={gameSession.TotalQuestions}");
         }
         public async Task<List<Room>> GetActiveRooms()
         {
