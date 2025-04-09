@@ -8,7 +8,7 @@ namespace TruthOrDare_Common.Exceptions.Room
 {
     public class RoomNeedMoreTimeException : Exception
     {
-        public RoomNeedMoreTimeException() : base("Please await 5 seconds before moving to the next player!")
+        public RoomNeedMoreTimeException() : base("Please await 1 seconds before moving to the next player!")
         {
         }
     }

@@ -217,7 +217,7 @@ namespace TruthOrDare_Core.Services
             }
             var rooms = await _rooms
                 .Find(filter)
-                .ToListAsync();
+                .ToListAsync(); 
 
             return rooms.Select(room => new RoomListDTO
             {
@@ -369,10 +369,16 @@ namespace TruthOrDare_Core.Services
 
             roomEntity.History.Add(new SessionHistory
             {
-                QuestionId = question.Id,
-                QuestionText = question.Text,
                 PlayerId = playerId,
                 PlayerName = player.PlayerName,
+                Questions = new List<QuestionDetail>
+                {
+                    new QuestionDetail
+                    {
+                        QuestionId = question.Id,
+                        QuestionContent = question.Text,
+                    }
+                },
                 Timestamp = DateTime.Now,
                 Status = "assigned"
             });
@@ -518,7 +524,7 @@ namespace TruthOrDare_Core.Services
             }
 
             // Yêu cầu 5 giây cho thao tác thủ công nếu đã lấy câu hỏi
-            if (roomEntity.LastQuestionTimestamp.HasValue && timeElapsed < 5)
+            if (roomEntity.LastQuestionTimestamp.HasValue && timeElapsed < 1)
             {
                 throw new RoomNeedMoreTimeException();
             }
@@ -560,6 +566,8 @@ namespace TruthOrDare_Core.Services
                 Id = ObjectId.GenerateNewId().ToString(), // Dùng ObjectId cho MongoDB
                 RoomId = roomEntity.RoomId,
                 RoomName = roomEntity.RoomName,
+                Mode = roomEntity.Mode,
+                AgeGroup = roomEntity.AgeGroup,
                 StartTime = roomEntity.CreatedAt,
                 EndTime = DateTime.Now,
                 History = roomEntity.History, // Chuyển toàn bộ lịch sử từ RoomEntity

@@ -36,14 +36,22 @@ namespace TruthOrDare_API
                         Example = new OpenApiString("{\"mode\": \"party\", \"type\": \"dare\", \"difficulty\": \"medium\", \"age_group\": \"all\"}")
                     };
                 }
-                else if (controllerName?.Contains("GameSession", StringComparison.OrdinalIgnoreCase) == true ||
-                         actionName?.Contains("GameSession", StringComparison.OrdinalIgnoreCase) == true)
+                else if (actionName.Equals("GetGameSessions", StringComparison.OrdinalIgnoreCase))
                 {
-                    // Question filters
+                    // Game session filters
                     parameter.Schema = new OpenApiSchema
                     {
                         Type = "string",
-                        Example = new OpenApiString("{\"playerId\": \"ABC\", \"roomId\": \"ABC\"}")
+                        Example = new OpenApiString("{\"playerId\": \"f22cb65a-6a02-4919-a17c-9eb8428fa123\"}")
+                    };
+                }
+                else if (actionName.Equals("GetGameSessionDetail", StringComparison.OrdinalIgnoreCase))
+                {
+                    // Game session detail filters
+                    parameter.Schema = new OpenApiSchema
+                    {
+                        Type = "string",
+                        Example = new OpenApiString("{\"playerId\": \"f6b419f9-ac4c-4a4a-88ef-ab4fbd98c795\", \"gamesessionId\": \"67f52b27a56daf59c56f6f12\"}")
                     };
                 }
                 else
