@@ -23,40 +23,81 @@ namespace TruthOrDare_Infrastructure.Repository
             _questions = context.Questions;
         }
 
-        public async Task<Question> GetRandomQuestionAsync(string questionType,string mode, string ageGroup, List<string> excludeIds)
+        public async Task<Question> GetRandomQuestionAsync(string questionType, string mode, string ageGroup, List<string> excludeIds)
         {
-            var filter = Builders<Question>.Filter.And(
-                Builders<Question>.Filter.Eq(a => a.AgeGroup, ageGroup.ToLower()),
-                Builders<Question>.Filter.Nin(q => q.Id, excludeIds),
-                Builders<Question>.Filter.Eq(a => a.IsDeleted, false));
-            // Nếu mode là "party", lọc theo mode và lấy cả "truth" lẫn "dare"
-            if (mode.ToLower() == "party")
-            {
-                filter = Builders<Question>.Filter.And(
-                    filter,
-                    Builders<Question>.Filter.Eq(q => q.Mode, "party")
-                );
-            }
-            var questions = await _questions.Find(filter).ToListAsync();
-            if (questions.Count == 0) return null;
+            var filters = new List<FilterDefinition<Question>>
+    {
+        Builders<Question>.Filter.Eq(a => a.IsDeleted, false),
+        Builders<Question>.Filter.Nin(q => q.Id, excludeIds ?? new List<string>())
+    };
 
-            // Lấy ngẫu nhiên từ danh sách (không cần ưu tiên type trong "party")
-            return questions[new Random().Next(questions.Count)];
+            // Xử lý ageGroup
+            var ageGroupLower = ageGroup?.ToLower();
+            if (!string.IsNullOrWhiteSpace(ageGroupLower) && ageGroupLower != "all")
+            {
+                filters.Add(Builders<Question>.Filter.Eq(a => a.AgeGroup, ageGroupLower));
+            }
+
+            // Xử lý mode
+            var modeLower = mode?.ToLower();
+            if (!string.IsNullOrWhiteSpace(modeLower))
+            {
+                if (modeLower != "party" && modeLower != "friends" && modeLower != "couples")
+                {
+                    throw new InvalidQuestionModeException();
+                }
+                filters.Add(Builders<Question>.Filter.Eq(q => q.Mode, modeLower));
+            }
+
+            // Lấy tất cả câu hỏi phù hợp trước
+            var baseFilter = Builders<Question>.Filter.And(filters);
+            var allQuestions = await _questions.Find(baseFilter).ToListAsync();
+
+            if (allQuestions.Count == 0) return null;
+
+            // Xử lý questionType
+            var questionTypeLower = questionType?.ToLower();
+            if (!string.IsNullOrWhiteSpace(questionTypeLower) && questionTypeLower is "truth" or "dare")
+            {
+                // Lọc câu hỏi theo type ưu tiên
+                var preferredQuestions = allQuestions.Where(q => q.Type.ToLower() == questionTypeLower).ToList();
+                if (preferredQuestions.Count > 0)
+                {
+                    return preferredQuestions[Random.Shared.Next(preferredQuestions.Count)];
+                }
+                // Nếu không còn câu hỏi theo type yêu cầu, lấy ngẫu nhiên từ tất cả
+            }
+
+            // Nếu không còn câu hỏi theo type hoặc type không được chỉ định, lấy ngẫu nhiên từ tất cả
+            return allQuestions[Random.Shared.Next(allQuestions.Count)];
         }
-        public async Task<int> GetTotalQuestionsAsync(string questionType,string mode, string ageGroup)
+        public async Task<int> GetTotalQuestionsAsync(string questionType, string mode, string ageGroup)
         {
-            var filter = Builders<Question>.Filter.And(
-        Builders<Question>.Filter.Eq(q => q.AgeGroup, ageGroup.ToLower()),
-        Builders<Question>.Filter.Eq(q => q.IsDeleted, false));
+            var filters = new List<FilterDefinition<Question>>
+    {
+        Builders<Question>.Filter.Eq(q => q.IsDeleted, false)
+    };
 
-            if (mode.ToLower() == "party")
+            // Xử lý ageGroup
+            var ageGroupLower = ageGroup?.ToLower();
+            if (!string.IsNullOrWhiteSpace(ageGroupLower) && ageGroupLower != "all")
             {
-                filter = Builders<Question>.Filter.And(
-                    filter,
-                    Builders<Question>.Filter.Eq(q => q.Mode, "party")
-                );
+                filters.Add(Builders<Question>.Filter.Eq(q => q.AgeGroup, ageGroupLower));
             }
 
+            // Xử lý mode
+            var modeLower = mode?.ToLower();
+            if (!string.IsNullOrWhiteSpace(modeLower))
+            {
+                if (modeLower != "party" && modeLower != "friends" && modeLower != "couples")
+                {
+                    throw new InvalidQuestionModeException();
+                }
+                filters.Add(Builders<Question>.Filter.Eq(q => q.Mode, modeLower));
+            }
+
+            // Không lọc theo questionType, đếm tổng tất cả truth và dare
+            var filter = Builders<Question>.Filter.And(filters);
             var count = await _questions.CountDocumentsAsync(filter);
             return (int)count;
         }
@@ -120,7 +161,12 @@ namespace TruthOrDare_Infrastructure.Repository
                 {
                     throw new InvalidQuestionAgeGroupException();
                 }
-                conditions.Add(Builders<Question>.Filter.Eq(q => q.AgeGroup, ageGroup));
+                // Chỉ thêm bộ lọc nếu ageGroup không phải "all"
+                if (agegroupLower != "all")
+                {
+                    conditions.Add(Builders<Question>.Filter.Eq(q => q.AgeGroup, ageGroup));
+                }
+                // Nếu ageGroup = "all", không thêm điều kiện, để lấy tất cả
             }
             FilterDefinition<Question> filterBuilder;
             if (conditions.Any())

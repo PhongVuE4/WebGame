@@ -11,7 +11,7 @@ namespace TruthOrDare_Common.Exceptions
         public List<string> Errors { get; }
 
         public MultipleValidationException(List<string> errors)
-            : base("Multiple validation errors occurred.")
+            : base($"Multiple validation errors occurred.")
         {
             Errors = errors ?? new List<string>();
         }
