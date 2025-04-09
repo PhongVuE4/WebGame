@@ -20,6 +20,7 @@ namespace TruthOrDare_API
         {
             //Add Repository
             services.AddScoped<IQuestionRepository, QuestionRepository>();
+            services.AddScoped<IGameSessionsRepository, GameSessionsRepository>();
             //Add service
             services.AddScoped<IRoomService, RoomService>();
             services.AddScoped<IWebSocketHandler, WebSocketHandler>();
