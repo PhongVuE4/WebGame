@@ -10,24 +10,24 @@ namespace TruthOrDare_Common
     {
         //room
         RoomAlreadyExists = 1001, // ten phong da ton tai
-        RoomIdIsRequired = 1002,
+        RoomIdIsRequired = 1002, // yeu cau room id
         RoomIdNotFound = 1003, // roomid ko ton tai
-        RoomPasswordRequired = 1004,
-        RoomPasswordIsWrong = 1005,
-        RoomRequiredHost = 1006,
-        RoomModeException = 1007,
-        GameMustbePlaying = 1008,
-        RoomNotFoundPlayerIdException = 1009,
-        QuestionTypeWrong = 1010,
-        RoomEndStatusException = 1011,
-        RoomResetStatusException = 1012,
-        RoomAgeGroupException= 1013,
-        RoomNameRequiredException = 1014,
-        RoomStartStatusException = 1015,
-        RoomNotYourTurn = 1016,
-        RoomNextPlayerException = 1017,
-        RoomNoTimestampException = 1018,
-        RoomNeedMoreTimeException = 1019,
+        RoomPasswordRequired = 1004, // yeu cau password voi room co password
+        RoomPasswordIsWrong = 1005,// sai password
+        RoomRequiredHost = 1006,// yeu cau la host
+        RoomModeException = 1007,// sai mode: party, friends, couples
+        GameMustbePlaying = 1008,// game phai o trang thai playing
+        RoomNotFoundPlayerIdException = 1009,// playerId ko o trong room
+        QuestionTypeWrong = 1010,// sai type cua question: dare hoac type
+        RoomEndStatusException = 1011,// game phai o trang thai playing
+        RoomResetStatusException = 1012,//game phai o trang thai ended
+        RoomAgeGroupException = 1013,// sai agegroup: kids, teen, adult, all
+        RoomNameRequiredException = 1014,// yeu cau roomName
+        RoomStartStatusException = 1015,// game chi bat dau khi o trang thai waiting
+        RoomNotYourTurn = 1016,// chua toi luot
+        RoomNextPlayerException = 1017,// chua toi luot hoac cau hoi da dc get
+        RoomNoTimestampException = 1018,// lỗi gắn time để auto next player (đề phòng trường hợp afk)
+        RoomNeedMoreTimeException = 1019,//doi 1s de next player
 
 
 
@@ -49,9 +49,13 @@ namespace TruthOrDare_Common
         QuestionAlreadyExists = 3008, // text question da ton tai
         QuestionNotFound = 3009, // ko co cau hoi nao
         EmptyQuestionList = 3010, // list cau hoi rong~
-        InvalidFilters = 3011, //filter ko hop le
-        MultipleValidationErrors = 3012, //bao loi cho truong hop add manyquestion
+        MultipleValidationErrors = 3011, //bao loi cho truong hop add manyquestion
 
+        //game session
+        GameSessionRequired = 4001,
+
+
+        InvalidFilters = 9997, //filter ko hop le
         ValidationError = 9998, // loi validation
         InternalServerError = 9999 //500 Internal Server Error
 

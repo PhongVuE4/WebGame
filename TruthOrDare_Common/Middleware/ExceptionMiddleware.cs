@@ -11,6 +11,7 @@ using TruthOrDare_Common;
 using TruthOrDare_Common.Exceptions.Room;
 using TruthOrDare_Common.Exceptions.Player;
 using TruthOrDare_Common.Exceptions.Question;
+using TruthOrDare_Common.Exceptions.GameSession;
 
 namespace TruthOrDare_Common.Middleware
 {
@@ -168,6 +169,10 @@ namespace TruthOrDare_Common.Middleware
             catch (RoomNextPlayerException ex)
             {
                 await HandleExceptionAsync(context, (int)HttpStatusCode.UnprocessableEntity, (int)ErrorCode.RoomNextPlayerException, ex.Message);
+            }
+            catch (GameSessionRequired ex)
+            {
+                await HandleExceptionAsync(context, (int)HttpStatusCode.UnprocessableEntity, (int)ErrorCode.GameSessionRequired, ex.Message);
             }
             catch (ArgumentException ex)
             {

@@ -38,9 +38,19 @@ namespace TruthOrDare_API.Controllers
         [HttpPost("add-many-question")]
         public async Task<IActionResult> InsertManyQuestions([FromBody] List<QuestionCreateDTO> questions)
         {
-            await _questionRepository.InsertManyQuestions(questions);
-
-            return Ok(new { message = "Questions created successfully." });
+            try
+            {
+                var count = await _questionRepository.InsertManyQuestions(questions);
+                return Ok(new { message = "Questions inserted successfully.", data = count });
+            }
+            catch (MultipleValidationException ex)
+            {
+                return BadRequest(new
+                {
+                    message = ex.Message,
+                    errors = ex.Errors // Trả mảng errors trực tiếp
+                });
+            }
         }
         [HttpDelete("delete-question")]
         public async Task<IActionResult> DeleteQuestion(string questionId)
