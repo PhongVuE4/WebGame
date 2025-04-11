@@ -36,7 +36,9 @@ namespace TruthOrDare_Common
         FullPlayer = 2002, //phong full nguoi choi
         PlayerIdNotFound = 2003, // ko tim thay player id
         PlayerNameExisted = 2004, // ten player da ton tai
-        PlayerNameRequiredException = 2005,
+        PlayerNameRequiredException = 2005, // bat buoc co playerName
+        PlayerIdCannotNull = 2006, // playerId ko dc null
+        PlayerIdAlreadyInUseException = 2007, // playerId da ton tai voi ten khac trong phong
 
         //question
         QuestionTextRequired = 3001, // bat buoc nhap text question
@@ -52,7 +54,7 @@ namespace TruthOrDare_Common
         MultipleValidationErrors = 3011, //bao loi cho truong hop add manyquestion
 
         //game session
-        GameSessionRequired = 4001,
+        GameSessionRequired = 4001, // yeu cau gamesession id
 
 
         InvalidFilters = 9997, //filter ko hop le

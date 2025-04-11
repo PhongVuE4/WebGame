@@ -36,7 +36,7 @@ namespace TruthOrDare_Core.Services
             _gameSessions = dbContext.GameSessions;
         }
 
-        public async Task<RoomCreateDTO> CreateRoom(string roomName, string playerName, string roomPassword, string ageGroup, string mode, int maxPlayer)
+        public async Task<RoomCreateDTO> CreateRoom(string roomName, string playerId, string playerName, string roomPassword, string ageGroup, string mode, int maxPlayer)
         {
             if (string.IsNullOrWhiteSpace(roomName))
             {
@@ -45,7 +45,10 @@ namespace TruthOrDare_Core.Services
             var existingRoom = await _rooms
                 .Find(r => r.RoomName == roomName && r.IsActive && !r.IsDeleted)
                 .FirstOrDefaultAsync();
-
+            if(string.IsNullOrWhiteSpace(playerId))
+            {
+                throw new PlayerIdCannotNull();
+            }
             if (existingRoom != null)
             {
                 throw new RoomAlreadyExistsException(roomName);
@@ -70,7 +73,6 @@ namespace TruthOrDare_Core.Services
                 throw new RoomModeException();
             }
             var roomId = IdGenerator.GenerateRoomId(); 
-            var playerId = Guid.NewGuid().ToString();
 
             string hashedPassword = null;
             if (!string.IsNullOrWhiteSpace(roomPassword))
@@ -96,7 +98,8 @@ namespace TruthOrDare_Core.Services
                 new PlayerCreateRoomDTO {
                     PlayerId = playerId,
                     PlayerName = playerName,
-                    IsHost = true
+                    IsHost = true,
+                    IsActive = true,
                     }
                 }
             };
@@ -106,7 +109,7 @@ namespace TruthOrDare_Core.Services
             return roomDTO;
         }
 
-        public async Task<(string roomId,string playerId, string playerName)> JoinRoom(string roomId, string playerName, string roomPassword)
+        public async Task<(string roomId,string playerId, string playerName)> JoinRoom(string roomId, string playerId, string playerName, string roomPassword)
         {
             var room = await _rooms
                 .Find(r => r.RoomId == roomId && r.IsActive && r.IsDeleted ==  false)
@@ -129,29 +132,44 @@ namespace TruthOrDare_Core.Services
                     throw new RoomPasswordWrong();
                 }
             }
-
+            if (string.IsNullOrWhiteSpace(playerId))
+            {
+                throw new PlayerIdCannotNull();
+            }
             if (string.IsNullOrWhiteSpace(playerName))
             {
                 playerName = NameGenerator.GenerateRandomName();
             }
 
-            if (room.Players.Any(p => p.PlayerName == playerName))
+            var existingPlayer = room.Players.FirstOrDefault(p => p.PlayerId == playerId);
+            if(existingPlayer != null)
             {
-                throw new PlayerNameExisted(playerName);
+                if (existingPlayer.PlayerName != playerName)
+                {
+                    throw new PlayerIdAlreadyInUseException(playerId);
+                }
+                existingPlayer.IsActive = true;
             }
-            if(room.Players.Count >= room.MaxPlayer)
+            else
             {
-                throw new FullPlayerException(room.MaxPlayer);
-            }
-            var playerId = Guid.NewGuid().ToString();
-            var newPlayer = new Player
-            {
-                PlayerId = playerId,
-                PlayerName = playerName,
-                IsHost = false
-            };
+                if (room.Players.Any(p => p.PlayerName == playerName && p.PlayerId != playerId))
+                {
+                    throw new PlayerNameExisted(playerName);
+                }
+                if (room.Players.Count >= room.MaxPlayer)
+                {
+                    throw new FullPlayerException(room.MaxPlayer);
+                }
+                var newPlayer = new Player
+                {
+                    PlayerId = playerId,
+                    PlayerName = playerName,
+                    IsHost = false,
+                    IsActive = true,
+                };
 
-            room.Players.Add(newPlayer);
+                room.Players.Add(newPlayer);
+            }
             await _rooms.ReplaceOneAsync(r => r.RoomId == roomId, room);
 
             return (roomId, playerId, playerName);
@@ -171,24 +189,25 @@ namespace TruthOrDare_Core.Services
             {
                 throw new PlayerIdCannotNull();
             }
-            var player = room.Players.SingleOrDefault(p => p.PlayerId == playerId);
+            var player = room.Players.FirstOrDefault(p => p.PlayerId == playerId);
             if (player == null)
             {
                 throw new PlayerIdNotFound(playerId);
             }
-            room.Players.Remove(player);
+            player.IsActive = false; // Đánh dấu người chơi roi phong
 
-            if (!room.Players.Any())
+            if (!room.Players.Any(p => !p.IsActive))
             {
-                room.IsActive = false; 
+                room.IsActive = false;
+                room.Status = "ended"; // Nếu không còn người chơi nào, đánh dấu phòng là không hoạt động
             }
-            else if (player.IsHost && room.Players.Any())
+            else if (player.IsHost && room.Players.Any(p => p.IsActive))
             {
-                room.Players.First().IsHost = true; 
+                var nextActivePlayer = room.Players.First(p => p.IsActive);
+                nextActivePlayer.IsHost = true;
             }
 
             await _rooms.ReplaceOneAsync(r => r.RoomId == roomId, room);
-
             return "Leave room success";
         }
 
@@ -321,7 +340,7 @@ namespace TruthOrDare_Core.Services
                 throw new GameMustbePlaying();
             }
 
-            var player = room.Players.FirstOrDefault(p => p.PlayerId == playerId);
+            var player = room.Players.FirstOrDefault(p => p.PlayerId == playerId && p.IsActive);
             if (player == null)
             {
                 throw new RoomNotFoundPlayerIdException();
@@ -484,7 +503,7 @@ namespace TruthOrDare_Core.Services
             {
                 throw new GameMustbePlaying();
             }
-            var player = roomEntity.Players.FirstOrDefault(p => p.PlayerId == playerId);
+            var player = roomEntity.Players.FirstOrDefault(p => p.PlayerId == playerId && p.IsActive);
             if(player == null)
             {
                 throw new RoomNotFoundPlayerIdException();
@@ -542,7 +561,7 @@ namespace TruthOrDare_Core.Services
         }
         private string GetNextPlayer(Room room, string currentPlayerId)
         {
-            var players = room.Players;
+            var players = room.Players.Where(p => p.IsActive).ToList();
             if (players == null || players.Count == 0)
             {
                 return null;
@@ -561,6 +580,16 @@ namespace TruthOrDare_Core.Services
         }
         private async Task SaveGameSession(Room roomEntity)
         {
+            // Lấy danh sách playerId có trong History (tức là đã được gán câu hỏi)
+            var activePlayerIds = roomEntity.History
+                .Select(h => h.PlayerId)
+                .Distinct()
+                .ToList();
+
+            // Lọc History chỉ giữ lại những người chơi có hoạt động
+            var filteredHistory = roomEntity.History
+                .Where(h => activePlayerIds.Contains(h.PlayerId))
+                .ToList();
             var gameSession = new GameSession
             {
                 Id = ObjectId.GenerateNewId().ToString(), // Dùng ObjectId cho MongoDB
