@@ -14,5 +14,6 @@ namespace TruthOrDare_Contract.DTOs.Player
         public string PlayerId { get; set; }
         public string PlayerName { get; set; }
         public bool IsHost { get; set; }
+        public bool IsActive { get; set; }
     }
 }

@@ -36,6 +36,8 @@ namespace TruthOrDare_Contract.Models
         public DateTime LastActive { get; set; }
         [BsonElement("is_host")]
         public bool IsHost { get; set; }
+        [BsonElement("is_active")]
+        public bool IsActive { get; set; }
         [BsonIgnore]
         public WebSocket WebSocket { get; set; }
         [BsonElement("is_deleted")]
