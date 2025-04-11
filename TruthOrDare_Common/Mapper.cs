@@ -67,6 +67,7 @@ namespace TruthOrDare_Common
                 PlayerId = dto.PlayerId,
                 PlayerName = dto.PlayerName,
                 IsHost = dto.IsHost,
+                IsActive = dto.IsActive
             };
         }
 
@@ -76,7 +77,8 @@ namespace TruthOrDare_Common
             {
                 PlayerId = player.PlayerId,
                 PlayerName = player.PlayerName,
-                IsHost = player.IsHost
+                IsHost = player.IsHost,
+                IsActive = player.IsActive
             };
         }
     }

@@ -118,6 +118,10 @@ namespace TruthOrDare_Common.Middleware
             {
                 await HandleExceptionAsync(context, (int)HttpStatusCode.UnprocessableEntity, (int)ErrorCode.RoomModeException, ex.Message);
             }
+            catch (PlayerIdCannotNull ex)
+            {
+                await HandleExceptionAsync(context, (int)HttpStatusCode.UnprocessableEntity, (int)ErrorCode.PlayerIdCannotNull, ex.Message);
+            }
             catch (GameMustbePlaying ex)
             {
                 await HandleExceptionAsync(context, (int)HttpStatusCode.UnprocessableEntity, (int)ErrorCode.GameMustbePlaying, ex.Message);
@@ -173,6 +177,10 @@ namespace TruthOrDare_Common.Middleware
             catch (GameSessionRequired ex)
             {
                 await HandleExceptionAsync(context, (int)HttpStatusCode.UnprocessableEntity, (int)ErrorCode.GameSessionRequired, ex.Message);
+            }
+            catch (PlayerIdAlreadyInUseException ex)
+            {
+                await HandleExceptionAsync(context, (int)HttpStatusCode.UnprocessableEntity, (int)ErrorCode.PlayerIdAlreadyInUseException, ex.Message);
             }
             catch (ArgumentException ex)
             {

@@ -30,7 +30,7 @@ namespace TruthOrDare_API.Controllers
 
         {
             string playerName = roomCreate.PlayerName;
-            var room = await _roomService.CreateRoom(roomCreate.RoomName, playerName, roomCreate.RoomPassword, roomCreate.AgeGroup, roomCreate.Mode, roomCreate.MaxPlayer);
+            var room = await _roomService.CreateRoom(roomCreate.RoomName, roomCreate.PlayerId, playerName, roomCreate.RoomPassword, roomCreate.AgeGroup, roomCreate.Mode, roomCreate.MaxPlayer);
             return Ok(room);
         }
 
@@ -44,7 +44,7 @@ namespace TruthOrDare_API.Controllers
             {
                 playerName = User.Identity.Name;
             }
-            var room = await _roomService.JoinRoom(roomId, playerName, request.RoomPassword);
+            var room = await _roomService.JoinRoom(roomId, request.PlayerId, playerName, request.RoomPassword);
             return Ok(new { room.roomId, room.playerId,room.playerName});
 
         }
