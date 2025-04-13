@@ -18,6 +18,7 @@ namespace TruthOrDare_Common
                 RoomId = dto.RoomId,
                 RoomName = dto.RoomName,
                 RoomPassword = dto.RoomPassword,
+                PlayerCount = dto.PlayerCount,
                 MaxPlayer = dto.MaxPlayer,
                 Status = dto.Status,
                 Mode = dto.Mode,
