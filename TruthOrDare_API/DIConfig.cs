@@ -23,7 +23,6 @@ namespace TruthOrDare_API
             services.AddScoped<IGameSessionsRepository, GameSessionsRepository>();
             //Add service
             services.AddScoped<IRoomService, RoomService>();
-            services.AddScoped<IWebSocketHandler, WebSocketHandler>();
             services.AddScoped<IPasswordHashingService, PasswordHashingService>();
             // Register MongoDbContext
             services.AddSingleton<MongoDbContext>(sp => new MongoDbContext(sp.GetRequiredService<IConfiguration>()));
