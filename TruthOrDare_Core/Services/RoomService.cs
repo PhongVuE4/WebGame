@@ -19,6 +19,8 @@ using System.Text.Json;
 using TruthOrDare_Infrastructure.Repository;
 using TruthOrDare_Common.Exceptions.Question;
 using MongoDB.Bson;
+using Microsoft.AspNetCore.SignalR;
+using TruthOrDare_Core.Hubs;
 
 namespace TruthOrDare_Core.Services
 {
@@ -28,12 +30,17 @@ namespace TruthOrDare_Core.Services
         private readonly IPasswordHashingService _passwordHashingService;
         private readonly IQuestionRepository _questionRepository;
         private readonly IMongoCollection<GameSession> _gameSessions;
-        public RoomService(MongoDbContext dbContext, IPasswordHashingService passwordHashingService, IQuestionRepository questionRepository)
+        private readonly IHubContext<RoomHub> _hubContext;
+        public RoomService(MongoDbContext dbContext, 
+            IPasswordHashingService passwordHashingService, 
+            IQuestionRepository questionRepository,
+            IHubContext<RoomHub> hubContext)
         {
             _rooms = dbContext.Rooms;
             _passwordHashingService = passwordHashingService;
             _questionRepository = questionRepository;
             _gameSessions = dbContext.GameSessions;
+            _hubContext = hubContext;
         }
 
         public async Task<RoomCreateDTO> CreateRoom(string roomName, string playerId, string playerName, string roomPassword, string ageGroup, string mode, int maxPlayer)
@@ -110,8 +117,9 @@ namespace TruthOrDare_Core.Services
             return roomDTO;
         }
 
-        public async Task<(string roomId,string playerId, string playerName)> JoinRoom(string roomId, string playerId, string playerName, string roomPassword)
+        public async Task<(string roomId,string playerId, string playerName)> JoinRoom(string roomId, string playerId, string playerName, string roomPassword, string connectionId)
         {
+            Console.WriteLine($"JoinRoom called with roomId: {roomId}, playerId: {playerId}, playerName: {playerName}, connectionId: {connectionId}");
             var room = await _rooms
                 .Find(r => r.RoomId == roomId && r.IsActive && r.IsDeleted ==  false)
                 .FirstOrDefaultAsync();
@@ -154,6 +162,7 @@ namespace TruthOrDare_Core.Services
                     throw new FullPlayerException(room.MaxPlayer);
                 }
                 existingPlayer.IsActive = true;
+                existingPlayer.ConnectionId = connectionId;
                 room.PlayerCount++;
             }
             else
@@ -172,11 +181,13 @@ namespace TruthOrDare_Core.Services
                     PlayerName = playerName,
                     IsHost = false,
                     IsActive = true,
+                    ConnectionId = connectionId,
                 };
 
                 room.Players.Add(newPlayer);
                 room.PlayerCount++;
             }
+            
             await _rooms.ReplaceOneAsync(r => r.RoomId == roomId, room);
 
             return (roomId, playerId, playerName);
@@ -676,6 +687,10 @@ namespace TruthOrDare_Core.Services
         public async Task<List<Room>> GetActiveRooms()
         {
             return await _rooms.Find(r => r.Status == "playing").ToListAsync();
+        }
+        public async Task NotifyPlayers(string roomId, string message)
+        {
+            await _hubContext.Clients.Group(roomId).SendAsync("ReceiveMessage", message);
         }
     }
 }

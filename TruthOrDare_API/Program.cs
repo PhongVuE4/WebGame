@@ -8,6 +8,7 @@ using TruthOrDare_Common.Middleware;
 using Microsoft.AspNetCore.Mvc;
 using TruthOrDare_Common.Exceptions;
 using Newtonsoft.Json;
+using TruthOrDare_Core.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -52,7 +53,8 @@ builder.Services.AddCors(options =>
             "https://leminhhien.me",
             "http://localhost:3001",
             "https://webgame-oqyj-g.fly.dev",
-            "https://leminhhien.id.vn")
+            "https://leminhhien.id.vn",
+            "http://localhost:8080")
                .AllowAnyMethod()
                .AllowAnyHeader();
     });
@@ -77,6 +79,9 @@ builder.Services.AddQuartz(q =>
     //Mỗi 5 phút: "0 0/5 * ? * *"
     //Mỗi giờ: "0 0 * ? * *"
 });
+
+builder.Services.AddSignalR();
+
 builder.Services.AddQuartzHostedService();
 var app = builder.Build();
 
@@ -87,21 +92,9 @@ app.UseSwaggerUI(c =>
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "TruthOrDare API V1");
     c.RoutePrefix = "swagger"; // Truy cập Swagger UI tại /swagger
 });
-app.UseWebSockets();
-app.Map("/ws/{roomId}/{playerId}", async (HttpContext context, IWebSocketHandler handler) =>
-{
-    var roomId = context.Request.RouteValues["roomId"]?.ToString();
-    var playerId = context.Request.RouteValues["playerId"]?.ToString();
-    if (context.WebSockets.IsWebSocketRequest)
-    {
-        var ws = await context.WebSockets.AcceptWebSocketAsync();
-        await handler.HandleWebSocket(context, ws, roomId, playerId);
-    }
-    else
-    {
-        context.Response.StatusCode = 400;
-    }
-});
+
+app.MapHub<RoomHub>("/roomHub");
+
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
