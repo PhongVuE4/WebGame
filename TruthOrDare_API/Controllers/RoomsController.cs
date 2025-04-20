@@ -17,12 +17,10 @@ namespace TruthOrDare_API.Controllers
     public class RoomsController : ControllerBase
     {
         private readonly IRoomService _roomService;
-        private readonly IWebSocketHandler _websocketHandler;
 
-        public RoomsController(IRoomService roomService, IWebSocketHandler webSocketHandler)
+        public RoomsController(IRoomService roomService)
         {
             _roomService = roomService;
-            _websocketHandler = webSocketHandler;
         }
 
         [HttpPost("create")]
@@ -37,6 +35,7 @@ namespace TruthOrDare_API.Controllers
         [HttpPatch("{roomId}/join")]
         public async Task<IActionResult> JoinRoom(string roomId, [FromBody] JoinRoomDTO request)
         {
+            Console.WriteLine($"JoinRoom API called with roomId: {roomId}, playerId: {request.PlayerId}, connectionId: {request.ConnectionId}");
             bool isAuthenticated = User.Identity?.IsAuthenticated ?? false;
             string playerName = request.PlayerName;
 
@@ -44,9 +43,8 @@ namespace TruthOrDare_API.Controllers
             {
                 playerName = User.Identity.Name;
             }
-            var room = await _roomService.JoinRoom(roomId, request.PlayerId, playerName, request.RoomPassword);
+            var room = await _roomService.JoinRoom(roomId, request.PlayerId, playerName, request.RoomPassword, request.ConnectionId);
             return Ok(new { room.roomId, room.playerId,room.playerName});
-
         }
         [HttpGet("list")]
         public async Task<IActionResult> GetListRoom(string? filters)
@@ -72,7 +70,6 @@ namespace TruthOrDare_API.Controllers
         public async Task<IActionResult> ChangeName(string roomId, [FromBody] ChangeNameInRoomDTO request)
         {
             await _roomService.ChangePlayerName(roomId, request.PlayerId, request.NewName);
-            await _websocketHandler.BroadcastMessage(roomId, $"Player {request.PlayerId} has changed their name to {request.NewName}");
             return Ok(new { message = "Name changed successfully." });
         }
         [HttpPatch("{roomId}/start")]

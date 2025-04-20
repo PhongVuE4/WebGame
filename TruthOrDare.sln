@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.12.35728.132 d17.12
+VisualStudioVersion = 17.12.35728.132
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TruthOrDare_API", "TruthOrDare_API\TruthOrDare_API.csproj", "{CDECCC2D-DF2D-498F-9C9D-8FED43A52D31}"
 EndProject
@@ -56,5 +56,8 @@ Global
 		{AE26A1BD-76E9-4DF6-9797-5FA255F2CC35} = {24D97974-A02E-4966-8359-8E25F46A9089}
 		{40CB5098-22D3-46D6-BCD9-0CE94669973B} = {A14AD4CC-952E-4FA8-820E-43B4BABC8FA1}
 		{0884C710-ED27-4C19-A207-5D32606A2FC9} = {97CB279F-07F9-41D3-8BCB-7E8E4B766C0F}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B558344D-7668-482E-9D2D-BCE3785D85C5}
 	EndGlobalSection
 EndGlobal
