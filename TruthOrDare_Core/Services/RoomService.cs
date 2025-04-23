@@ -161,9 +161,12 @@ namespace TruthOrDare_Core.Services
                 {
                     throw new FullPlayerException(room.MaxPlayer);
                 }
+               if (!existingPlayer.IsActive)
+                {
+                    room.PlayerCount++; // chỉ tăng nếu player trước đó không active
+                }
                 existingPlayer.IsActive = true;
                 existingPlayer.ConnectionId = connectionId;
-                room.PlayerCount++;
             }
             else
             {
