@@ -43,7 +43,7 @@ namespace TruthOrDare_Core.Services
             _hubContext = hubContext;
         }
 
-        public async Task<RoomCreateDTO> CreateRoom(string roomName, string playerId, string playerName, string roomPassword, string ageGroup, string mode, int maxPlayer)
+        public async Task<RoomCreateDTO> CreateRoom(string roomName, string playerId, string playerName, string roomPassword, string ageGroup, string mode, int maxPlayer, string connectionId)
         {
             if (string.IsNullOrWhiteSpace(roomName))
             {
@@ -108,12 +108,23 @@ namespace TruthOrDare_Core.Services
                     PlayerName = playerName,
                     IsHost = true,
                     IsActive = true,
+                    ConnectionId = connectionId,
                     }
                 }
             };
 
             var room = Mapper.ToRoom(roomDTO);
             await _rooms.InsertOneAsync(room);
+            // Thêm host vào nhóm SignalR
+            if (!string.IsNullOrEmpty(connectionId))
+            {
+                await _hubContext.Groups.AddToGroupAsync(connectionId, roomId);
+                Console.WriteLine($"Thêm host {playerName} vào nhóm SignalR {roomId}");
+
+                // Gửi sự kiện PlayerListUpdated
+                var players = roomDTO.Players.Select(p => new { p.PlayerId, p.PlayerName }).ToList();
+                await _hubContext.Clients.Group(roomId).SendAsync("PlayerListUpdated", players);
+            }
             return roomDTO;
         }
 
@@ -161,9 +172,12 @@ namespace TruthOrDare_Core.Services
                 {
                     throw new FullPlayerException(room.MaxPlayer);
                 }
+                if (!existingPlayer.IsActive)
+                {
+                    room.PlayerCount++;
+                }
                 existingPlayer.IsActive = true;
                 existingPlayer.ConnectionId = connectionId;
-                room.PlayerCount++;
             }
             else
             {

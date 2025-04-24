@@ -15,5 +15,6 @@ namespace TruthOrDare_Contract.DTOs.Room
         public string AgeGroup { get; set; }
         public string Mode { get; set; }
         public int MaxPlayer {  get; set; }
+        public string ConnectionId { get; set; }
     }
 }
