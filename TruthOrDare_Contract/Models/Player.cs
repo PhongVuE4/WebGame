@@ -37,7 +37,7 @@ namespace TruthOrDare_Contract.Models
         public bool IsHost { get; set; }
         [BsonElement("is_active")]
         public bool IsActive { get; set; }
-        [BsonIgnore]
+        [BsonElement("connection_id")]
         public string ConnectionId { get; set; }
         [BsonElement("is_deleted")]
         public bool IsDeleted { get; set; }

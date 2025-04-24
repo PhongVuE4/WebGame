@@ -10,7 +10,7 @@ namespace TruthOrDare_Contract.IServices
 {
     public interface IRoomService
     {
-        Task<RoomCreateDTO> CreateRoom(string roomName, string playerId, string playerName, string roomPassword, string ageGroup, string mode, int maxPlayer);
+        Task<RoomCreateDTO> CreateRoom(string roomName, string playerId, string playerName, string roomPassword, string ageGroup, string mode, int maxPlayer, string connectionId);
         Task<(string roomId, string playerId,string playerName)> JoinRoom(string roomId, string playerId, string playerName, string roomPassword, string connectionId);
         Task<string> LeaveRoom(string roomId, string playerId);
         Task<List<RoomListDTO>> GetListRoom(string? roomId);
