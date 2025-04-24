@@ -28,7 +28,7 @@ namespace TruthOrDare_API.Controllers
 
         {
             string playerName = roomCreate.PlayerName;
-            var room = await _roomService.CreateRoom(roomCreate.RoomName, roomCreate.PlayerId, playerName, roomCreate.RoomPassword, roomCreate.AgeGroup, roomCreate.Mode, roomCreate.MaxPlayer);
+            var room = await _roomService.CreateRoom(roomCreate.RoomName, roomCreate.PlayerId, playerName, roomCreate.RoomPassword, roomCreate.AgeGroup, roomCreate.Mode, roomCreate.MaxPlayer, roomCreate.ConnectionId);
             return Ok(room);
         }
 
