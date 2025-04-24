@@ -48,19 +48,19 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", builder =>
     {
-        //builder.WithOrigins("https://webgame-lk6s.onrender.com",
-        //    "http://localhost:3000",
-        //    "https://leminhhien.me",
-        //    "http://localhost:3001",
-        //    "https://webgame-oqyj-g.fly.dev",
-        //    "https://leminhhien.id.vn",
-        //    "http://localhost:8080")
-        //       .AllowAnyMethod()
-        //       .AllowAnyHeader();
-        builder.WithOrigins("http://127.0.0.1:8080", "http://localhost:8080")
+        builder.WithOrigins("https://webgame-lk6s.onrender.com",
+            "http://localhost:3000",
+            "https://leminhhien.me",
+            "http://localhost:3001",
+            "https://webgame-oqyj-g.fly.dev",
+            "https://leminhhien.id.vn",
+            "http://localhost:8080")
                .AllowAnyMethod()
-               .AllowAnyHeader()
-               .AllowCredentials();
+               .AllowAnyHeader();
+        //builder.WithOrigins("http://127.0.0.1:8080", "http://localhost:8080")
+        //       .AllowAnyMethod()
+        //       .AllowAnyHeader()
+        //       .AllowCredentials();
     });
 });
 // Cấu hình Quartz
