@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace TruthOrDare_Common.Exceptions.Room
 {
-    public class RoomNextPlayerException : Exception
+    public class PlayerNotActiveException : Exception
     {
-        public RoomNextPlayerException() : base($"No turn or question has started yet!")
+        public PlayerNotActiveException() : base($"Please join by JoinRoom")
         {
         }
     }

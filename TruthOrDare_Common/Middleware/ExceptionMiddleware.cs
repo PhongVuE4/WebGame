@@ -186,6 +186,10 @@ namespace TruthOrDare_Common.Middleware
             {
                 await HandleExceptionAsync(context, (int)HttpStatusCode.UnprocessableEntity, (int)ErrorCode.NoActivePlayersException, ex.Message);
             }
+            catch (PlayerNotActiveException ex)
+            {
+                await HandleExceptionAsync(context, (int)HttpStatusCode.UnprocessableEntity, (int)ErrorCode.PlayerNotActiveException, ex.Message);
+            }
             catch (ArgumentException ex)
             {
                 await HandleExceptionAsync(context, (int)HttpStatusCode.UnprocessableEntity, (int)ErrorCode.ValidationError, ex.Message);

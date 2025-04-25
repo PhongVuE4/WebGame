@@ -28,7 +28,8 @@ namespace TruthOrDare_Common
         RoomNextPlayerException = 1017,// chua toi luot hoac cau hoi da dc get
         RoomNoTimestampException = 1018,// lỗi gắn time để auto next player (đề phòng trường hợp afk)
         RoomNeedMoreTimeException = 1019,//doi 1s de next player
-        NoActivePlayersException = 1020,// ko co player nao trong room
+        NoActivePlayersException = 1020,// ko co player nao trong room,
+        PlayerNotActiveException = 1021, // yeu cau vao lai phong` bang joinroom
 
 
 
