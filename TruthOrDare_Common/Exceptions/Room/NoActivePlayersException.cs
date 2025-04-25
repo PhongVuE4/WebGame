@@ -8,7 +8,7 @@ namespace TruthOrDare_Common.Exceptions.Room
 {
     public class NoActivePlayersException : Exception
     {
-        public NoActivePlayersException() : base("No active players in the room.")
+        public NoActivePlayersException() : base($"No active players in the room.")
         {
         }
     }
