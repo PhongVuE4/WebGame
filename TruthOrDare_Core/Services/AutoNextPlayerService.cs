@@ -8,18 +8,22 @@ using TruthOrDare_Core.Services;
 using Microsoft.Extensions.Hosting;
 using TruthOrDare_Contract.IServices;
 using TruthOrDare_Contract.Models;
+using Microsoft.AspNetCore.SignalR;
+using TruthOrDare_Core.Hubs;
 
 namespace TruthOrDare_Core.Services
 {
     public class AutoNextPlayerService : BackgroundService
     {
         private readonly IServiceProvider _serviceProvider;
+        private readonly IHubContext<RoomHub> _hubContext;
         private List<Room> _activeRooms = new List<Room>(); // Lưu danh sách phòng trong bộ nhớ
         private DateTime _lastRoomRefresh = DateTime.MinValue;
 
-        public AutoNextPlayerService(IServiceProvider serviceProvider)
+        public AutoNextPlayerService(IServiceProvider serviceProvider, IHubContext<RoomHub> hubContext)
         {
             _serviceProvider = serviceProvider;
+            _hubContext = hubContext;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -63,6 +67,11 @@ namespace TruthOrDare_Core.Services
                                     {
                                         Console.WriteLine($"Game ended in room {room.RoomId}: {message}");
                                         // Không cần cập nhật thêm vì NextPlayer đã đặt Status = "ended"
+                                        await _hubContext.Clients.Group(room.RoomId).SendAsync("GameEnded", new
+                                        {
+                                            roomId = room.RoomId,
+                                            message
+                                        });
                                     }
                                     else
                                     {
@@ -70,6 +79,15 @@ namespace TruthOrDare_Core.Services
                                         room.LastQuestionTimestamp = null;
                                         room.LastTurnTimestamp = DateTime.Now;
                                         Console.WriteLine($"Auto-switched from {currentPlayerId} to {nextPlayerId} in room {room.RoomId}");
+
+                                        // Gửi thông báo chuyển lượt tới nhóm
+                                        var nextPlayerName = room.Players.FirstOrDefault(p => p.PlayerId == nextPlayerId)?.PlayerName;
+                                        await _hubContext.Clients.Group(room.RoomId).SendAsync("NextPlayerTurn", new
+                                        {
+                                            nextPlayerId,
+                                            nextPlayerName,
+                                            message = $"Lượt của {nextPlayerName} (tự động chuyển sau 2 phút)"
+                                        });
                                     }
                                 }
                             }
@@ -86,6 +104,12 @@ namespace TruthOrDare_Core.Services
                                     if (isGameEnded)
                                     {
                                         Console.WriteLine($"Game ended in room {room.RoomId}: {message}");
+                                        // Gửi thông báo game kết thúc tới nhóm
+                                        await _hubContext.Clients.Group(room.RoomId).SendAsync("GameEnded", new
+                                        {
+                                            roomId = room.RoomId,
+                                            message
+                                        });
                                     }
                                     else
                                     {
@@ -93,6 +117,15 @@ namespace TruthOrDare_Core.Services
                                         room.LastQuestionTimestamp = null;
                                         room.LastTurnTimestamp = DateTime.Now;
                                         Console.WriteLine($"Auto-switched from {currentPlayerId} to {nextPlayerId} in room {room.RoomId}");
+                                       
+                                        // Gửi thông báo chuyển lượt tới nhóm
+                                        var nextPlayerName = room.Players.FirstOrDefault(p => p.PlayerId == nextPlayerId)?.PlayerName;
+                                        await _hubContext.Clients.Group(room.RoomId).SendAsync("NextPlayerTurn", new
+                                        {
+                                            nextPlayerId,
+                                            nextPlayerName,
+                                            message = $"Lượt của {nextPlayerName} (tự động chuyển sau 30 giây)"
+                                        });
                                     }
                                 }
                             }
