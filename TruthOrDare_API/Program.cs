@@ -56,7 +56,8 @@ builder.Services.AddCors(options =>
             "https://leminhhien.id.vn",
             "http://localhost:8080")
                .AllowAnyMethod()
-               .AllowAnyHeader();
+               .AllowAnyHeader()
+                .AllowCredentials();
         //builder.WithOrigins("http://127.0.0.1:8080", "http://localhost:8080")
         //       .AllowAnyMethod()
         //       .AllowAnyHeader()
