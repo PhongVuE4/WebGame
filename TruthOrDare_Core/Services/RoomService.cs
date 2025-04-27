@@ -241,7 +241,7 @@ namespace TruthOrDare_Core.Services
                 }
             }
 
-            if (!room.Players.Any(p => !p.IsActive))
+            if (!room.Players.Any(p => p.IsActive))
             {
                 room.IsActive = false;
                 room.Status = "ended"; // Nếu không còn người chơi nào, đánh dấu phòng là không hoạt động

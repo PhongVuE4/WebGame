@@ -156,16 +156,22 @@ namespace TruthOrDare_Core.Hubs
                 // Gọi RoomService.LeaveRoom
                 await _roomService.LeaveRoom(roomId, playerId);
 
-                // Lấy lại phòng sau khi rời
-                room = await _roomService.GetRoom(roomId);
+                if (room.PlayerCount > 1)
+                {
+                    // Lấy lại phòng để cập nhật trạng thái mới nhất
+                    room = await _roomService.GetRoom(roomId);
 
-                // Gửi thông báo tới client
-                var players = room.Players
-                    .Where(p => p.IsActive)
-                    .Select(p => (dynamic)new { p.PlayerId, p.PlayerName })
-                    .ToList();
-                await Clients.Group(roomId).SendAsync("PlayerListUpdated", players);
-                await Clients.Group(roomId).SendAsync("PlayerLeft", player.PlayerName);
+                    // Nếu phòng vẫn còn người chơi, gửi thông báo cập nhật
+                    if (room != null && room.Players.Any(p => p.IsActive))
+                    {
+                        var players = room.Players
+                            .Where(p => p.IsActive)
+                            .Select(p => (dynamic)new { p.PlayerId, p.PlayerName })
+                            .ToList();
+                        await Clients.Group(roomId).SendAsync("PlayerListUpdated", players);
+                        await Clients.Group(roomId).SendAsync("PlayerLeft", player.PlayerName);
+                    }
+                }
                 await Clients.Caller.SendAsync("LeaveRoomSuccess", $"Đã rời phòng {roomId}");
             });
         }
