@@ -93,7 +93,10 @@ namespace TruthOrDare_Core.Hubs
                 {
                     throw new RoomNotExistException(roomId);
                 }
-
+                if (room.MaxPlayer <= room.PlayerCount)
+                {
+                    throw new FullPlayerException(room.PlayerCount);
+                }
                 // Kiểm tra xem playerId đã trong phòng, khớp playerName, và IsActive
                 var player = room.Players?.FirstOrDefault(p => p.PlayerId == playerId && p.PlayerName == playerName);
                 if (player == null)
