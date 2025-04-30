@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,6 +21,8 @@ namespace TruthOrDare_Core.Hubs
         private readonly IRoomService _roomService;
         private readonly IMongoCollection<Room> _rooms;
         private readonly IHubContext<RoomHub> _hubContext;
+        private static readonly ConcurrentDictionary<string, bool> _roomLocks = new ConcurrentDictionary<string, bool>();
+
         public RoomHub(IRoomService roomService, MongoDbContext dbContext, IHubContext<RoomHub> hubContext)
         {
             _roomService = roomService;
@@ -74,7 +77,7 @@ namespace TruthOrDare_Core.Hubs
                 // Gửi thông báo và cập nhật danh sách người chơi
                 await Clients.Group(roomId).SendAsync("PlayerJoined", returnedPlayerName);
                 var players = room.Players != null
-                    ? room.Players.Select(p => (dynamic)new { p.PlayerId, p.PlayerName }).ToList()
+                    ? room.Players.Where(p => p.IsActive).Select(p => (dynamic)new { p.PlayerId, p.PlayerName }).ToList()
                     : new List<dynamic>();
                 await Clients.Group(roomId).SendAsync("PlayerListUpdated", players);
                 await Clients.Caller.SendAsync("JoinRoomSuccess", $"Đã vào phòng {roomId} thành công với tên {returnedPlayerName}");
@@ -102,7 +105,8 @@ namespace TruthOrDare_Core.Hubs
                 {
                     Console.WriteLine($"ReconnectPlayer: Player {playerId} đã được kết nối với ConnectionId={Context.ConnectionId}. Bỏ qua cập nhật.");
                     await Groups.AddToGroupAsync(Context.ConnectionId, roomId);
-                    var pls = room.Players != null ? room.Players.Select(p => new { p.PlayerId, p.PlayerName })
+                    var pls = room.Players != null ? room.Players
+                    .Where(p => p.IsActive).Select(p => new { p.PlayerId, p.PlayerName })
                         .Cast<dynamic>()
                         .ToList() : new List<dynamic>();
                     await Clients.Caller.SendAsync("ReconnectSuccess", new
@@ -156,7 +160,7 @@ namespace TruthOrDare_Core.Hubs
                 await Groups.AddToGroupAsync(Context.ConnectionId, roomId);
 
                 // Gửi thông tin phòng để đồng bộ client
-                var players = room.Players != null ? room.Players.Select(p => new { p.PlayerId, p.PlayerName })
+                var players = room.Players != null ? room.Players.Where(p => p.IsActive).Select(p => new { p.PlayerId, p.PlayerName })
                       .Cast<dynamic>()
                       .ToList() : new List<dynamic>();
 
@@ -404,7 +408,6 @@ namespace TruthOrDare_Core.Hubs
             bool sendToCaller = false;
             await ExecuteWithErrorHandling(async () =>
             {
-                // Tìm phòng chứa người chơi dựa trên ConnectionId
                 var room = await _rooms
                     .Find(r => r.Players.Any(p => p.ConnectionId == Context.ConnectionId && p.IsActive))
                     .FirstOrDefaultAsync();
@@ -416,39 +419,72 @@ namespace TruthOrDare_Core.Hubs
                     {
                         Console.WriteLine($"Player disconnected: PlayerId={player.PlayerId}, PlayerName={player.PlayerName}, RoomId={room.RoomId}");
 
-                        // Không đặt IsActive = false ngay, chỉ xóa ConnectionId
                         player.ConnectionId = null;
-                        // Gửi thông báo tạm thời tới nhóm
                         await Clients.Group(room.RoomId).SendAsync("ReceiveMessage",
                             $"{player.PlayerName} has disconnected. Waiting for reconnect...");
 
-                        // Cập nhật phòng để lưu trạng thái ConnectionId = null
                         await _rooms.ReplaceOneAsync(r => r.RoomId == room.RoomId, room);
 
-                        // Chờ 30 giây để kiểm tra reconnect
                         _ = Task.Run(async () =>
                         {
-                            await Task.Delay(TimeSpan.FromSeconds(30));
-                            var updatedRoom = await _rooms.Find(r => r.RoomId == room.RoomId).FirstOrDefaultAsync();
-                            if (updatedRoom != null)
+                            try
                             {
-                                var disconnectedPlayer = updatedRoom.Players.FirstOrDefault(p => p.PlayerId == player.PlayerId);
-                                if (disconnectedPlayer != null && disconnectedPlayer.ConnectionId == null)
+                                await Task.Delay(TimeSpan.FromSeconds(30));
+                                if (!_roomLocks.TryAdd(room.RoomId, true))
                                 {
+                                    Console.WriteLine($"Room {room.RoomId} is being processed by another operation. Skipping.");
+                                    return;
+                                }
+
+                                try
+                                {
+                                    var updatedRoom = await _rooms
+                                        .Find(r => r.RoomId == room.RoomId && r.IsActive && !r.IsDeleted)
+                                        .FirstOrDefaultAsync();
+                                    if (updatedRoom == null)
+                                    {
+                                        Console.WriteLine($"Error: Room {room.RoomId} not found or no longer active/deleted after 30 seconds.");
+                                        return;
+                                    }
+
+                                    var disconnectedPlayer = updatedRoom.Players.FirstOrDefault(p => p.PlayerId == player.PlayerId);
+                                    if (disconnectedPlayer == null)
+                                    {
+                                        Console.WriteLine($"Error: Player {player.PlayerId} not found in room {room.RoomId} after 30 seconds.");
+                                        return;
+                                    }
+
+                                    if (disconnectedPlayer.ConnectionId != null)
+                                    {
+                                        Console.WriteLine($"Player {player.PlayerId} reconnected to room {room.RoomId} with ConnectionId={disconnectedPlayer.ConnectionId}.");
+                                        return;
+                                    }
+
                                     Console.WriteLine($"Player {player.PlayerId} did not reconnect after 30s. Updating status...");
 
-                                    // Người chơi không reconnect: đặt IsActive = false và giảm PlayerCount
                                     disconnectedPlayer.IsActive = false;
                                     updatedRoom.PlayerCount--;
 
-                                    // Nếu người chơi là host, chuyển quyền host
                                     if (disconnectedPlayer.IsHost && updatedRoom.Players.Any(p => p.IsActive))
                                     {
                                         Console.WriteLine($"Transferring host from {disconnectedPlayer.PlayerName}.");
-
                                         disconnectedPlayer.IsHost = false;
                                         var nextActivePlayer = updatedRoom.Players.First(p => p.IsActive);
                                         nextActivePlayer.IsHost = true;
+                                    }
+
+                                    try
+                                    {
+                                        var replaceResult = await _rooms.ReplaceOneAsync(r => r.RoomId == updatedRoom.RoomId, updatedRoom);
+                                        if (replaceResult.ModifiedCount == 0)
+                                        {
+                                            Console.WriteLine($"Warning: No changes saved to room {updatedRoom.RoomId}. Room state may already be updated.");
+                                        }
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        Console.WriteLine($"Error saving room {updatedRoom.RoomId} to MongoDB: {ex.Message}\n{ex.StackTrace}");
+                                        return;
                                     }
 
                                     var updatedPlayers = updatedRoom.Players
@@ -463,77 +499,93 @@ namespace TruthOrDare_Core.Hubs
                                         message = $"{player.PlayerName} has left the room."
                                     });
 
-                                    // Nếu người chơi là CurrentPlayerIdTurn, chuyển lượt
                                     if (updatedRoom.Status == "playing" && updatedRoom.CurrentPlayerIdTurn == player.PlayerId)
                                     {
                                         Console.WriteLine($"Current player {player.PlayerId} disconnected. Transferring turn...");
 
-                                        var (nextPlayerId, isGameEnded, message) = await _roomService.NextPlayer(updatedRoom.RoomId, player.PlayerId);
-                                        updatedRoom.CurrentPlayerIdTurn = nextPlayerId;
-                                        updatedRoom.LastQuestionTimestamp = null;
-                                        updatedRoom.LastTurnTimestamp = DateTime.Now;
-                                        if (isGameEnded)
+                                        try
                                         {
+                                            Console.WriteLine($"Before NextPlayer: Room {updatedRoom.RoomId}, isActive={updatedRoom.IsActive}, isDeleted={updatedRoom.IsDeleted}, currentPlayerIdTurn={updatedRoom.CurrentPlayerIdTurn}");
+                                            var (nextPlayerId, isGameEnded, message) = await _roomService.NextPlayer(updatedRoom.RoomId, player.PlayerId);
+                                            updatedRoom.CurrentPlayerIdTurn = nextPlayerId;
+                                            updatedRoom.LastQuestionTimestamp = null;
+                                            updatedRoom.LastTurnTimestamp = DateTime.Now;
+
+                                            if (isGameEnded)
+                                            {
+                                                updatedRoom.Status = "ended";
+                                                Console.WriteLine($"Game ended: {message}");
+                                                await _rooms.ReplaceOneAsync(r => r.RoomId == updatedRoom.RoomId, updatedRoom);
+                                                await _hubContext.Clients.Group(updatedRoom.RoomId).SendAsync("GameEnded", new
+                                                {
+                                                    message = message ?? "Game has ended."
+                                                });
+                                            }
+                                            else if (nextPlayerId != null)
+                                            {
+                                                var nextPlayer = updatedRoom.Players.FirstOrDefault(p => p.PlayerId == nextPlayerId);
+                                                if (nextPlayer != null)
+                                                {
+                                                    await _rooms.ReplaceOneAsync(r => r.RoomId == updatedRoom.RoomId, updatedRoom);
+                                                    Console.WriteLine($"Sending NextPlayerTurn: {nextPlayer.PlayerName} ({nextPlayer.PlayerId})");
+                                                    await _hubContext.Clients.Group(updatedRoom.RoomId).SendAsync("NextPlayerTurn", new
+                                                    {
+                                                        nextPlayerId = nextPlayer.PlayerId,
+                                                        nextPlayerName = nextPlayer.PlayerName,
+                                                        isHost = nextPlayer.IsHost,
+                                                        message = $"Turn passed to {nextPlayer.PlayerName} because {player.PlayerName} left the room."
+                                                    });
+
+                                                    Console.WriteLine($"Sending CurrentTurn: {nextPlayer.PlayerName} ({nextPlayer.PlayerId})");
+                                                    await _hubContext.Clients.Group(updatedRoom.RoomId).SendAsync("CurrentTurn", new
+                                                    {
+                                                        currentPlayerId = nextPlayer.PlayerId,
+                                                        currentPlayerName = nextPlayer.PlayerName,
+                                                        isHost = nextPlayer.IsHost,
+                                                        message = $"Current turn is {nextPlayer.PlayerName}."
+                                                    });
+                                                }
+                                                else
+                                                {
+                                                    Console.WriteLine($"Error: Next player {nextPlayerId} not found in room {updatedRoom.RoomId}.");
+                                                }
+                                            }
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            Console.WriteLine($"Error calling NextPlayer for room {updatedRoom.RoomId}: {ex.Message}\n{ex.StackTrace}");
                                             updatedRoom.Status = "ended";
-                                            Console.WriteLine($"Game ended: {message}");
                                             await _rooms.ReplaceOneAsync(r => r.RoomId == updatedRoom.RoomId, updatedRoom);
-                                            Console.WriteLine($"Sending GameEnded: {message}");
                                             await _hubContext.Clients.Group(updatedRoom.RoomId).SendAsync("GameEnded", new
                                             {
-                                                message = message ?? "Game has ended."
+                                                message = "Game has ended due to error in transferring turn."
                                             });
                                         }
-                                        else if (nextPlayerId != null)
-                                        {
-                                            var nextPlayer = updatedRoom.Players.FirstOrDefault(p => p.PlayerId == nextPlayerId);
-                                            if (nextPlayer != null)
-                                            {
-                                                await _rooms.ReplaceOneAsync(r => r.RoomId == updatedRoom.RoomId, updatedRoom);
-                                                Console.WriteLine($"Sending NextPlayerTurn: {nextPlayer.PlayerName} ({nextPlayer.PlayerId})");
-                                                await _hubContext.Clients.Group(updatedRoom.RoomId).SendAsync("NextPlayerTurn", new
-                                                {
-                                                    nextPlayerId = nextPlayer.PlayerId,
-                                                    nextPlayerName = nextPlayer.PlayerName,
-                                                    isHost = nextPlayer.IsHost,
-                                                    message = $"Turn passed to {nextPlayer.PlayerName} because {player.PlayerName} left the room."
-                                                });
-
-                                                Console.WriteLine($"Sending CurrentTurn: {nextPlayer.PlayerName} ({nextPlayer.PlayerId})");
-                                                await _hubContext.Clients.Group(updatedRoom.RoomId).SendAsync("CurrentTurn", new
-                                                {
-                                                    currentPlayerId = nextPlayer.PlayerId,
-                                                    currentPlayerName = nextPlayer.PlayerName,
-                                                    isHost = nextPlayer.IsHost,
-                                                    message = $"Current turn is {nextPlayer.PlayerName}."
-                                                });
-                                            }
-                                            else
-                                            {
-                                                Console.WriteLine($"Error: Next player {nextPlayerId} not found in room {updatedRoom.RoomId}.");
-                                            }
-                                        }
-                                        else
-                                        {
-                                            await _rooms.ReplaceOneAsync(r => r.RoomId == updatedRoom.RoomId, updatedRoom);
-                                        }
-                                    }
-                                    else
-                                    {
-                                        Console.WriteLine($"Player {player.PlayerId} reconnected or not found in room {room.RoomId}.");
                                     }
                                 }
-                                else
+                                finally
                                 {
-                                    Console.WriteLine($"Error: Room {room.RoomId} not found after 30 seconds.");
+                                    _roomLocks.TryRemove(room.RoomId, out _);
                                 }
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine($"Error in OnDisconnectedAsync Task.Run: {ex.Message}\n{ex.StackTrace}");
                             }
                         });
                     }
+                    else
+                    {
+                        Console.WriteLine($"No active player found for ConnectionId {Context.ConnectionId} in room {room.RoomId}.");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine($"No room found for ConnectionId {Context.ConnectionId}.");
                 }
 
                 await base.OnDisconnectedAsync(exception);
             }, sendToCaller: false);
-
         }
 
         public async Task TestConnection(string message)
