@@ -576,19 +576,40 @@ namespace TruthOrDare_Core.Services
         }
         public async Task<(string nextPlayerId, bool isGameEnded, string message)> NextPlayer(string roomId, string playerId)
         {
-            var roomEntity = await _rooms.Find(a => a.RoomId == roomId).FirstOrDefaultAsync();
+            // Thử lấy phòng với retry
+            Room roomEntity = null;
+            for (int attempt = 1; attempt <= 3; attempt++)
+            {
+                roomEntity = await _rooms
+                    .Find(r => r.RoomId == roomId && r.IsActive && !r.IsDeleted)
+                    .FirstOrDefaultAsync();
+                if (roomEntity != null)
+                {
+                    break;
+                }
+                Console.WriteLine($"NextPlayer: Room {roomId} not found on attempt {attempt}. Retrying...");
+                await Task.Delay(100);
+            }
+
             if (roomEntity == null)
             {
+                Console.WriteLine($"NextPlayer: Room {roomId} not found after 3 attempts or no longer active/deleted.");
                 throw new RoomNotExistException(roomId);
             }
+
+            Console.WriteLine($"NextPlayer: Found room {roomId}, status={roomEntity.Status}, currentPlayerIdTurn={roomEntity.CurrentPlayerIdTurn}, players={string.Join(", ", roomEntity.Players.Select(p => $"{p.PlayerName} ({p.PlayerId}, isActive={p.IsActive})"))}");
+
             if (roomEntity.Status.ToLower() != "playing")
             {
+                Console.WriteLine($"NextPlayer: Room {roomId} is not in playing status (current: {roomEntity.Status}).");
                 throw new GameMustbePlaying();
             }
+
+            // Kiểm tra người chơi hiện tại
             var currentPlayer = roomEntity.Players.FirstOrDefault(p => p.PlayerId == playerId && p.IsActive);
-            if(currentPlayer == null)
+            if (currentPlayer == null)
             {
-                // Nếu currentPlayerIdTurn không active, tự động chuyển sang người tiếp theo
+                Console.WriteLine($"NextPlayer: Player {playerId} not found or not active in room {roomId}. Transferring turn...");
                 roomEntity.CurrentPlayerIdTurn = GetNextPlayer(roomEntity, roomEntity.CurrentPlayerIdTurn);
                 if (roomEntity.CurrentPlayerIdTurn == null)
                 {
@@ -596,34 +617,50 @@ namespace TruthOrDare_Core.Services
                     roomEntity.UpdatedAt = DateTime.UtcNow;
                     await _rooms.ReplaceOneAsync(r => r.RoomId == roomId, roomEntity);
                     await SaveGameSession(roomEntity);
+                    Console.WriteLine($"NextPlayer: Game ended in room {roomId} due to no active players.");
                     return (null, true, "Game has ended due to no active players.");
                 }
             }
-            var player = roomEntity.Players.FirstOrDefault(p => p.PlayerId == playerId && p.IsActive);
-            if (player == null)
+            else if (playerId != roomEntity.CurrentPlayerIdTurn)
             {
-                throw new RoomNotFoundPlayerIdException();
-            }
-            if (player.PlayerId != roomEntity.CurrentPlayerIdTurn)
-            {
+                Console.WriteLine($"NextPlayer: Player {playerId} is not the current turn player (current: {roomEntity.CurrentPlayerIdTurn}).");
                 throw new RoomNotYourTurn();
             }
-            // Kiểm tra xem có ít nhất một trong hai timestamp
+            else
+            {
+                // Người chơi hợp lệ, chuyển lượt
+                Console.WriteLine($"NextPlayer: Player {playerId} is valid. Transferring turn...");
+                roomEntity.CurrentPlayerIdTurn = GetNextPlayer(roomEntity, roomEntity.CurrentPlayerIdTurn);
+                if (roomEntity.CurrentPlayerIdTurn == null)
+                {
+                    roomEntity.Status = "ended";
+                    roomEntity.UpdatedAt = DateTime.UtcNow;
+                    await _rooms.ReplaceOneAsync(r => r.RoomId == roomId, roomEntity);
+                    await SaveGameSession(roomEntity);
+                    Console.WriteLine($"NextPlayer: Game ended in room {roomId} due to no active players after transfer.");
+                    return (null, true, "Game has ended due to no active players.");
+                }
+            }
+
+            // Kiểm tra timestamp
             if (!roomEntity.LastQuestionTimestamp.HasValue && !roomEntity.LastTurnTimestamp.HasValue)
             {
+                Console.WriteLine($"NextPlayer: No timestamp available for room {roomId}.");
                 throw new RoomNextPlayerException();
             }
 
-            // Kiểm tra nếu đây là câu hỏi cuối
+            // Kiểm tra câu hỏi cuối
             if (roomEntity.IsLastQuestionAssigned == true)
             {
                 roomEntity.Status = "ended";
                 roomEntity.UpdatedAt = DateTime.UtcNow;
                 await _rooms.ReplaceOneAsync(r => r.RoomId == roomId, roomEntity);
-                await SaveGameSession(roomEntity); // Lưu session nếu có
+                await SaveGameSession(roomEntity);
+                Console.WriteLine($"NextPlayer: Game ended in room {roomId} due to last question assigned.");
                 return (null, true, "Game has ended.");
             }
-            // Nếu LastQuestionTimestamp chưa có, cho phép chuyển lượt với người chơi đầu tiên
+
+            // Kiểm tra thời gian
             double timeElapsed;
             if (roomEntity.LastQuestionTimestamp.HasValue)
             {
@@ -635,41 +672,49 @@ namespace TruthOrDare_Core.Services
             }
             else
             {
+                Console.WriteLine($"NextPlayer: No valid timestamp for room {roomId}.");
                 throw new RoomNoTimestampException();
             }
 
-            // Yêu cầu 5 giây cho thao tác thủ công nếu đã lấy câu hỏi
             if (roomEntity.LastQuestionTimestamp.HasValue && timeElapsed < 1)
             {
+                Console.WriteLine($"NextPlayer: Not enough time elapsed for room {roomId} (timeElapsed: {timeElapsed}s).");
                 throw new RoomNeedMoreTimeException();
             }
 
-            // Chuyển sang người chơi tiếp theo
-            var currentPlayerId = roomEntity.CurrentPlayerIdTurn;
-            roomEntity.CurrentPlayerIdTurn = GetNextPlayer(roomEntity, currentPlayerId);
-            roomEntity.LastQuestionTimestamp = null; // Reset thời gian để bắt đầu lượt mới
-            roomEntity.LastTurnTimestamp = DateTime.Now; // Đặt lại thời gian lượt mới
+            roomEntity.LastQuestionTimestamp = null;
+            roomEntity.LastTurnTimestamp = DateTime.Now;
 
             var result = await _rooms.ReplaceOneAsync(r => r.RoomId == roomId, roomEntity);
+            if (result.ModifiedCount == 0)
+            {
+                Console.WriteLine($"Warning: No changes saved in NextPlayer for room {roomId}. Room state may already be updated.");
+            }
 
-            
-            return (roomEntity.CurrentPlayerIdTurn, false, null); // Trả về ID của người chơi tiếp theo
+            Console.WriteLine($"NextPlayer: Transferred turn to player {roomEntity.CurrentPlayerIdTurn} in room {roomId}.");
+            return (roomEntity.CurrentPlayerIdTurn, false, null);
         }
         private string GetNextPlayer(Room room, string currentPlayerId)
         {
-            var players = room.Players.Where(p => p.IsActive).ToList();
-            if (players == null || players.Count == 0)
+            var allPlayers = room.Players.ToList();
+            var activePlayers = room.Players.Where(p => p.IsActive).ToList();
+
+            if (activePlayers == null || activePlayers.Count == 0)
             {
+                Console.WriteLine($"GetNextPlayer: No active players in room {room.RoomId}.");
                 return null;
             }
 
-            // Tìm chỉ số của currentPlayerId trong danh sách gốc (không chỉ active)
-            var allPlayers = room.Players.ToList();
+            // Tìm chỉ số của currentPlayerId trong danh sách gốc
             int currentIndex = allPlayers.FindIndex(p => p.PlayerId == currentPlayerId);
+            Console.WriteLine($"GetNextPlayer: Current player {currentPlayerId}, currentIndex={currentIndex}");
+
             if (currentIndex == -1)
             {
                 // Nếu không tìm thấy, chọn người active đầu tiên
-                return players.FirstOrDefault()?.PlayerId;
+                var firstActivePlayer = activePlayers.FirstOrDefault();
+                Console.WriteLine($"GetNextPlayer: Current player {currentPlayerId} not found. Selecting first active player: {firstActivePlayer?.PlayerName} ({firstActivePlayer?.PlayerId})");
+                return firstActivePlayer?.PlayerId;
             }
 
             // Tìm người chơi active tiếp theo trong danh sách gốc
@@ -677,13 +722,16 @@ namespace TruthOrDare_Core.Services
             {
                 int nextIndex = (currentIndex + i) % allPlayers.Count;
                 var nextPlayer = allPlayers[nextIndex];
+                Console.WriteLine($"GetNextPlayer: Checking player at index {nextIndex}: {nextPlayer.PlayerName} ({nextPlayer.PlayerId}, isActive={nextPlayer.IsActive})");
                 if (nextPlayer.IsActive)
                 {
+                    Console.WriteLine($"GetNextPlayer: Selected next player: {nextPlayer.PlayerName} ({nextPlayer.PlayerId})");
                     return nextPlayer.PlayerId;
                 }
             }
 
-            return null; // Không tìm thấy người active
+            Console.WriteLine($"GetNextPlayer: No active players found after checking all players in room {room.RoomId}.");
+            return null;
         }
         private async Task SaveGameSession(Room roomEntity)
         {
