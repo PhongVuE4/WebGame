@@ -228,11 +228,17 @@ namespace TruthOrDare_Core.Services
                 throw new PlayerIdNotFound(playerId);
             }
             player.IsActive = false; // Đánh dấu người chơi roi phong
+            player.ConnectionId = null; // Xóa ConnectionId
             room.PlayerCount--;
-            // Nếu người rời là currentPlayerIdTurn, chuyển lượt
-            if (room.CurrentPlayerIdTurn == playerId)
+
+            // Nếu người rời là CurrentPlayerIdTurn, chuyển lượt
+            bool turnChanged = false;
+            string nextPlayerId = null;
+            if (room.Status == "playing" && room.CurrentPlayerIdTurn == playerId)
             {
-                room.CurrentPlayerIdTurn = GetNextPlayer(room, playerId);
+                nextPlayerId = GetNextPlayer(room, playerId);
+                room.CurrentPlayerIdTurn = nextPlayerId;
+                turnChanged = true;
                 if (room.CurrentPlayerIdTurn == null)
                 {
                     room.Status = "ended";
@@ -240,22 +246,28 @@ namespace TruthOrDare_Core.Services
                     await SaveGameSession(room);
                 }
             }
-
-            if (!room.Players.Any(p => p.IsActive))
+            // Xử lý host
+            if (player.IsHost && room.Players.Any(p => p.IsActive))
             {
-                room.IsActive = false;
-                room.Status = "ended"; // Nếu không còn người chơi nào, đánh dấu phòng là không hoạt động
-                await SaveGameSession(room);
-            }
-            else if (player.IsHost && room.Players.Any(p => p.IsActive))
-            {
-                player.IsHost = false; // Đánh dấu người chơi không còn là host
+                player.IsHost = false;
                 var nextActivePlayer = room.Players.First(p => p.IsActive);
                 nextActivePlayer.IsHost = true;
             }
 
+            // Lưu trạng thái phòng
             await _rooms.ReplaceOneAsync(r => r.RoomId == roomId, room);
-            return "Leave room success";
+
+            // Nếu không còn người chơi, đánh dấu phòng kết thúc
+            if (!room.Players.Any(p => p.IsActive))
+            {
+                room.Status = "ended";
+                await SaveGameSession(room);
+                await _rooms.ReplaceOneAsync(r => r.RoomId == roomId, room);
+            }
+
+            await _rooms.ReplaceOneAsync(r => r.RoomId == roomId, room);
+            return turnChanged ? nextPlayerId : "Leave room success";
+            //return "Leave room success";
         }
 
         public async Task<List<RoomListDTO>> GetListRoom(string? filters)
@@ -374,17 +386,17 @@ namespace TruthOrDare_Core.Services
             }
 
             // Kiểm tra có người chơi active
-            var firstActivePlayer = room.Players.FirstOrDefault(p => p.IsActive);
-            if (firstActivePlayer == null)
+            var hostPlayer = room.Players.FirstOrDefault(p => p.IsHost && p.IsActive);
+            if (hostPlayer == null)
             {
-                throw new NoActivePlayersException();
+                throw new NoActivePlayersException(); // Hoặc xử lý trường hợp không có host active
             }
             // Cập nhật trạng thái phòng
             room.Status = "playing";
             room.LastTurnTimestamp = DateTime.Now;
             room.LastQuestionTimestamp = null;
             room.IsLastQuestionAssigned = false;
-            room.CurrentPlayerIdTurn = firstActivePlayer.PlayerId; // Chọn người active đầu tiên
+            room.CurrentPlayerIdTurn = hostPlayer.PlayerId; // Chọn người active đầu tiên
             room.UpdatedAt = DateTime.Now;
             await _rooms.ReplaceOneAsync(r => r.RoomId == roomId, room);
         }
@@ -652,20 +664,23 @@ namespace TruthOrDare_Core.Services
                 return null;
             }
 
-
-            // Tìm chỉ số của currentPlayerId trong danh sách gốc
-            int currentIndex = players.FindIndex(p => p.PlayerId == currentPlayerId);
-            // Nếu không tìm thấy, bắt đầu từ đầu danh sách
-            int startIndex = (currentIndex == -1) ? -1 : currentIndex;
-
-            // Tìm người chơi active tiếp theo
-            int nextIndex = startIndex;
-            for (int i = 0; i < players.Count; i++)
+            // Tìm chỉ số của currentPlayerId trong danh sách gốc (không chỉ active)
+            var allPlayers = room.Players.ToList();
+            int currentIndex = allPlayers.FindIndex(p => p.PlayerId == currentPlayerId);
+            if (currentIndex == -1)
             {
-                nextIndex = (nextIndex + 1) % players.Count; // Vòng lại nếu đến cuối
-                if (players[nextIndex].IsActive)
+                // Nếu không tìm thấy, chọn người active đầu tiên
+                return players.FirstOrDefault()?.PlayerId;
+            }
+
+            // Tìm người chơi active tiếp theo trong danh sách gốc
+            for (int i = 1; i <= allPlayers.Count; i++)
+            {
+                int nextIndex = (currentIndex + i) % allPlayers.Count;
+                var nextPlayer = allPlayers[nextIndex];
+                if (nextPlayer.IsActive)
                 {
-                    return players[nextIndex].PlayerId;
+                    return nextPlayer.PlayerId;
                 }
             }
 

@@ -26,8 +26,11 @@ namespace TruthOrDare_API
             services.AddScoped<IPasswordHashingService, PasswordHashingService>();
             // Register MongoDbContext
             services.AddSingleton<MongoDbContext>(sp => new MongoDbContext(sp.GetRequiredService<IConfiguration>()));
-            //Register AutoNextPlayerService
+
+
+            //Register BackgroundService
             services.AddHostedService<AutoNextPlayerService>();
+            services.AddHostedService<RoomCleanupService>();
             return services;
         }
     }
