@@ -30,6 +30,7 @@ namespace TruthOrDare_Common
         RoomNeedMoreTimeException = 1019,//doi 1s de next player
         NoActivePlayersException = 1020,// ko co player nao trong room,
         PlayerNotActiveException = 1021, // yeu cau vao lai phong` bang joinroom
+        FullPlayerException = 1022,// phong da day nguoi choi
 
 
 
