@@ -30,7 +30,7 @@ namespace TruthOrDare_API
 
             //Register BackgroundService
             services.AddHostedService<AutoNextPlayerService>();
-            services.AddHostedService<RoomCleanupService>();
+            //services.AddHostedService<RoomCleanupService>();
             return services;
         }
     }
