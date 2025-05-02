@@ -14,7 +14,7 @@ namespace TruthOrDare_Core.Services
     {
         private readonly IMongoCollection<Room> _rooms;
         //private readonly TimeSpan _cleanupInterval = TimeSpan.FromMinutes(5);
-        private readonly TimeSpan _cleanupInterval = TimeSpan.FromSeconds(10);
+        private readonly TimeSpan _cleanupInterval = TimeSpan.FromSeconds(60);
 
         public RoomCleanupService(MongoDbContext dbContext)
         {
