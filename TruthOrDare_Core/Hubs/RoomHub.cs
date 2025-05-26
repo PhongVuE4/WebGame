@@ -327,14 +327,15 @@ namespace TruthOrDare_Core.Hubs
                     totalQuestions,
                     usedQuestions
                 });
-                await Clients.Caller.SendAsync("GetQuestionSuccess", new
-                {
-                    questionId = question.Id,
-                    questionText = question.Text,
-                    isLastQuestion,
-                    totalQuestions,
-                    usedQuestions
-                });
+                //await Clients.Caller.SendAsync("GetQuestionSuccess", new
+                //{
+                //    questionId = question.Id,
+                //    questionText = question.Text,
+                //    isLastQuestion,
+                //    totalQuestions,
+                //    usedQuestions
+                //});
+                await Clients.Caller.SendAsync("GetQuestionSuccess", question);
             });
         }
 
