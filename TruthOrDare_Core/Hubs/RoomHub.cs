@@ -318,9 +318,9 @@ namespace TruthOrDare_Core.Hubs
                 // Thông báo câu hỏi mới
                 await Clients.Group(roomId).SendAsync("QuestionAssigned", new
                 {
-                    questionId = question.Id,
-                    questionText = question.Text,
-                    questionType,
+                    Id = question.Id,
+                    Text = question.Text,
+                    Type = question.Type,
                     playerId,
                     playerName = room.Players.FirstOrDefault(p => p.PlayerId == playerId)?.PlayerName,
                     isLastQuestion,
