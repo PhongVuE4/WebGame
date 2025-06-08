@@ -319,6 +319,21 @@ namespace TruthOrDare_Core.Hubs
                     });
                 }
             }
+            catch (RoomHaveBeenStarted ex) // errorCode: 1014
+            {
+                if (sendToCaller)
+                {
+                    await Clients.Caller.SendAsync("OperationFailed", new
+                    {
+                        statusCode = 422,
+                        errors = new
+                        {
+                            errorCode = 1023,
+                            message = ex.Message
+                        }
+                    });
+                }
+            }
             catch (PlayerIdNotFound ex) // errorCode: 2003
             {
                 if (sendToCaller)
@@ -730,6 +745,22 @@ namespace TruthOrDare_Core.Hubs
                         errors = new
                         {
                             errorCode = 1022,
+                            message = ex.Message
+                        }
+                    });
+                }
+                throw;
+            }
+            catch (RoomHaveBeenStarted ex) // errorCode: 1014
+            {
+                if (sendToCaller)
+                {
+                    await Clients.Caller.SendAsync("OperationFailed", new
+                    {
+                        statusCode = 422,
+                        errors = new
+                        {
+                            errorCode = 1023,
                             message = ex.Message
                         }
                     });

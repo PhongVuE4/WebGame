@@ -160,6 +160,10 @@ namespace TruthOrDare_Core.Services
             {
                 playerName = NameGenerator.GenerateRandomName();
             }
+            if (room.Status != "waiting")
+            {
+                throw new RoomHaveBeenStarted();
+            }
 
             var existingPlayer = room.Players.FirstOrDefault(p => p.PlayerId == playerId);
             if(existingPlayer != null)

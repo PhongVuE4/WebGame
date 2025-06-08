@@ -31,7 +31,7 @@ namespace TruthOrDare_Common
         NoActivePlayersException = 1020,// ko co player nao trong room,
         PlayerNotActiveException = 1021, // yeu cau vao lai phong` bang joinroom
         FullPlayerException = 1022,// phong da day nguoi choi
-
+        RoomHaveBeenStarted = 1023, // phong da bat dau, player khong the join
 
 
         //player
