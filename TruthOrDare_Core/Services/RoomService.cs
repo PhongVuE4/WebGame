@@ -149,7 +149,7 @@ namespace TruthOrDare_Core.Services
 
                 if (!_passwordHashingService.VerifyPassword(roomPassword, room.RoomPassword))
                 {
-                    throw new RoomPasswordWrong();
+                    throw new RoomPasswordIsWrong();
                 }
             }
             if (string.IsNullOrWhiteSpace(playerId))

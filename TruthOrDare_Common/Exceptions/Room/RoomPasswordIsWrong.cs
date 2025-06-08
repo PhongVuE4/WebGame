@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace TruthOrDare_Common.Exceptions.Room
 {
-    public class RoomPasswordWrong : Exception
+    public class RoomPasswordIsWrong : Exception
     {
-        public RoomPasswordWrong() : base($"Password is wrong"){ }
+        public RoomPasswordIsWrong() : base($"Password is wrong"){ }
     }
 }
