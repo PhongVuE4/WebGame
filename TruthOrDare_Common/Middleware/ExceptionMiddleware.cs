@@ -190,6 +190,10 @@ namespace TruthOrDare_Common.Middleware
             {
                 await HandleExceptionAsync(context, (int)HttpStatusCode.UnprocessableEntity, (int)ErrorCode.PlayerNotActiveException, ex.Message);
             }
+            catch (RoomHaveBeenStarted ex)
+            {
+                await HandleExceptionAsync(context, (int)HttpStatusCode.UnprocessableEntity, (int)ErrorCode.RoomHaveBeenStarted, ex.Message);
+            }
             catch (ArgumentException ex)
             {
                 await HandleExceptionAsync(context, (int)HttpStatusCode.UnprocessableEntity, (int)ErrorCode.ValidationError, ex.Message);
