@@ -46,7 +46,7 @@ namespace TruthOrDare_Common.Middleware
             {
                 await HandleExceptionAsync(context, (int)HttpStatusCode.UnprocessableEntity, (int)ErrorCode.RoomPasswordRequired, ex.Message);
             }
-            catch (RoomPasswordWrong ex)
+            catch (RoomPasswordIsWrong ex)
             {
                 await HandleExceptionAsync(context, (int)HttpStatusCode.UnprocessableEntity, (int)ErrorCode.RoomPasswordIsWrong, ex.Message);
             }
