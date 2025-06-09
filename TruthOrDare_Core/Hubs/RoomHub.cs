@@ -51,7 +51,8 @@ namespace TruthOrDare_Core.Hubs
                 {
                     message,
                     playerId,
-                    playerName = player.PlayerName
+                    playerName = player.PlayerName,
+                    messTime = DateTime.Now.ToString("HH:mm:ss")
                 });
             });
         }
