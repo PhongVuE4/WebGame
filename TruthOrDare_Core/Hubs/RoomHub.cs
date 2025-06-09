@@ -29,10 +29,40 @@ namespace TruthOrDare_Core.Hubs
             _rooms = dbContext.Rooms;
             _hubContext = hubContext;
         }
-        public async Task SendMessage(string roomId, string message)
+        public async Task SendMessage(string roomId, string playerId, string message)
         {
-            Console.WriteLine($"Gửi tin nhắn đến phòng {roomId}: {message}");
-            await Clients.Group(roomId).SendAsync("ReceiveMessage", message);
+            await ExecuteWithErrorHandling(async () =>
+            {
+                Console.WriteLine($"Bắt đầu SendMessage: roomId={roomId}, playerId={playerId}, message={message}");
+
+                // Lấy thông tin phòng
+                var room = await _roomService.GetRoom(roomId);
+                if (room == null)
+                {
+                    Console.WriteLine($"Lỗi: Phòng {roomId} không tồn tại");
+
+                    throw new RoomNotExistException(roomId);
+                }
+
+                // Tìm người chơi
+                var player = room.Players.FirstOrDefault(p => p.PlayerId == playerId && p.IsActive);
+                if (player == null)
+                {
+                    Console.WriteLine($"Lỗi: Người chơi {playerId} không tồn tại hoặc không active trong phòng {roomId}");
+                    throw new RoomNotFoundPlayerIdException();
+                }
+
+                // Log tin nhắn
+                Console.WriteLine($"Gửi tin nhắn đến phòng {roomId} từ {player.PlayerName} ({playerId}): {message}");
+
+                // Gửi tin nhắn đến nhóm
+                await Clients.Group(roomId).SendAsync("ReceiveMessage", new
+                {
+                    message,
+                    playerId,
+                    playerName = player.PlayerName
+                });
+            });
         }
         public async Task CreateRoom(string roomName, string playerId, string playerName, string roomPassword, string ageGroup, string mode, int maxPlayer)
         {

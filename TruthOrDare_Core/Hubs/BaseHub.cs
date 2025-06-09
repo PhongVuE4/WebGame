@@ -64,6 +64,21 @@ namespace TruthOrDare_Core.Hubs
                     });
                 }
             }
+            catch (RoomPasswordIsWrong ex) // errorCode: 1003
+            {
+                if (sendToCaller)
+                {
+                    await Clients.Caller.SendAsync("OperationFailed", new
+                    {
+                        statusCode = 422,
+                        errors = new
+                        {
+                            errorCode = 1005,
+                            message = ex.Message
+                        }
+                    });
+                }
+            }
             catch (RoomRequiredHost ex) // errorCode: 1003
             {
                 if (sendToCaller)
