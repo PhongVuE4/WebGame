@@ -60,7 +60,7 @@ namespace TruthOrDare_Core.Services
                                 timestampType = "LastQuestionTimestamp";
                                 if (timeElapsed >= 120)
                                 {
-                                    Console.WriteLine($"Auto-switching player in room {room.RoomId} (after 2 minutes of question)");
+                                    //Console.WriteLine($"Auto-switching player in room {room.RoomId} (after 2 minutes of question)");
                                     var currentPlayerId = room.CurrentPlayerIdTurn;
                                     var (nextPlayerId, isGameEnded, message) = await roomService.NextPlayer(room.RoomId, currentPlayerId);
                                     if (isGameEnded)
@@ -78,7 +78,7 @@ namespace TruthOrDare_Core.Services
                                         room.CurrentPlayerIdTurn = nextPlayerId; // Cập nhật trong bộ nhớ
                                         room.LastQuestionTimestamp = null;
                                         room.LastTurnTimestamp = DateTime.Now;
-                                        Console.WriteLine($"Auto-switched from {currentPlayerId} to {nextPlayerId} in room {room.RoomId}");
+                                        //Console.WriteLine($"Auto-switched from {currentPlayerId} to {nextPlayerId} in room {room.RoomId}");
 
                                         // Gửi thông báo chuyển lượt tới nhóm
                                         var nextPlayerName = room.Players.FirstOrDefault(p => p.PlayerId == nextPlayerId)?.PlayerName;
@@ -97,13 +97,13 @@ namespace TruthOrDare_Core.Services
                                 timestampType = "LastTurnTimestamp";
                                 if (timeElapsed >= 30)
                                 {
-                                    Console.WriteLine($"Auto-switching player in room {room.RoomId} (after 30 seconds of turn)");
+                                    //Console.WriteLine($"Auto-switching player in room {room.RoomId} (after 30 seconds of turn)");
                                     var currentPlayerId = room.CurrentPlayerIdTurn;
                                     var (nextPlayerId, isGameEnded, message) = await roomService.NextPlayer(room.RoomId, currentPlayerId);
 
                                     if (isGameEnded)
                                     {
-                                        Console.WriteLine($"Game ended in room {room.RoomId}: {message}");
+                                        //Console.WriteLine($"Game ended in room {room.RoomId}: {message}");
                                         // Gửi thông báo game kết thúc tới nhóm
                                         await _hubContext.Clients.Group(room.RoomId).SendAsync("GameEnded", new
                                         {
@@ -116,7 +116,7 @@ namespace TruthOrDare_Core.Services
                                         room.CurrentPlayerIdTurn = nextPlayerId;
                                         room.LastQuestionTimestamp = null;
                                         room.LastTurnTimestamp = DateTime.Now;
-                                        Console.WriteLine($"Auto-switched from {currentPlayerId} to {nextPlayerId} in room {room.RoomId}");
+                                        //Console.WriteLine($"Auto-switched from {currentPlayerId} to {nextPlayerId} in room {room.RoomId}");
                                        
                                         // Gửi thông báo chuyển lượt tới nhóm
                                         var nextPlayerName = room.Players.FirstOrDefault(p => p.PlayerId == nextPlayerId)?.PlayerName;
@@ -131,11 +131,11 @@ namespace TruthOrDare_Core.Services
                             }
                             else
                             {
-                                Console.WriteLine($"Room {room.RoomId}: No LastQuestionTimestamp or LastTurnTimestamp set.");
+                                //Console.WriteLine($"Room {room.RoomId}: No LastQuestionTimestamp or LastTurnTimestamp set.");
                                 continue;
                             }
 
-                            Console.WriteLine($"Room {room.RoomId}: {timestampType}={room.LastQuestionTimestamp ?? room.LastTurnTimestamp}, TimeElapsed={timeElapsed} seconds");
+                            //Console.WriteLine($"Room {room.RoomId}: {timestampType}={room.LastQuestionTimestamp ?? room.LastTurnTimestamp}, TimeElapsed={timeElapsed} seconds");
                         }
                     }
                 }
