@@ -33,14 +33,10 @@ namespace TruthOrDare_Core.Hubs
         {
             await ExecuteWithErrorHandling(async () =>
             {
-                Console.WriteLine($"Bắt đầu SendMessage: roomId={roomId}, playerId={playerId}, message={message}");
-
                 // Lấy thông tin phòng
                 var room = await _roomService.GetRoom(roomId);
                 if (room == null)
                 {
-                    Console.WriteLine($"Lỗi: Phòng {roomId} không tồn tại");
-
                     throw new RoomNotExistException(roomId);
                 }
 
@@ -48,13 +44,8 @@ namespace TruthOrDare_Core.Hubs
                 var player = room.Players.FirstOrDefault(p => p.PlayerId == playerId && p.IsActive);
                 if (player == null)
                 {
-                    Console.WriteLine($"Lỗi: Người chơi {playerId} không tồn tại hoặc không active trong phòng {roomId}");
                     throw new RoomNotFoundPlayerIdException();
                 }
-
-                // Log tin nhắn
-                Console.WriteLine($"Gửi tin nhắn đến phòng {roomId} từ {player.PlayerName} ({playerId}): {message}");
-
                 // Gửi tin nhắn đến nhóm
                 await Clients.Group(roomId).SendAsync("ReceiveMessage", new
                 {
@@ -133,7 +124,7 @@ namespace TruthOrDare_Core.Hubs
                 // Kiểm tra xem ConnectionId đã được cập nhật chưa
                 if (player.ConnectionId == Context.ConnectionId && player.IsActive)
                 {
-                    Console.WriteLine($"ReconnectPlayer: Player {playerId} đã được kết nối với ConnectionId={Context.ConnectionId}. Bỏ qua cập nhật.");
+                    //Console.WriteLine($"ReconnectPlayer: Player {playerId} đã được kết nối với ConnectionId={Context.ConnectionId}. Bỏ qua cập nhật.");
                     await Groups.AddToGroupAsync(Context.ConnectionId, roomId);
                     var pls = room.Players != null ? room.Players
                     .Where(p => p.IsActive).Select(p => new { p.PlayerId, p.PlayerName })
@@ -148,11 +139,7 @@ namespace TruthOrDare_Core.Hubs
                     });
                     return;
                 }
-                //if (!player.IsActive)
-                //{
-                //    throw new PlayerNotActiveException();
-                //}
-                Console.WriteLine($"ReconnectPlayer: roomId={roomId}, playerId={playerId}, playerName={playerName}, isActive={player.IsActive}, connectionId={player.ConnectionId}, playerCount={room.PlayerCount}");
+                //Console.WriteLine($"ReconnectPlayer: roomId={roomId}, playerId={playerId}, playerName={playerName}, isActive={player.IsActive}, connectionId={player.ConnectionId}, playerCount={room.PlayerCount}");
                 // Cập nhật connectionId
                 var update = Builders<Room>.Update
                         .Set("Players.$[p].connection_id", Context.ConnectionId)
@@ -170,7 +157,7 @@ namespace TruthOrDare_Core.Hubs
                 {
                     new BsonDocumentArrayFilterDefinition<BsonDocument>(new BsonDocument("p.player_id", playerId))
                 };
-                Console.WriteLine($"ReconnectPlayer: filter=RoomId:{roomId}, arrayFilters=p.PlayerId:{playerId}");
+                //Console.WriteLine($"ReconnectPlayer: filter=RoomId:{roomId}, arrayFilters=p.PlayerId:{playerId}");
 
                 var updateResult = await _rooms.UpdateOneAsync(
                        filter,
@@ -188,7 +175,6 @@ namespace TruthOrDare_Core.Hubs
                 }
                 // Lấy lại room để đảm bảo dữ liệu mới nhất
                 room = await _rooms.Find(r => r.RoomId == roomId).FirstOrDefaultAsync();
-                //await _rooms.UpdateOneAsync(filter, update, arrayFilter);
 
                 // Thêm lại vào nhóm SignalR
                 await Groups.AddToGroupAsync(Context.ConnectionId, roomId);
