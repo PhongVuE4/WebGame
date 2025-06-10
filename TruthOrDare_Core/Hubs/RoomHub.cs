@@ -6,6 +6,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Google;
 using Microsoft.AspNetCore.SignalR;
 using MongoDB.Bson;
 using MongoDB.Driver;
@@ -13,6 +14,7 @@ using TruthOrDare_Common.Exceptions.Player;
 using TruthOrDare_Common.Exceptions.Room;
 using TruthOrDare_Contract.IServices;
 using TruthOrDare_Contract.Models;
+using TruthOrDare_Core.Services;
 using TruthOrDare_Infrastructure;
 
 namespace TruthOrDare_Core.Hubs
@@ -22,13 +24,17 @@ namespace TruthOrDare_Core.Hubs
         private readonly IRoomService _roomService;
         private readonly IMongoCollection<Room> _rooms;
         private readonly IHubContext<RoomHub> _hubContext;
+        private readonly GoogleDriveService _driveService;
+        private readonly YouTubeService _youTubeService;
         private static readonly ConcurrentDictionary<string, bool> _roomLocks = new ConcurrentDictionary<string, bool>();
 
-        public RoomHub(IRoomService roomService, MongoDbContext dbContext, IHubContext<RoomHub> hubContext)
+        public RoomHub(IRoomService roomService, MongoDbContext dbContext, IHubContext<RoomHub> hubContext, GoogleDriveService driveSerevice, YouTubeService youTubeService)
         {
             _roomService = roomService;
             _rooms = dbContext.Rooms;
             _hubContext = hubContext;
+            _driveService = driveSerevice;
+            _youTubeService = youTubeService;
         }
         public async Task SendMessage(string roomId, string playerId, string message)
         {
@@ -427,41 +433,58 @@ namespace TruthOrDare_Core.Hubs
             });
         }
 
-        public async Task SubmitChallenge(string roomId, string playerId, string mediaUrl, string mediaType)
+        public async Task UploadChallenge(string roomId, string playerId, string fileName, string mimeType, byte[] fileData)
         {
             await ExecuteWithErrorHandling(async () =>
             {
-                Console.WriteLine($"Bắt đầu SubmitChallenge: roomId={roomId}, playerId={playerId}, mediaUrl={mediaUrl}, mediaType={mediaType}");
-                var room = await _roomService.GetRoom(roomId);
-                if (room == null)
+                // Validate inputs
+                if (string.IsNullOrEmpty(roomId) || string.IsNullOrEmpty(playerId) || string.IsNullOrEmpty(fileName) || fileData == null)
                 {
-                    Console.WriteLine($"Lỗi: Phòng {roomId} không tồn tại");
-                    throw new RoomNotExistException("Room not found");
+                    await Clients.Caller.SendAsync("OperationFailed", new
+                    {
+                        statusCode = 422,
+                        errors = new { message = "Room ID, player ID, file name, and file data are required" }
+                    });
+                    return;
                 }
 
-                var player = room.Players.FirstOrDefault(p => p.PlayerId == playerId && p.IsActive);
-                if (player == null)
+                string mediaUrl;
+                using (var stream = new MemoryStream(fileData))
                 {
-                    Console.WriteLine($"Lỗi: Người chơi {playerId} không tồn tại hoặc không active");
-                    throw new PlayerIdNotFound("Player not found or not active");
+                    if (mimeType.StartsWith("image/"))
+                    {
+                        // Upload to Google Drive
+                        mediaUrl = await _driveService.UploadFile(stream, fileName, mimeType);
+                    }
+                    else if (mimeType.StartsWith("video/"))
+                    {
+                        // Upload to YouTube
+                        mediaUrl = await _youTubeService.UploadVideo(stream, fileName, $"Challenge from {playerId} in room {roomId}");
+                    }
+                    else
+                    {
+                        await Clients.Caller.SendAsync("OperationFailed", new
+                        {
+                            statusCode = 422,
+                            errors = new { message = "Unsupported file type. Only images and videos are allowed." }
+                        });
+                        return;
+                    }
                 }
 
-                var payload = new
+                // Broadcast the uploaded media URL to all clients in the room
+                await Clients.Group(roomId).SendAsync("ChallengeUploaded", new
                 {
-                    mediaUrl,
-                    mediaType,
+                    roomId,
                     playerId,
-                    playerName = player.PlayerName,
-                    timestamp = DateTime.UtcNow.ToString("o")
-                };
-
-                Console.WriteLine($"Gửi submission đến phòng {roomId} từ {player.PlayerName} ({playerId}): {mediaUrl}");
-                await Clients.Group(roomId).SendAsync("ReceiveChallenge", payload);
-
-                // Lưu vào DB nếu cần
-                // await _challengeService.SaveChallenge(roomId, playerId, mediaUrl, mediaType);
+                    mediaUrl,
+                    fileName,
+                    mimeType,
+                    uploadTime = DateTime.UtcNow.ToString("o")
+                });
             });
         }
+
 
         public override async Task OnDisconnectedAsync(Exception? exception)
         {

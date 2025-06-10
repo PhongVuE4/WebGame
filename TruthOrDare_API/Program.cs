@@ -54,7 +54,8 @@ builder.Services.AddCors(options =>
             "http://localhost:3001",
             "https://webgame-oqyj-g.fly.dev",
             "https://leminhhien.id.vn",
-            "http://localhost:8080")
+            "http://localhost:8080",
+            "https://localhost:8080")
                .AllowAnyMethod()
                .AllowAnyHeader()
                 .AllowCredentials();
