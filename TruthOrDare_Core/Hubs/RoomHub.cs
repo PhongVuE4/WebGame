@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -425,6 +426,43 @@ namespace TruthOrDare_Core.Hubs
                 await Clients.Caller.SendAsync("NextPlayerSuccess", $"Đã chuyển lượt sang {nextPlayerName}");
             });
         }
+
+        public async Task SubmitChallenge(string roomId, string playerId, string mediaUrl, string mediaType)
+        {
+            await ExecuteWithErrorHandling(async () =>
+            {
+                Console.WriteLine($"Bắt đầu SubmitChallenge: roomId={roomId}, playerId={playerId}, mediaUrl={mediaUrl}, mediaType={mediaType}");
+                var room = await _roomService.GetRoom(roomId);
+                if (room == null)
+                {
+                    Console.WriteLine($"Lỗi: Phòng {roomId} không tồn tại");
+                    throw new RoomNotExistException("Room not found");
+                }
+
+                var player = room.Players.FirstOrDefault(p => p.PlayerId == playerId && p.IsActive);
+                if (player == null)
+                {
+                    Console.WriteLine($"Lỗi: Người chơi {playerId} không tồn tại hoặc không active");
+                    throw new PlayerIdNotFound("Player not found or not active");
+                }
+
+                var payload = new
+                {
+                    mediaUrl,
+                    mediaType,
+                    playerId,
+                    playerName = player.PlayerName,
+                    timestamp = DateTime.UtcNow.ToString("o")
+                };
+
+                Console.WriteLine($"Gửi submission đến phòng {roomId} từ {player.PlayerName} ({playerId}): {mediaUrl}");
+                await Clients.Group(roomId).SendAsync("ReceiveChallenge", payload);
+
+                // Lưu vào DB nếu cần
+                // await _challengeService.SaveChallenge(roomId, playerId, mediaUrl, mediaType);
+            });
+        }
+
         public override async Task OnDisconnectedAsync(Exception? exception)
         {
             bool sendToCaller = false;
@@ -442,7 +480,7 @@ namespace TruthOrDare_Core.Hubs
                         Console.WriteLine($"Player disconnected: PlayerId={player.PlayerId}, PlayerName={player.PlayerName}, RoomId={room.RoomId}");
 
                         player.ConnectionId = null;
-                        await Clients.Group(room.RoomId).SendAsync("ReceiveMessage",
+                        await Clients.Group(room.RoomId).SendAsync("ReconnectMessage",
                             $"{player.PlayerName} has disconnected. Waiting for reconnect...");
 
                         await _rooms.ReplaceOneAsync(r => r.RoomId == room.RoomId, room);
@@ -613,7 +651,7 @@ namespace TruthOrDare_Core.Hubs
         public async Task TestConnection(string message)
         {
             Console.WriteLine($"Message from client: {message}");
-            await Clients.Caller.SendAsync("ReceiveMessage", $"Server received: {message}");
+            await Clients.Caller.SendAsync("ConnectMessage", $"Server received: {message}");
         }
     }
 }
