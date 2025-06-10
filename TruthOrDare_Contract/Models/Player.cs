@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Net.WebSockets;
 
 namespace TruthOrDare_Contract.Models
 {
@@ -36,8 +35,10 @@ namespace TruthOrDare_Contract.Models
         public DateTime LastActive { get; set; }
         [BsonElement("is_host")]
         public bool IsHost { get; set; }
-        [BsonIgnore]
-        public WebSocket WebSocket { get; set; }
+        [BsonElement("is_active")]
+        public bool IsActive { get; set; }
+        [BsonElement("connection_id")]
+        public string ConnectionId { get; set; }
         [BsonElement("is_deleted")]
         public bool IsDeleted { get; set; }
         [BsonElement("questions_answered")]

@@ -15,8 +15,11 @@ namespace TruthOrDare_Contract.DTOs.Room
         public int MaxPlayer { get; set; }
         public bool HasPassword { get; set; }
         public string Status { get; set; }
+        public string Mode { get; set; }
+        public string AgeGroup { get; set; }
         public bool IsActive { get; set; }
         public bool IsDeleted { get; set; }
+        public string CurrentPlayerIdTurn { get; set; }
         public List<PlayerCreateRoomDTO> Players { get; set; } = new List<PlayerCreateRoomDTO>();
     }
 }
