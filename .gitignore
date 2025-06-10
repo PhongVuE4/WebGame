@@ -53,6 +53,9 @@ CodeCoverage/
 TestResult.xml
 nunit-*.xml
 
+# Credentials
+service-account-credentials.json
+
 # appsettings files
 appsettings.json
 appsettings.*.json
