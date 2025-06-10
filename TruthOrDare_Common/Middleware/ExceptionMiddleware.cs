@@ -12,6 +12,7 @@ using TruthOrDare_Common.Exceptions.Room;
 using TruthOrDare_Common.Exceptions.Player;
 using TruthOrDare_Common.Exceptions.Question;
 using TruthOrDare_Common.Exceptions.GameSession;
+using TruthOrDare_Common.Exceptions.ImageAndVideo;
 
 namespace TruthOrDare_Common.Middleware
 {
@@ -193,6 +194,14 @@ namespace TruthOrDare_Common.Middleware
             catch (RoomHaveBeenStarted ex)
             {
                 await HandleExceptionAsync(context, (int)HttpStatusCode.UnprocessableEntity, (int)ErrorCode.RoomHaveBeenStarted, ex.Message);
+            }
+            catch (UploadVideoFailed ex)
+            {
+                await HandleExceptionAsync(context, (int)HttpStatusCode.UnprocessableEntity, (int)ErrorCode.UploadVideoFailed, ex.Message);
+            }
+            catch (UploadImageFailed ex)
+            {
+                await HandleExceptionAsync(context, (int)HttpStatusCode.UnprocessableEntity, (int)ErrorCode.UploadImageFailed, ex.Message);
             }
             catch (ArgumentException ex)
             {

@@ -8,6 +8,7 @@ using TruthOrDare_Common.Exceptions.Player;
 using TruthOrDare_Common.Exceptions.Room;
 using TruthOrDare_Common.Exceptions;
 using TruthOrDare_Common.Exceptions.Question;
+using TruthOrDare_Common.Exceptions.ImageAndVideo;
 
 namespace TruthOrDare_Core.Hubs
 {
@@ -419,6 +420,36 @@ namespace TruthOrDare_Core.Hubs
                         errors = new
                         {
                             errorCode = 2007,
+                            message = ex.Message
+                        }
+                    });
+                }
+            }
+            catch (UploadImageFailed ex) // errorCode: 2007
+            {
+                if (sendToCaller)
+                {
+                    await Clients.Caller.SendAsync("OperationFailed", new
+                    {
+                        statusCode = 422,
+                        errors = new
+                        {
+                            errorCode = 5001,
+                            message = ex.Message
+                        }
+                    });
+                }
+            }
+            catch (UploadVideoFailed ex) // errorCode: 2007
+            {
+                if (sendToCaller)
+                {
+                    await Clients.Caller.SendAsync("OperationFailed", new
+                    {
+                        statusCode = 422,
+                        errors = new
+                        {
+                            errorCode = 5002,
                             message = ex.Message
                         }
                     });
@@ -840,6 +871,54 @@ namespace TruthOrDare_Core.Hubs
                         errors = new
                         {
                             errorCode = 2006,
+                            message = ex.Message
+                        }
+                    });
+                }
+                throw;
+            }
+            catch (PlayerIdAlreadyInUseException ex) // errorCode: 2007
+            {
+                if (sendToCaller)
+                {
+                    await Clients.Caller.SendAsync("OperationFailed", new
+                    {
+                        statusCode = 422,
+                        errors = new
+                        {
+                            errorCode = 2007,
+                            message = ex.Message
+                        }
+                    });
+                }
+                throw;
+            }
+            catch (UploadImageFailed ex) // errorCode: 2007
+            {
+                if (sendToCaller)
+                {
+                    await Clients.Caller.SendAsync("OperationFailed", new
+                    {
+                        statusCode = 422,
+                        errors = new
+                        {
+                            errorCode = 5001,
+                            message = ex.Message
+                        }
+                    });
+                }
+                throw;
+            }
+            catch (UploadVideoFailed ex) // errorCode: 2007
+            {
+                if (sendToCaller)
+                {
+                    await Clients.Caller.SendAsync("OperationFailed", new
+                    {
+                        statusCode = 422,
+                        errors = new
+                        {
+                            errorCode = 5002,
                             message = ex.Message
                         }
                     });

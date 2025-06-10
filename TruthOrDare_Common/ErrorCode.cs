@@ -59,6 +59,9 @@ namespace TruthOrDare_Common
         //game session
         GameSessionRequired = 4001, // yeu cau gamesession id
 
+        //upload image and video
+        UploadImageFailed = 5001, // loi upload image
+        UploadVideoFailed = 5002, // loi upload video
 
         InvalidFilters = 9997, //filter ko hop le
         ValidationError = 9998, // loi validation
