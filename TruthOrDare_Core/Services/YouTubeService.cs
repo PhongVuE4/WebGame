@@ -118,7 +118,7 @@ namespace TruthOrDare_Core.Services
                 throw new UploadVideoFailed();
             }
 
-            return $"https://www.youtube.com/watch?v={response.Id}";
+            return $"https://www.youtube.com/embed/{response.Id}";
         }
     }
 }

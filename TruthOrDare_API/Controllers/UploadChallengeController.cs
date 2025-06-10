@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using TruthOrDare_Contract.DTOs.UploadImageAndVideo;
+using TruthOrDare_Core.Hubs;
 using TruthOrDare_Core.Services;
 
 namespace TruthOrDare_API.Controllers
@@ -11,11 +13,14 @@ namespace TruthOrDare_API.Controllers
     {
         private readonly GoogleDriveService _driveService;
         private readonly YouTubeService _youTubeService;
+        private readonly IHubContext<RoomHub> _hubContext;
+        private readonly HttpClient _httpClient = new HttpClient();
 
-        public UploadChallengeController(GoogleDriveService driveService, YouTubeService youTubeService)
+        public UploadChallengeController(GoogleDriveService driveService, YouTubeService youTubeService, IHubContext<RoomHub> hubContext)
         {
             _driveService = driveService;
             _youTubeService = youTubeService;
+            _hubContext = hubContext;
         }
 
         [HttpPost("upload-image-video")]
@@ -53,6 +58,16 @@ namespace TruthOrDare_API.Controllers
                 {
                     return BadRequest(new { message = "Unsupported file type" });
                 }
+                // Gửi thông báo qua SignalR đến tất cả client trong phòng
+                await _hubContext.Clients.Group(request.RoomId).SendAsync("ChallengeUploaded", new
+                {
+                    roomId = request.RoomId,
+                    playerId = request.PlayerId,
+                    mediaUrl,
+                    fileName = request.File.FileName,
+                    mediaType,
+                    uploadTime = DateTime.UtcNow.ToString("o")
+                });
 
                 return Ok(new { mediaUrl, mediaType });
             }
@@ -63,5 +78,22 @@ namespace TruthOrDare_API.Controllers
             }
         }
 
+        [HttpGet("proxy-image")]
+        public async Task<IActionResult> ProxyImage(string id)
+        {
+            try
+            {
+                var url = $"https://drive.google.com/uc?id={id}";
+                var response = await _httpClient.GetAsync(url);
+                response.EnsureSuccessStatusCode();
+                var content = await response.Content.ReadAsByteArrayAsync();
+                var contentType = response.Content.Headers.ContentType?.MediaType ?? "image/jpeg"; // Giả định type mặc định
+                return File(content, contentType);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = $"Proxy failed: {ex.Message}" });
+            }
+        }
     }
 }
