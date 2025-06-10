@@ -24,8 +24,8 @@ namespace TruthOrDare_Core.Services
             var credentialsPath = Environment.GetEnvironmentVariable("GOOGLE_CREDENTIALS");
             _folderId = configuration["Drive:FolderId"];
 
-            using var stream = new FileStream(credentialsPath, FileMode.Open, FileAccess.Read);
-            var credential = GoogleCredential.FromStream(stream)
+           //using var stream = new FileStream(credentialsPath, FileMode.Open, FileAccess.Read);
+            var credential = GoogleCredential.FromJson(credentialsPath)
                 .CreateScoped(DriveService.Scope.DriveFile);
 
             _driveService = new DriveService(new BaseClientService.Initializer
