@@ -63,6 +63,7 @@ namespace TruthOrDare_Core.Services
                 Role = "reader",
                 Type = "anyone"
             };
+
             await _driveService.Permissions.Create(permission, file.Id).ExecuteAsync();
 
             return $"https://drive.google.com/uc?id={file.Id}";
