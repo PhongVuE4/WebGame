@@ -7,11 +7,10 @@ using System.Threading.Tasks;
 
 namespace TruthOrDare_Contract.DTOs.UploadImageAndVideo
 {
-    public class UploadChallengeRequest
+    public class UploadMessage
     {
         public string RoomId { get; set; }
         public string PlayerId { get; set; }
-        public string QuestionId { get; set; }
         public IFormFile File { get; set; }
     }
 }

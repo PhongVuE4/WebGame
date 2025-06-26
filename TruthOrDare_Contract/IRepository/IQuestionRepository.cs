@@ -15,6 +15,7 @@ namespace TruthOrDare_Contract.IRepository
         Task<int> GetPointsForQuestionAsync(string questionId);
         Task<Question> CreateQuestion(QuestionCreateDTO question);
         Task<List<Question>> GetQuestions(string? filter);
+        Task<Question> GetQuestionById(string questionId);
         Task<int> InsertManyQuestions(List<QuestionCreateDTO> questions);
         Task DeleteQuestion(string questionId);
     }

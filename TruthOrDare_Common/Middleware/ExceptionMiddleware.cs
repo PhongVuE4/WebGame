@@ -211,10 +211,10 @@ namespace TruthOrDare_Common.Middleware
             {
                 await HandleExceptionAsync(context, (int)HttpStatusCode.UnprocessableEntity, ex.ErrorCode, ex.Message, ex.Errors);
             }
-            catch (Exception ex)
-            {
-                await HandleExceptionAsync(context, (int)HttpStatusCode.InternalServerError, (int)ErrorCode.InternalServerError, "An unexpected error occurred.");
-            }
+            //catch (Exception ex)
+            //{
+            //    await HandleExceptionAsync(context, (int)HttpStatusCode.InternalServerError, (int)ErrorCode.InternalServerError, "An unexpected error occurred.");
+            //}
         }
 
         private static Task HandleExceptionAsync(HttpContext context, int statusCode, int errorCode, string message, IDictionary<string, string[]> errors = null)

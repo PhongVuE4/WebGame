@@ -17,7 +17,7 @@ namespace TruthOrDare_Contract.IServices
         Task<Room> GetRoom(string roomId);
         Task ChangePlayerName(string roomId, string playerId, string newName);
         Task StartGame(string roomId, string playerId);
-        Task<(Question question, bool isLastQuestion, int totalQuestions, int usedQuestions)> GetRandomQuestionForRoom(string roomId, string playerId, string questionType);
+        Task<(Question question, bool isLastQuestion, int totalQuestions, int usedQuestions, string responseType)> GetRandomQuestionForRoom(string roomId, string playerId, string questionType);
         Task<EndGameSummaryDTO> EndGame(string roomId, string playerId);
         Task ResetGame(string roomId, string playerId);
         Task<(string nextPlayerId, bool isGameEnded, string message)> NextPlayer(string roomId, string playerId);

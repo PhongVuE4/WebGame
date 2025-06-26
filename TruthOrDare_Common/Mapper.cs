@@ -5,12 +5,14 @@ using System.Text;
 using System.Threading.Tasks;
 using TruthOrDare_Contract.DTOs.Player;
 using TruthOrDare_Contract.DTOs.Room;
+using TruthOrDare_Contract.IRepository;
 using TruthOrDare_Contract.Models;
 
 namespace TruthOrDare_Common
 {
     public static class Mapper
     {
+        private static readonly IQuestionRepository questionRepository;
         public static Room ToRoom(RoomCreateDTO dto)
         {
             return new Room
@@ -43,8 +45,15 @@ namespace TruthOrDare_Common
                 Players = room.Players.Select(p => ToPlayerCreateRoomDTO(p)).ToList()
             };
         }
-        public static RoomDetailDTO ToRoomDetailDTO(Room room)
+        public static async Task<RoomDetailDTO> ToRoomDetailDTO(Room room, IQuestionRepository questionRepository)
         {
+            string currentQuestionText = null;
+            if (room.CurrentQuestionId != null)
+            {
+                 var question = await questionRepository.GetQuestionById(room.CurrentQuestionId);
+                currentQuestionText = question?.Text;
+            }
+
             return new RoomDetailDTO
             {
                 RoomId = room.RoomId,
@@ -52,6 +61,8 @@ namespace TruthOrDare_Common
                 PlayerCount = room.PlayerCount,
                 MaxPlayer = room.MaxPlayer,
                 CurrentPlayerIdTurn = room.CurrentPlayerIdTurn,
+                CurrentQuestionId = room.CurrentQuestionId,
+                CurrentQuestionText = currentQuestionText,
                 HasPassword = room.HasPassword,
                 Status = room.Status,
                 Mode = room.Mode,
