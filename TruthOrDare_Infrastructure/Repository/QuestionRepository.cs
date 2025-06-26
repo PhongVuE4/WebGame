@@ -101,7 +101,26 @@ namespace TruthOrDare_Infrastructure.Repository
             var count = await _questions.CountDocumentsAsync(filter);
             return (int)count;
         }
-
+        public async Task<Question> GetQuestionById(string questionId)
+        {
+            if (string.IsNullOrWhiteSpace(questionId))
+            {
+                throw new QuestionNotFoundException(questionId);
+            }
+            // Kiểm tra định dạng ObjectId
+            if (!MongoDB.Bson.ObjectId.TryParse(questionId, out _))
+            {
+                throw new QuestionIdFormat();
+            }
+            var question = await _questions
+                .Find(q => q.Id == questionId && !q.IsDeleted)
+                .FirstOrDefaultAsync();
+            if (question == null)
+            {
+                throw new QuestionNotFoundException(questionId);
+            }
+            return question;
+        }
         public async Task<List<Question>> GetQuestions(string? filters)
         {
             var baseFilter = Builders<Question>.Filter.Eq(q => q.IsDeleted, false);

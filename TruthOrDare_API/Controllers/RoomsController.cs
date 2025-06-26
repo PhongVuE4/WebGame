@@ -9,6 +9,7 @@ using TruthOrDare_Core.Services;
 using TruthOrDare_Contract.Models;
 using TruthOrDare_Common;
 using Microsoft.AspNetCore.Http.HttpResults;
+using TruthOrDare_Contract.IRepository;
 
 namespace TruthOrDare_API.Controllers
 {
@@ -17,10 +18,11 @@ namespace TruthOrDare_API.Controllers
     public class RoomsController : ControllerBase
     {
         private readonly IRoomService _roomService;
-
-        public RoomsController(IRoomService roomService)
+        private readonly IQuestionRepository _questionRepository;
+        public RoomsController(IRoomService roomService, IQuestionRepository questionRepository)
         {
             _roomService = roomService;
+            _questionRepository = questionRepository;
         }
 
         [HttpPost("create")]
@@ -56,7 +58,8 @@ namespace TruthOrDare_API.Controllers
         public async Task<IActionResult> GetRoom(string roomId)
         {
             var room = await _roomService.GetRoom(roomId);
-            var roomDto = Mapper.ToRoomDetailDTO(room);
+            var questionRepository = _questionRepository;
+            var roomDto = await Mapper.ToRoomDetailDTO(room, questionRepository);
             return Ok(roomDto);
         }
         [HttpPatch("{roomId}/leave-room")]
@@ -88,7 +91,7 @@ namespace TruthOrDare_API.Controllers
         [HttpPatch("{roomId}/get-question")]
         public async Task<ActionResult> GetRandomQuestion(string roomId, [FromBody] RoomGetQuestionDTO action)
         {
-                var (_question, _isLastQuestion, _totalQuestions, _usedQuestions) = await _roomService.GetRandomQuestionForRoom(roomId, action.PlayerId, action.QuestionType);
+                var (_question, _isLastQuestion, _totalQuestions, _usedQuestions, reponseType) = await _roomService.GetRandomQuestionForRoom(roomId, action.PlayerId, action.QuestionType);
                 if (_question == null)
                 {
                     return Ok(new { message = "No more questions available. Game has ended.", isGameEnded = true });
@@ -98,7 +101,8 @@ namespace TruthOrDare_API.Controllers
                     question = _question,
                     isLastQuestion = _isLastQuestion,
                     totalQuestions = _totalQuestions,
-                    usedQuestions = _usedQuestions
+                    usedQuestions = _usedQuestions,
+                    reponseType = reponseType,
                 });
         }
         [HttpPatch("{roomId}/next-player")]

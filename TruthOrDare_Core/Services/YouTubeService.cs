@@ -69,56 +69,65 @@ namespace TruthOrDare_Core.Services
 
         public async Task<string> UploadVideo(Stream fileStream, string title, string description)
         {
-            var credential = await GetCredential();
-            var youtubeService = new Google.Apis.YouTube.v3.YouTubeService(new BaseClientService.Initializer
+            try
             {
-                HttpClientInitializer = credential,
-                ApplicationName = "TruthOrDareGame"
-            });
+                var credential = await GetCredential();
+                var youtubeService = new Google.Apis.YouTube.v3.YouTubeService(new BaseClientService.Initializer
+                {
+                    HttpClientInitializer = credential,
+                    ApplicationName = "TruthOrDareGame"
+                });
 
-            var video = new Google.Apis.YouTube.v3.Data.Video
-            {
-                Snippet = new Google.Apis.YouTube.v3.Data.VideoSnippet
+                var video = new Google.Apis.YouTube.v3.Data.Video
                 {
-                    Title = title,
-                    Description = description,
-                    CategoryId = "22" // People & Blogs
-                },
-                Status = new Google.Apis.YouTube.v3.Data.VideoStatus
+                    Snippet = new Google.Apis.YouTube.v3.Data.VideoSnippet
+                    {
+                        Title = title,
+                        Description = description,
+                        CategoryId = "22" // People & Blogs
+                    },
+                    Status = new Google.Apis.YouTube.v3.Data.VideoStatus
+                    {
+                        PrivacyStatus = "unlisted"
+                    }
+                };
+
+                using var fileStreamCopy = new MemoryStream();
+                await fileStream.CopyToAsync(fileStreamCopy);
+                fileStreamCopy.Position = 0;
+
+                var videosInsertRequest = youtubeService.Videos.Insert(video, "snippet,status", fileStreamCopy, "video/*");
+                videosInsertRequest.ProgressChanged += (progress) =>
                 {
-                    PrivacyStatus = "unlisted"
+                    switch (progress.Status)
+                    {
+                        case UploadStatus.Uploading:
+                            Console.WriteLine($"Uploaded {progress.BytesSent} bytes");
+                            break;
+                        case UploadStatus.Completed:
+                            Console.WriteLine("Upload completed!");
+                            break;
+                        case UploadStatus.Failed:
+                            Console.WriteLine($"Upload failed: {progress.Exception?.Message}");
+                            break;
+                    }
+                };
+                await videosInsertRequest.UploadAsync();
+                var response = videosInsertRequest.ResponseBody;
+                if (response == null || string.IsNullOrEmpty(response.Id))
+                {
+                    Console.WriteLine($"Upload failed: {response}");
+                    throw new UploadVideoFailed();
                 }
-            };
 
-            using var fileStreamCopy = new MemoryStream();
-            await fileStream.CopyToAsync(fileStreamCopy);
-            fileStreamCopy.Position = 0;
-
-            var videosInsertRequest = youtubeService.Videos.Insert(video, "snippet,status", fileStreamCopy, "video/*");
-            videosInsertRequest.ProgressChanged += (progress) =>
-            {
-                switch (progress.Status)
-                {
-                    case UploadStatus.Uploading:
-                        Console.WriteLine($"Uploaded {progress.BytesSent} bytes");
-                        break;
-                    case UploadStatus.Completed:
-                        Console.WriteLine("Upload completed!");
-                        break;
-                    case UploadStatus.Failed:
-                        Console.WriteLine($"Upload failed: {progress.Exception?.Message}");
-                        break;
-                }
-            };
-            await videosInsertRequest.UploadAsync();
-            var response = videosInsertRequest.ResponseBody;
-            if (response == null || string.IsNullOrEmpty(response.Id))
-            {
-                Console.WriteLine($"Upload failed: {response}");
-                throw new UploadVideoFailed();
+                return $"https://www.youtube.com/embed/{response.Id}";
             }
-
-            return $"https://www.youtube.com/embed/{response.Id}";
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error uploading video: {ex.Message}");
+                throw;
+            }
+            
         }
     }
 }

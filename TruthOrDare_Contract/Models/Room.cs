@@ -60,6 +60,8 @@ namespace TruthOrDare_Contract.Models
         public bool IsDeleted { get; set; }
         [BsonElement("used_question_ids")]
         public List<string> UsedQuestionIds { get; set; } = new List<string>(); // Câu hỏi đã dùng
+        [BsonElement("questions")]
+        public List<Question> Questions { get; set; } = new List<Question>();
 
         [BsonElement("history")]
         public List<SessionHistory> History { get; set; } = new List<SessionHistory>();

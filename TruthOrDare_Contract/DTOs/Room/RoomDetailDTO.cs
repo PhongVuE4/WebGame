@@ -20,6 +20,8 @@ namespace TruthOrDare_Contract.DTOs.Room
         public bool IsActive { get; set; }
         public bool IsDeleted { get; set; }
         public string CurrentPlayerIdTurn { get; set; }
+        public string CurrentQuestionId { get; set; }
+        public string CurrentQuestionText { get; set; }
         public List<PlayerCreateRoomDTO> Players { get; set; } = new List<PlayerCreateRoomDTO>();
     }
 }

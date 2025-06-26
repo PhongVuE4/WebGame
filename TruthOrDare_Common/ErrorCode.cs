@@ -55,6 +55,8 @@ namespace TruthOrDare_Common
         QuestionNotFound = 3009, // ko co cau hoi nao
         EmptyQuestionList = 3010, // list cau hoi rong~
         MultipleValidationErrors = 3011, //bao loi cho truong hop add manyquestion
+        QuestionIdFormat = 3012, // questionId phai la guid
+
 
         //game session
         GameSessionRequired = 4001, // yeu cau gamesession id

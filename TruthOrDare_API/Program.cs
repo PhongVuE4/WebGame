@@ -86,7 +86,10 @@ builder.Services.AddQuartz(q =>
     //Mỗi giờ: "0 0 * ? * *"
 });
 
-builder.Services.AddSignalR();
+builder.Services.AddSignalR(options =>
+{
+    options.MaximumReceiveMessageSize = 128 * 1024 * 1024; // 128MB
+});
 
 builder.Services.AddQuartzHostedService();
 var app = builder.Build();

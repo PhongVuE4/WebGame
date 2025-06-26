@@ -28,6 +28,12 @@ namespace TruthOrDare_API.Controllers
             var question = await _questionRepository.GetQuestions(filters);
             return Ok(new { message = "Get questions successfully.", data = question });
         }
+        [HttpGet("questions-id")]
+        public async Task<IActionResult> GetQuestionsById([FromQuery] string? filters)
+        {
+            var question = await _questionRepository.GetQuestionById(filters);
+            return Ok(new { message = "Get questions successfully.", data = question });
+        }
         [HttpPost("add-a-question")]
         public async Task<ActionResult> CreateQuestion([FromBody] QuestionCreateDTO questionCreate)
         {

@@ -47,7 +47,9 @@ namespace TruthOrDare_Contract.Models
         public List<QuestionDetail> Questions { get; set; } = new();
         [BsonElement("status")]
         public string Status { get; set; }
-
+        [BsonElement("response_type")]
+        [BsonIgnoreIfNull]
+        public string ResponseType { get; set; }
         [BsonElement("response")]
         [BsonIgnoreIfNull]
         public string Response { get; set; }

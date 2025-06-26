@@ -12,6 +12,7 @@ using MongoDB.Bson;
 using MongoDB.Driver;
 using TruthOrDare_Common.Exceptions.Player;
 using TruthOrDare_Common.Exceptions.Room;
+using TruthOrDare_Contract.IRepository;
 using TruthOrDare_Contract.IServices;
 using TruthOrDare_Contract.Models;
 using TruthOrDare_Core.Services;
@@ -22,19 +23,26 @@ namespace TruthOrDare_Core.Hubs
     public class RoomHub : BaseHub
     {
         private readonly IRoomService _roomService;
+        private readonly IQuestionRepository _questionRepository;
         private readonly IMongoCollection<Room> _rooms;
         private readonly IHubContext<RoomHub> _hubContext;
         private readonly GoogleDriveService _driveService;
         private readonly YouTubeService _youTubeService;
         private static readonly ConcurrentDictionary<string, bool> _roomLocks = new ConcurrentDictionary<string, bool>();
 
-        public RoomHub(IRoomService roomService, MongoDbContext dbContext, IHubContext<RoomHub> hubContext, GoogleDriveService driveSerevice, YouTubeService youTubeService)
+        public RoomHub(IRoomService roomService,
+            MongoDbContext dbContext,
+            IHubContext<RoomHub> hubContext,
+            GoogleDriveService driveSerevice,
+            YouTubeService youTubeService,
+            IQuestionRepository questionRepository)
         {
             _roomService = roomService;
             _rooms = dbContext.Rooms;
             _hubContext = hubContext;
             _driveService = driveSerevice;
             _youTubeService = youTubeService;
+            _questionRepository = questionRepository;
         }
         public async Task SendMessage(string roomId, string playerId, string message)
         {
@@ -53,13 +61,15 @@ namespace TruthOrDare_Core.Hubs
                 {
                     throw new RoomNotFoundPlayerIdException();
                 }
+                var vnTimeZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+                var vnTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, vnTimeZone);
                 // Gửi tin nhắn đến nhóm
                 await Clients.Group(roomId).SendAsync("ReceiveMessage", new
                 {
                     message,
                     playerId,
                     playerName = player.PlayerName,
-                    messTime = DateTime.Now.ToString("HH:mm:ss")
+                    messTime = vnTime.ToString("dd/MM/yyyy HH:mm:ss")
                 });
             });
         }
@@ -111,18 +121,19 @@ namespace TruthOrDare_Core.Hubs
                 await Clients.Group(roomId).SendAsync("PlayerListUpdated", players);
                 await Clients.Caller.SendAsync("JoinRoomSuccess", $"Đã vào phòng {roomId} thành công với tên {returnedPlayerName}");
             });
-            
+
         }
         public async Task ReconnectPlayer(string roomId, string playerId, string playerName)
         {
             await ExecuteWithErrorHandling(async () =>
             {
+
                 var room = await _rooms.Find(r => r.RoomId == roomId).FirstOrDefaultAsync();
                 if (room == null)
                 {
                     throw new RoomNotExistException(roomId);
                 }
-                
+
                 // Kiểm tra xem playerId đã trong phòng, khớp playerName, và IsActive
                 var player = room.Players?.FirstOrDefault(p => p.PlayerId == playerId && p.PlayerName == playerName);
                 if (player == null)
@@ -143,7 +154,7 @@ namespace TruthOrDare_Core.Hubs
                         message = $"Đã kết nối lại vào phòng {roomId}",
                         roomStatus = room.Status,
                         currentPlayerId = room.CurrentPlayerIdTurn,
-                        pls
+                        pls,
                     });
                     return;
                 }
@@ -181,9 +192,28 @@ namespace TruthOrDare_Core.Hubs
 
                     throw new Exception("Failed to update player connection.");
                 }
+
                 // Lấy lại room để đảm bảo dữ liệu mới nhất
                 room = await _rooms.Find(r => r.RoomId == roomId).FirstOrDefaultAsync();
+                string questionText = "";
+                string responseType = "";
+                string questionOwnerId = "";
+                if (!string.IsNullOrEmpty(room.CurrentQuestionId))
+                {
+                    var q = await _questionRepository.GetQuestionById(room.CurrentQuestionId);
+                    questionText = q?.Text;
+                    responseType = q?.ResponseType;
+                    questionOwnerId = room.CurrentPlayerIdTurn;
+                    var lastEntry = room.History?
+                        .Where(h => h.Questions != null && h.Questions.Any(q => q.QuestionId == room.CurrentQuestionId))
+                        .OrderByDescending(h => h.Timestamp)
+                        .FirstOrDefault();
+                    if (lastEntry != null)
+                    {
+                        questionOwnerId = lastEntry.PlayerId;
+                    }
 
+                }
                 // Thêm lại vào nhóm SignalR
                 await Groups.AddToGroupAsync(Context.ConnectionId, roomId);
 
@@ -197,13 +227,19 @@ namespace TruthOrDare_Core.Hubs
                     message = $"Đã kết nối lại vào phòng {roomId}",
                     roomStatus = room.Status,
                     currentPlayerId = room.CurrentPlayerIdTurn,
-                    players
+                    players,
+                    questionOwnerId = questionOwnerId,
+                    question = questionText,
+                    responseType,
+
                 });
                 await Clients.Group(roomId).SendAsync("PlayerReconnected", new
                 {
                     playerId,
                     playerName,
-                    message = $"{playerName} đã kết nối lại vào phòng."
+                    questionOwnerId = questionOwnerId,
+                    question = questionText,
+                    message = $"{playerName} đã kết nối lại vào phòng.",
                 });
                 await Clients.Group(roomId).SendAsync("PlayerListUpdated", players);
             });
@@ -325,7 +361,7 @@ namespace TruthOrDare_Core.Hubs
         {
             await ExecuteWithErrorHandling(async () =>
             {
-                var (question, isLastQuestion, totalQuestions, usedQuestions) = await _roomService.GetRandomQuestionForRoom(roomId, playerId, questionType);
+                var (question, isLastQuestion, totalQuestions, usedQuestions, responseType) = await _roomService.GetRandomQuestionForRoom(roomId, playerId, questionType);
 
                 var room = await _roomService.GetRoom(roomId);
                 if (question == null)
@@ -349,7 +385,8 @@ namespace TruthOrDare_Core.Hubs
                     playerName = room.Players.FirstOrDefault(p => p.PlayerId == playerId)?.PlayerName,
                     isLastQuestion,
                     totalQuestions,
-                    usedQuestions
+                    usedQuestions,
+                    responseType
                 });
                 //await Clients.Caller.SendAsync("GetQuestionSuccess", new
                 //{
@@ -459,7 +496,12 @@ namespace TruthOrDare_Core.Hubs
                     else if (mimeType.StartsWith("video/"))
                     {
                         // Upload to YouTube
-                        mediaUrl = await _youTubeService.UploadVideo(stream, fileName, $"Challenge from {playerId} in room {roomId}");
+                        //mediaUrl = await _youTubeService.UploadVideo(stream, fileName, $"Challenge from {playerId} in room {roomId}");
+                        mediaUrl = await _youTubeService.UploadVideo(
+                            stream,
+                            $"Challenge from {playerId} in room {roomId}",
+                            $"Submitted on {DateTime.UtcNow.ToString("o")}"
+                        );
                     }
                     else
                     {
@@ -484,8 +526,166 @@ namespace TruthOrDare_Core.Hubs
                 });
             });
         }
+        public async Task SubmitTextAnswer(string roomId, string playerId, string questionId, string response)
+        {
+            await ExecuteWithErrorHandling(async () =>
+            {
+                if (string.IsNullOrEmpty(roomId) || string.IsNullOrEmpty(playerId) || string.IsNullOrEmpty(questionId) || string.IsNullOrEmpty(response))
+                {
+                    await Clients.Caller.SendAsync("OperationFailed", new
+                    {
+                        statusCode = 422,
+                        errors = new { errorMessage = "Room ID, player ID, question ID, and response are required" }
+                    });
+                    return;
+                }
 
+                var room = await _rooms.Find(r => r.RoomId == roomId && !r.IsDeleted).FirstOrDefaultAsync();
+                if (room == null)
+                {
+                    await Clients.Caller.SendAsync("OperationFailed", new
+                    {
+                        statusCode = 422,
+                        errors = new { errorMessage = "Room not found" }
+                    });
+                    return;
+                }
+                if (room.Status.ToLower() != "playing")
+                {
+                    await Clients.Caller.SendAsync("OperationFailed", new
+                    {
+                        statusCode = 422,
+                        errors = new { errorMessage = "Game must be playing" }
+                    });
+                    return;
+                }
+                if (room.CurrentPlayerIdTurn != playerId)
+                {
+                    await Clients.Caller.SendAsync("OperationFailed", new
+                    {
+                        statusCode = 422,
+                        errors = new { errorMessage = "Not your turn" }
+                    });
+                    return;
+                }
 
+                var historyItem = room.History.LastOrDefault(h => h.PlayerId == playerId && h.Questions.Any(q => q.QuestionId == questionId) && h.Status == "assigned");
+                if (historyItem == null)
+                {
+                    await Clients.Caller.SendAsync("OperationFailed", new
+                    {
+                        statusCode = 422,
+                        errors = new { errorMessage = "No assigned question found for this player" }
+                    });
+                    return;
+                }
+
+                historyItem.Status = "answered";
+                historyItem.Response = response;
+                historyItem.ResponseType = "text";
+                historyItem.Timestamp = DateTime.Now;
+
+                room.LastQuestionTimestamp = null;
+                await _rooms.ReplaceOneAsync(r => r.RoomId == roomId, room);
+
+                await Clients.Group(roomId).SendAsync("AnswerSubmitted", new
+                {
+                    roomId,
+                    playerId,
+                    playerName = room.Players.FirstOrDefault(p => p.PlayerId == playerId)?.PlayerName,
+                    questionId,
+                    response,
+                    responseUrl = (string)null,
+                    responseType = "text",
+                    timestamp = DateTime.UtcNow.ToString("o")
+                });
+            });
+        }
+        public async Task SubmitMediaAnswer(string roomId, string playerId, string questionId, string responseUrl, string responseType)
+        {
+            await ExecuteWithErrorHandling(async () =>
+            {
+                if (string.IsNullOrEmpty(roomId) || string.IsNullOrEmpty(playerId) || string.IsNullOrEmpty(questionId) || string.IsNullOrEmpty(responseUrl) || string.IsNullOrEmpty(responseType))
+                {
+                    await Clients.Caller.SendAsync("OperationFailed", new
+                    {
+                        statusCode = 422,
+                        errors = new { errorMessage = "Room ID, player ID, question ID, response URL, and response type are required" }
+                    });
+                    return;
+                }
+
+                if (responseType != "image" && responseType != "video")
+                {
+                    await Clients.Caller.SendAsync("OperationFailed", new
+                    {
+                        statusCode = 422,
+                        errors = new { errorMessage = "Invalid response type. Must be 'image' or 'video'" }
+                    });
+                    return;
+                }
+
+                var room = await _rooms.Find(r => r.RoomId == roomId && !r.IsDeleted).FirstOrDefaultAsync();
+                if (room == null)
+                {
+                    await Clients.Caller.SendAsync("OperationFailed", new
+                    {
+                        statusCode = 422,
+                        errors = new { errorMessage = "Room not found" }
+                    });
+                    return;
+                }
+                if (room.Status.ToLower() != "playing")
+                {
+                    await Clients.Caller.SendAsync("OperationFailed", new
+                    {
+                        statusCode = 422,
+                        errors = new { errorMessage = "Game must be playing" }
+                    });
+                    return;
+                }
+                if (room.CurrentPlayerIdTurn != playerId)
+                {
+                    await Clients.Caller.SendAsync("OperationFailed", new
+                    {
+                        statusCode = 422,
+                        errors = new { errorMessage = "Not your turn" }
+                    });
+                    return;
+                }
+
+                var historyItem = room.History.LastOrDefault(h => h.PlayerId == playerId && h.Questions.Any(q => q.QuestionId == questionId) && h.Status == "assigned");
+                if (historyItem == null)
+                {
+                    await Clients.Caller.SendAsync("OperationFailed", new
+                    {
+                        statusCode = 422,
+                        errors = new { errorMessage = "No assigned question found for this player" }
+                    });
+                    return;
+                }
+
+                historyItem.Status = "answered";
+                historyItem.ResponseUrl = responseUrl;
+                historyItem.ResponseType = responseType;
+                historyItem.Timestamp = DateTime.Now;
+
+                room.LastQuestionTimestamp = null;
+                await _rooms.ReplaceOneAsync(r => r.RoomId == roomId, room);
+
+                await Clients.Group(roomId).SendAsync("AnswerSubmitted", new
+                {
+                    roomId,
+                    playerId,
+                    playerName = room.Players.FirstOrDefault(p => p.PlayerId == playerId)?.PlayerName,
+                    questionId,
+                    response = (string)null,
+                    responseUrl,
+                    responseType,
+                    timestamp = DateTime.UtcNow.ToString("o")
+                });
+            });
+        }
         public override async Task OnDisconnectedAsync(Exception? exception)
         {
             bool sendToCaller = false;

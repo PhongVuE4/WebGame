@@ -31,6 +31,7 @@ namespace TruthOrDare_Core.Services
         private readonly IQuestionRepository _questionRepository;
         private readonly IMongoCollection<GameSession> _gameSessions;
         private readonly IHubContext<RoomHub> _hubContext;
+        private readonly IMongoCollection<Question> _questions;
         public RoomService(MongoDbContext dbContext, 
             IPasswordHashingService passwordHashingService, 
             IQuestionRepository questionRepository,
@@ -403,7 +404,7 @@ namespace TruthOrDare_Core.Services
             room.UpdatedAt = DateTime.Now;
             await _rooms.ReplaceOneAsync(r => r.RoomId == roomId, room);
         }
-        public async Task<(Question question, bool isLastQuestion, int totalQuestions, int usedQuestions)> GetRandomQuestionForRoom(string roomId, string playerId, string questionType)
+        public async Task<(Question question, bool isLastQuestion, int totalQuestions, int usedQuestions, string responseType)> GetRandomQuestionForRoom(string roomId, string playerId, string questionType)
         {
             var room = await GetRoom(roomId);
             if (room.Status.ToLower() != "playing")
@@ -421,7 +422,7 @@ namespace TruthOrDare_Core.Services
                     room.UpdatedAt = DateTime.UtcNow;
                     await _rooms.ReplaceOneAsync(r => r.RoomId == roomId, room);
                     await SaveGameSession(room);
-                    return (null, false, 0, 0); // Không còn người chơi active
+                    return (null, false, 0, 0, null); // Không còn người chơi active
                 }
                 await _rooms.ReplaceOneAsync(r => r.RoomId == roomId, room);
             }
@@ -468,7 +469,7 @@ namespace TruthOrDare_Core.Services
                 roomEntity.UpdatedAt = DateTime.Now; 
                 await _rooms.ReplaceOneAsync(r => r.RoomId == roomId, roomEntity);
                 await SaveGameSession(roomEntity);
-                return (null, false, totalQuestions, usedQuestions); // Hết câu hỏi
+                return (null, false, totalQuestions, usedQuestions, null); // Hết câu hỏi
 
             }
 
@@ -485,9 +486,10 @@ namespace TruthOrDare_Core.Services
                     }
                 },
                 Timestamp = DateTime.Now,
-                Status = "assigned"
+                Status = "assigned",
+                ResponseType = question.ResponseType,
             });
-
+            roomEntity.CurrentQuestionId = question.Id; // Lưu ID câu hỏi hiện tại trong Room Entity
             roomEntity.UsedQuestionIds.Add(question.Id);
             roomEntity.Players.FirstOrDefault(p => p.PlayerId == playerId).QuestionsAnswered++;
             roomEntity.LastQuestionTimestamp = DateTime.Now; // Lưu thời gian lấy câu hỏi
@@ -503,7 +505,7 @@ namespace TruthOrDare_Core.Services
             roomEntity.IsLastQuestionAssigned = isLastQuestion; // xac dinh cau hoi cuoi
             await _rooms.ReplaceOneAsync(r => r.RoomId == roomId, roomEntity); // Cập nhật lại
 
-            return (question, isLastQuestion, totalQuestions, usedQuestionsAfter);
+            return (question, isLastQuestion, totalQuestions, usedQuestionsAfter, question.ResponseType);
         }
         public async Task<EndGameSummaryDTO> EndGame(string roomId, string playerId)
         {
@@ -749,6 +751,39 @@ namespace TruthOrDare_Core.Services
             var filteredHistory = roomEntity.History
                 .Where(h => activePlayerIds.Contains(h.PlayerId))
                 .ToList();
+
+            // Tạo danh sách History mới với ResponseType
+            var updatedHistory = new List<SessionHistory>();
+            foreach (var historyItem in filteredHistory)
+            {
+                // Sao chép historyItem
+                var updatedItem = new SessionHistory
+                {
+                    PlayerId = historyItem.PlayerId,
+                    PlayerName = historyItem.PlayerName,
+                    Questions = historyItem.Questions,
+                    Status = historyItem.Status,
+                    Response = historyItem.Response,
+                    ResponseUrl = historyItem.ResponseUrl,
+                    PointsEarned = historyItem.PointsEarned,
+                    Timestamp = historyItem.Timestamp,
+                    ResponseType = historyItem.ResponseType // Giữ ResponseType nếu đã có
+                };
+
+                // Nếu ResponseType chưa có, lấy từ Question dựa trên QuestionId
+                if (string.IsNullOrEmpty(updatedItem.ResponseType) && updatedItem.Questions.Any())
+                {
+                    var questionId = updatedItem.Questions.First().QuestionId;
+                    var question = await _questions.Find(q => q.Id == questionId && !q.IsDeleted).FirstOrDefaultAsync();
+                    if (question != null)
+                    {
+                        updatedItem.ResponseType = question.ResponseType;
+                    }
+                }
+
+                updatedHistory.Add(updatedItem);
+            }
+
             var gameSession = new GameSession
             {
                 Id = ObjectId.GenerateNewId().ToString(), // Dùng ObjectId cho MongoDB
@@ -768,6 +803,15 @@ namespace TruthOrDare_Core.Services
         public async Task<List<Room>> GetActiveRooms()
         {
             return await _rooms.Find(r => r.Status == "playing").ToListAsync();
+        }
+        public string GetLastQuestionText(Room room, string playerId)
+        {
+            var lastEntry = room.History
+                .Where(h => h.PlayerId == playerId)
+                .OrderByDescending(h => h.Timestamp)
+                .FirstOrDefault();
+
+            return lastEntry?.Questions?.FirstOrDefault()?.QuestionContent;
         }
         public async Task NotifyPlayers(string roomId, string message)
         {
