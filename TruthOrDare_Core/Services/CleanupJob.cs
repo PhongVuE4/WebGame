@@ -31,6 +31,7 @@ namespace TruthOrDare_Core.Services
                 var room = Builders<Room>.Filter.And(
                             Builders<Room>.Filter.Or(
                                 Builders<Room>.Filter.Eq(a => a.IsDeleted, true),
+                                Builders<Room>.Filter.Eq(a => a.PlayerCount, 0),
                                 Builders<Room>.Filter.Eq(a => a.IsActive, false),
                                 Builders<Room>.Filter.Eq(a => a.Status, "ended")
                             ),
